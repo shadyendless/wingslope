@@ -26,3 +26,7 @@ Durable, repo-specific instructions for coding agents. Project facts live in [RE
 - Before calling work done, run `pnpm verify` (build, typecheck, test, lint, format check), and for UI changes check both themes in Storybook.
 - Ask before adding dependencies, changing public exports, or changing shared configs (`tsconfig.base.json`, `eslint.config.js`, `pnpm-workspace.yaml`).
 - Do not commit or push unless asked.
+- Commit messages follow [`.gitmessage`](./.gitmessage) (the standard-toolkit template):
+  - Title: `<label>: Summary` with label `build`, `chore`, `docs`, `feat`, `fix` or `refactor`, an imperative summary starting upper case, at most 50 characters, no period.
+  - Body: wrapped at 72 characters, explaining what and why.
+  - Never add AI attribution such as `Co-Authored-By` trailers or "Generated with" lines.
