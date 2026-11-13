@@ -1,0 +1,24 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .key {
+    @apply w-fit min-w-xl p-xs font-primary text-header-s fg-primary-bold uppercase;
+
+    &.flat {
+      @apply bg-transparent;
+    }
+
+    &.icon {
+      @apply -mx-xs bg-transparent px-0;
+    }
+
+    &.outline {
+      @apply rounded-medium bg-surface-default outline outline-static;
+      box-shadow: 0 3px var(--outline-static);
+    }
+  }
+
+  .set {
+    @apply flex items-center gap-xs text-header-m fg-primary-muted;
+  }
+}

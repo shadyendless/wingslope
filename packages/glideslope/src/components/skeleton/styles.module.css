@@ -1,0 +1,19 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .skeleton {
+    @apply bg-interactive-disabled fg-primary-bold;
+
+    @variant motion-safe {
+      @apply animate-pulse;
+    }
+
+    &.circle {
+      @apply aspect-square w-[1lh] rounded-full;
+    }
+
+    &.rectangle {
+      @apply h-lh w-full rounded-small;
+    }
+  }
+}

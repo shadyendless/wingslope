@@ -1,0 +1,4 @@
+@import '@wingbrace/glideslope-foundation/styles';
+
+/* Generate utilities used for layout in story templates. */
+@source '../src/**/*.stories.ts';

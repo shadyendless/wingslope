@@ -1,0 +1,36 @@
+{
+  "name": "glideslope-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Glideslope design system: a Vue 3 + Reka UI design system with a Tailwind v4 foundation.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@10.25.0",
+  "engines": {
+    "node": ">=22.12",
+    "pnpm": ">=10"
+  },
+  "scripts": {
+    "build": "pnpm --filter \"./packages/**\" run build",
+    "typecheck": "pnpm -r run typecheck",
+    "test": "pnpm -r run test",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "storybook": "pnpm --filter \"@wingbrace/glideslope^...\" run build && pnpm --filter @wingbrace/glideslope run storybook",
+    "playground": "pnpm --filter \"playground^...\" run build && pnpm --filter playground run dev",
+    "verify": "pnpm build && pnpm typecheck && pnpm test && pnpm lint && pnpm format:check"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@vue/eslint-config-prettier": "^10.2.0",
+    "@vue/eslint-config-typescript": "^14.9.0",
+    "eslint": "^10.14.0",
+    "eslint-plugin-vue": "^10.12.1",
+    "globals": "^17.14.0",
+    "prettier": "^3.10.1",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "typescript": "catalog:"
+  }
+}

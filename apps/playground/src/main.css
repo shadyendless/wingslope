@@ -1,0 +1,5 @@
+/* 1. The foundation: Tailwind, Glideslope tokens, variants and utilities, and the layer order. */
+@import '@wingbrace/glideslope-foundation/styles';
+
+/* 2. Pre-compiled component styles. They live in `components.l*` layers, below utilities. */
+@import '@wingbrace/glideslope/styles.css';

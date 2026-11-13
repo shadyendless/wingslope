@@ -1,0 +1,25 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .link {
+    @apply inline-flex cursor-pointer items-center align-bottom fg-accent-primary-bold;
+    padding-inline: 0.5ch;
+    gap: 0.5ch;
+
+    @variant hover {
+      @apply bg-accent-primary-muted fg-accent-primary-hover;
+    }
+
+    @variant focus-visible {
+      @apply bg-accent-primary-muted fg-accent-primary-hover;
+    }
+
+    @variant active {
+      @apply bg-accent-primary-muted fg-accent-primary-pressed;
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed fg-disabled;
+    }
+  }
+}

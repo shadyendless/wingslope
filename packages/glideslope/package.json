@@ -1,0 +1,65 @@
+{
+  "name": "@wingbrace/glideslope",
+  "version": "0.0.0",
+  "description": "Glideslope Vue 3 component library, built on Reka UI and the Glideslope foundation.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "keywords": [
+    "design-system",
+    "vue",
+    "reka-ui",
+    "tailwindcss",
+    "glideslope"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./styles.css": "./dist/glideslope.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build && vue-tsc -p tsconfig.build.json",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.app.json && vue-tsc --noEmit -p tsconfig.node.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@wingbrace/glideslope-icons": "workspace:^",
+    "reka-ui": "catalog:"
+  },
+  "peerDependencies": {
+    "@wingbrace/glideslope-foundation": "workspace:^",
+    "vue": "catalog:"
+  },
+  "devDependencies": {
+    "@storybook/addon-a11y": "catalog:",
+    "@storybook/addon-docs": "catalog:",
+    "@storybook/addon-themes": "catalog:",
+    "@storybook/vue3-vite": "catalog:",
+    "@tailwindcss/vite": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/user-event": "catalog:",
+    "@testing-library/vue": "catalog:",
+    "@types/node": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
+    "@wingbrace/glideslope-foundation": "workspace:^",
+    "jsdom": "catalog:",
+    "storybook": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "vue": "catalog:",
+    "vue-tsc": "catalog:"
+  }
+}

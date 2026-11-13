@@ -1,0 +1,20 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .divider {
+    @apply shrink-0 grow-0 self-stretch border-0;
+    background-color: var(--outline-static);
+
+    @variant orientation-horizontal {
+      @apply h-px w-full;
+    }
+
+    /*
+     * `height: 100%` collapses inside flex rows, so a vertical divider relies on `align-self:
+     * stretch` there, and on `min-height: 100%` in block layouts with a definite height.
+     */
+    @variant orientation-vertical {
+      @apply min-h-full w-px;
+    }
+  }
+}

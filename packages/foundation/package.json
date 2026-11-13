@@ -1,0 +1,49 @@
+{
+  "name": "@wingbrace/glideslope-foundation",
+  "version": "0.0.0",
+  "description": "Glideslope design tokens, Tailwind v4 theme, custom variants and utilities. Framework-agnostic.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "keywords": [
+    "design-system",
+    "design-tokens",
+    "tailwindcss",
+    "glideslope"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    "./styles": {
+      "style": "./dist/index.css",
+      "default": "./dist/index.css"
+    },
+    "./tokens": {
+      "types": "./dist/tokens/index.d.ts",
+      "default": "./dist/tokens/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "generate": "node scripts/generate-tokens.mjs && node scripts/generate-variants.mjs",
+    "build": "pnpm run generate && node scripts/build.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "@fontsource-variable/roboto-flex": "catalog:",
+    "@fontsource-variable/roboto-mono": "catalog:",
+    "tailwindcss": "catalog:"
+  },
+  "devDependencies": {
+    "@fontsource-variable/roboto-flex": "catalog:",
+    "@fontsource-variable/roboto-mono": "catalog:",
+    "@types/node": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

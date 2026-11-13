@@ -1,0 +1,30 @@
+{
+  "name": "playground",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A plain Vue SPA that consumes the built Glideslope packages, the way an app would.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.app.json && vue-tsc --noEmit -p tsconfig.node.json"
+  },
+  "dependencies": {
+    "@fontsource-variable/roboto-flex": "catalog:",
+    "@fontsource-variable/roboto-mono": "catalog:",
+    "@wingbrace/glideslope": "workspace:*",
+    "@wingbrace/glideslope-foundation": "workspace:*",
+    "@wingbrace/glideslope-icons": "workspace:*",
+    "vue": "catalog:"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "catalog:",
+    "@types/node": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vue-tsc": "catalog:"
+  }
+}

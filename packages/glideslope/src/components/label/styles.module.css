@@ -1,0 +1,11 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .label {
+    @apply text-header-s fg-primary-bold;
+
+    @variant disabled {
+      @apply fg-disabled;
+    }
+  }
+}

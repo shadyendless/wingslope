@@ -1,0 +1,33 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Shared dependency versions. Reference with `"pkg": "catalog:"` in a package.json.
+catalog:
+  '@fontsource-variable/roboto-flex': ^5.3.0
+  '@fontsource-variable/roboto-mono': ^5.3.0
+  '@storybook/addon-a11y': ^10.6.7
+  '@storybook/addon-docs': ^10.6.7
+  '@storybook/addon-themes': ^10.6.7
+  '@storybook/vue3-vite': ^10.6.7
+  '@tailwindcss/vite': ^4.3.5
+  '@testing-library/jest-dom': ^7.0.1
+  '@testing-library/user-event': ^14.6.10
+  '@testing-library/vue': ^8.1.0
+  '@types/node': ^22.20.5
+  '@vitejs/plugin-vue': ^6.0.11
+  '@vue/test-utils': ^2.5.1
+  jsdom: ^31.0.1
+  reka-ui: ^2.11.0
+  storybook: ^10.6.7
+  svgo: ^4.1.0
+  tailwindcss: ^4.3.5
+  # TypeScript 7 (native) has no JS API yet, which vue-tsc requires. Stay on 6.0.x.
+  typescript: ~6.0.3
+  vite: ^8.3.8
+  vitest: ^5.1.0
+  vue: ^3.5.45
+  vue-tsc: ^3.3.14
+
+onlyBuiltDependencies:
+  - esbuild

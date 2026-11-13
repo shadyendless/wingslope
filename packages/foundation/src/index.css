@@ -1,0 +1,159 @@
+/*
+ * Glideslope foundation stylesheet.
+ *
+ * Import this from your app's Tailwind entry CSS:
+ *   @import '@wingbrace/glideslope-foundation/styles';
+ *
+ * Reference it (without emitting CSS) from CSS Modules:
+ *   @reference '@wingbrace/glideslope-foundation/styles';
+ */
+
+/*
+ * Cascade layer order. Components use `components.l1` (lowest) through `components.l5`; a component
+ * that restyles another component uses the next layer up. Utilities always win over components, so
+ * app code can override any component style with a utility class.
+ */
+@layer theme, base, components, components.l1, components.l2, components.l3, components.l4, components.l5, utilities;
+
+@import '@fontsource-variable/roboto-flex';
+@import '@fontsource-variable/roboto-mono';
+
+@import 'tailwindcss';
+
+@theme {
+  /* Remove Tailwind's default scales; Glideslope tokens replace them. */
+  --color-*: initial;
+  --font-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --spacing-*: initial;
+  --text-*: initial;
+
+  --animate-fade-enter: fade-enter var(--animation-duration-normal)
+    var(--animation-easing-decelerate) both;
+  --animate-fade-exit: fade-exit var(--animation-duration-normal) var(--animation-easing-accelerate)
+    both;
+
+  @keyframes fade-enter {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes fade-exit {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+}
+
+/* Generated primitive + semantic tokens */
+@import './tokens/themes.css';
+
+@theme {
+  --color-current: currentColor;
+}
+
+@layer theme {
+  * {
+    @variant dark {
+      color-scheme: dark;
+    }
+
+    @variant light {
+      color-scheme: light;
+    }
+  }
+}
+
+/* Generated custom variants */
+@import './variants/variants.css';
+
+@source inline('{motion-safe:}');
+@source inline('animate-spin');
+@source inline('animate-ping');
+@source inline('animate-pulse');
+
+/*
+ * Color utilities. Each resolves a semantic (`--bg-*`, `--fg-*`, `--outline-*`), domain or
+ * primitive token and supports an opacity modifier, e.g. `bg-surface-raised/50`.
+ */
+@utility bg-* {
+  --bg-value: --value(--bg-*, --domain-*, --primitive-*);
+  --bg-alpha: calc(--modifier(integer) / 100);
+
+  background-color: rgb(from var(--bg-value) r g b / var(--bg-alpha, alpha));
+}
+
+/* `fg-*` sets text color and also the icon color for any nested icon. */
+@utility fg-* {
+  --fg-value: --value(--fg-*, --domain-*, --primitive-*);
+  --fg-alpha: calc(--modifier(integer) / 100);
+  --fg-color: rgb(from var(--fg-value) r g b / var(--fg-alpha, alpha));
+  --icon-color: var(--fg-color);
+
+  color: var(--fg-color);
+}
+
+/* `icon-*` sets only the icon color, leaving text color alone. */
+@utility icon-* {
+  --icon-value: --value(--fg-*, --domain-*, --primitive-*);
+  --icon-alpha: calc(--modifier(integer) / 100);
+  --icon-color: rgb(from var(--icon-value) r g b / var(--icon-alpha, alpha));
+}
+
+@utility outline-* {
+  --outline-value: --value(--outline-*, --domain-*, --primitive-*);
+  --outline-alpha: calc(--modifier(integer) / 100);
+
+  outline-color: rgb(from var(--outline-value) r g b / var(--outline-alpha, alpha));
+}
+
+@utility shadow-* {
+  box-shadow: --value(--shadow-*);
+}
+
+/*
+ * Glideslope draws "borders" with outlines so they never change an element's box size. Elements
+ * with and without a border render at the same dimensions.
+ */
+@utility outline {
+  outline-offset: -1px;
+}
+
+@utility text-* {
+  font-size: --value(--typography-size-*);
+  font-weight: --value(--typography-weight-*);
+  letter-spacing: --value(--typography-spacing-*);
+  line-height: --value(--typography-height-*);
+}
+
+@layer base {
+  html {
+    @apply bg-surface-default font-primary fg-primary-bold;
+  }
+
+  ::-webkit-scrollbar {
+    @apply size-l;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-interactive-muted-hover;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-large bg-interactive-muted;
+    border: 5px solid transparent;
+    background-clip: padding-box;
+  }
+}

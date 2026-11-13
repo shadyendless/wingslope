@@ -1,0 +1,11 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .clearButton {
+    @apply flex w-fit min-w-0 shrink-0 cursor-pointer items-center justify-center gap-xxs rounded-small text-button-s;
+
+    @variant hover {
+      @apply bg-interactive-muted-hover;
+    }
+  }
+}

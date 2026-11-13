@@ -1,0 +1,40 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .list {
+    @apply grid gap-x-m font-display text-body-m;
+    grid-template-columns: auto 1fr;
+  }
+
+  .label {
+    @apply col-start-1 fg-primary-muted;
+
+    &.left {
+      @apply text-left;
+    }
+
+    &.center {
+      @apply text-right;
+    }
+
+    &.justify {
+      @apply text-left;
+    }
+  }
+
+  .value {
+    @apply col-start-2 fg-primary-bold;
+
+    &.left {
+      @apply text-left;
+    }
+
+    &.center {
+      @apply text-left;
+    }
+
+    &.justify {
+      @apply text-right;
+    }
+  }
+}

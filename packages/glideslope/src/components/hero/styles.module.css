@@ -1,0 +1,40 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .hero {
+    @apply relative flex flex-col;
+
+    @variant layout-grid {
+      @apply pl-xxl;
+    }
+
+    @variant layout-stack {
+      @apply rounded-large bg-interactive-disabled px-l py-xl;
+    }
+  }
+
+  .title {
+    @apply -order-2 mb-xs font-display text-header-l fg-primary-bold;
+  }
+
+  .subtitle {
+    @apply -order-1 block font-display text-body-s fg-primary-muted;
+  }
+}
+
+/* The hero restyles GsIcon (components.l1), so these rules sit one layer up. */
+@layer components.l2 {
+  .icon {
+    @apply -order-3 fg-primary-muted;
+  }
+
+  .hero:where([data-layout='grid']) .icon {
+    @apply absolute top-xxs left-xs;
+  }
+
+  .hero:where([data-layout='stack']) .icon {
+    @apply mb-l;
+    width: 48px;
+    height: 48px;
+  }
+}

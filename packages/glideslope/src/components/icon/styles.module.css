@@ -1,0 +1,31 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .icon {
+    @apply block flex-none;
+    width: var(--icon-size, var(--icon-size-m));
+    height: var(--icon-size, var(--icon-size-m));
+    color: var(--icon-color, currentColor);
+
+    @variant size-large {
+      --icon-size: var(--icon-size-l);
+    }
+
+    @variant size-medium {
+      --icon-size: var(--icon-size-m);
+    }
+
+    @variant size-small {
+      --icon-size: var(--icon-size-s);
+    }
+
+    @variant size-xsmall {
+      --icon-size: var(--icon-size-xs);
+    }
+
+    /* Size the icon component placed in the slot to the wrapper. */
+    & > svg {
+      @apply size-full;
+    }
+  }
+}

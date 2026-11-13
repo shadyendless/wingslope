@@ -1,0 +1,8 @@
+/*
+ * Declares the Glideslope cascade layer order before any component styles.
+ *
+ * Browsers fix layer order by first appearance. Without this, loading `glideslope.css` before the
+ * app's Tailwind CSS would put `components` below `base`, letting Tailwind's reset override
+ * component styles. This statement must match the one in `@wingbrace/glideslope-foundation/styles`.
+ */
+@layer theme, base, components, components.l1, components.l2, components.l3, components.l4, components.l5, utilities;

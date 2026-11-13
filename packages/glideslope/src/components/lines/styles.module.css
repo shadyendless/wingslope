@@ -1,0 +1,83 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .lines {
+    @variant size-large {
+      @apply h-xxl;
+    }
+
+    @variant size-medium {
+      @apply min-h-xl;
+    }
+
+    @variant size-small {
+      @apply min-h-l;
+    }
+
+    &[data-hidden] {
+      @apply invisible;
+    }
+
+    &.branch {
+      background-image:
+        repeating-linear-gradient(
+          to bottom,
+          var(--outline-static) 0,
+          var(--outline-static) 1px,
+          transparent 1px,
+          transparent 4px
+        ),
+        repeating-linear-gradient(
+          to right,
+          var(--outline-static) 0,
+          var(--outline-static) 1px,
+          transparent 1px,
+          transparent 4px
+        );
+      background-position:
+        center,
+        center right;
+      background-repeat: repeat-y, no-repeat;
+      background-size:
+        1px 4px,
+        50% 1px;
+    }
+
+    &.vert {
+      @apply bg-center bg-repeat-y;
+      background-size: 1px 4px;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        var(--outline-static) 0,
+        var(--outline-static) 1px,
+        transparent 1px,
+        transparent 4px
+      );
+    }
+
+    &.last {
+      background-image:
+        repeating-linear-gradient(
+          to bottom,
+          var(--outline-static) 0,
+          var(--outline-static) 1px,
+          transparent 1px,
+          transparent 4px
+        ),
+        repeating-linear-gradient(
+          to right,
+          var(--outline-static) 0,
+          var(--outline-static) 1px,
+          transparent 1px,
+          transparent 4px
+        );
+      background-position:
+        center top,
+        center right;
+      background-repeat: no-repeat;
+      background-size:
+        1px 50%,
+        50% 1px;
+    }
+  }
+}

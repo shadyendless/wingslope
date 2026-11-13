@@ -1,0 +1,45 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .icon {
+    @apply inline-flex size-m;
+
+    @variant data-[status=good] {
+      @apply rounded-full bg-(--fg-normal-bold);
+    }
+
+    @variant data-[status=degraded] {
+      @apply scale-80 rotate-45 bg-(--fg-serious-bold); /* scale down to make it look visually more aligned with the other variants */
+    }
+
+    @variant data-[status=poor] {
+      @apply bg-(--fg-critical-bold);
+
+      /* isosceles triangle */
+      clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+    }
+
+    @variant data-[status=pending] {
+      @apply size-s rounded-full bg-transparent outline-2 outline-accent-primary-bold;
+    }
+
+    @variant data-[status=unknown] {
+      @apply size-s rounded-full bg-(--fg-info-bold);
+    }
+  }
+}
+
+@layer components.l1 {
+  .labeled {
+    @apply flex items-center gap-s;
+  }
+
+  /* Centers the smaller status shapes in a consistent-width column so labels line up. */
+  .iconSlot {
+    @apply flex min-w-m justify-center;
+  }
+
+  .label {
+    @apply text-header-s fg-primary-bold;
+  }
+}

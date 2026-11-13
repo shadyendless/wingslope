@@ -1,0 +1,33 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .avatar {
+    @apply grid rounded-full bg-surface-overlay fg-primary-muted;
+    grid-template-areas: 'content';
+
+    @variant size-medium {
+      @apply text-header-m;
+      width: 32px;
+      height: 32px;
+    }
+
+    @variant size-small {
+      @apply size-xl text-header-xs;
+    }
+  }
+
+  .image {
+    @apply size-full overflow-hidden rounded-full object-cover object-center;
+    grid-area: content;
+  }
+
+  .fallback {
+    @apply flex size-full items-center justify-center;
+    grid-area: content;
+  }
+
+  .content {
+    @apply relative flex size-full items-center justify-center;
+    grid-area: content;
+  }
+}

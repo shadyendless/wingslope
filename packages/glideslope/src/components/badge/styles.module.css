@@ -1,0 +1,55 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .badge {
+    @apply inline-flex items-center justify-center rounded-full px-xs text-body-xs fg-primary-bold outline;
+
+    &:where(:empty, [data-empty]) {
+      @apply size-s px-none;
+    }
+
+    &[data-placement] {
+      @apply absolute;
+    }
+
+    &:where([data-placement~='top']) {
+      @apply -translate-y-1/2;
+      top: var(--badge-offset-y, 0px);
+    }
+
+    &:where([data-placement~='right']) {
+      @apply translate-x-1/2;
+      right: var(--badge-offset-x, 0px);
+    }
+
+    &:where([data-placement~='bottom']) {
+      @apply translate-y-1/2;
+      bottom: var(--badge-offset-y, 0px);
+    }
+
+    &:where([data-placement~='left']) {
+      @apply -translate-x-1/2;
+      left: var(--badge-offset-x, 0px);
+    }
+
+    @variant color-info {
+      @apply bg-info-muted outline-info-bold;
+    }
+
+    @variant color-advisory {
+      @apply bg-advisory-muted outline-advisory-bold;
+    }
+
+    @variant color-normal {
+      @apply bg-normal-muted outline-normal-bold;
+    }
+
+    @variant color-serious {
+      @apply bg-serious-muted outline-serious-bold;
+    }
+
+    @variant color-critical {
+      @apply bg-critical-muted outline-critical-bold;
+    }
+  }
+}

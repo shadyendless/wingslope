@@ -1,0 +1,917 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .button {
+    @apply flex w-fit shrink-0 cursor-pointer items-center justify-center rounded-medium outline outline-transparent select-none;
+
+    @variant motion-safe {
+      transition:
+        background-color var(--animation-duration-normal) var(--animation-easing-standard),
+        outline-color var(--animation-duration-normal) var(--animation-easing-standard);
+    }
+
+    @variant size-large {
+      @apply gap-xs px-l py-s text-button-l;
+      min-width: 96px;
+    }
+
+    @variant size-medium {
+      @apply gap-xs px-m py-xs text-button-m;
+      min-width: 68px;
+    }
+
+    @variant size-small {
+      @apply gap-xxs px-s py-xs text-button-s;
+      min-width: 54px;
+    }
+
+    @variant size-xsmall {
+      @apply gap-xxs p-xs text-button-xs;
+      min-width: 41px;
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed;
+    }
+
+    &.filled {
+      @variant color-mono-muted {
+        @apply bg-interactive-muted fg-primary-bold;
+
+        @variant hover {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant active {
+          @apply bg-interactive-muted-pressed fg-primary-muted;
+        }
+      }
+
+      @variant color-mono-bold {
+        @apply bg-interactive-bold fg-inverse-bold;
+
+        @variant hover {
+          @apply bg-interactive-bold-hover fg-disabled;
+        }
+
+        @variant focus-visible {
+          @apply bg-interactive-bold-hover fg-disabled;
+        }
+
+        @variant active {
+          @apply bg-interactive-bold-pressed fg-inverse-muted;
+        }
+      }
+
+      @variant color-accent {
+        @apply bg-accent-primary-bold fg-a11y-on-accent;
+
+        @variant hover {
+          @apply bg-accent-primary-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-accent-primary-hover;
+        }
+
+        @variant active {
+          @apply bg-accent-primary-pressed fg-accent-primary-bold;
+        }
+      }
+
+      @variant color-serious {
+        @apply bg-serious-bold fg-a11y-on-utility;
+
+        @variant hover {
+          @apply bg-serious-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-serious-hover;
+        }
+
+        @variant active {
+          @apply bg-serious-pressed fg-serious-bold;
+        }
+      }
+
+      @variant color-critical {
+        @apply bg-critical-bold fg-a11y-on-utility;
+
+        @variant hover {
+          @apply bg-critical-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-critical-hover;
+        }
+
+        @variant active {
+          @apply bg-critical-pressed fg-critical-bold;
+        }
+      }
+
+      @variant disabled {
+        @apply bg-interactive-disabled fg-disabled;
+      }
+    }
+
+    &.flat {
+      @variant color-mono-muted {
+        @apply fg-primary-muted;
+
+        @variant hover {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant active {
+          @apply bg-interactive-muted-pressed fg-pressed;
+        }
+      }
+
+      @variant color-mono-bold {
+        @apply fg-primary-bold;
+
+        @variant hover {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant active {
+          @apply bg-interactive-muted-pressed fg-pressed;
+        }
+      }
+
+      @variant color-accent {
+        @apply fg-accent-primary-bold;
+
+        @variant hover {
+          @apply bg-accent-primary-hover fg-a11y-on-accent;
+        }
+
+        @variant focus-visible {
+          @apply bg-accent-primary-hover fg-a11y-on-accent;
+        }
+
+        @variant active {
+          @apply bg-accent-primary-pressed fg-accent-primary-pressed;
+        }
+      }
+
+      @variant color-serious {
+        @apply fg-serious-bold;
+
+        @variant hover {
+          @apply bg-serious-hover fg-a11y-on-accent;
+        }
+
+        @variant focus-visible {
+          @apply bg-serious-hover fg-a11y-on-accent;
+        }
+
+        @variant active {
+          @apply bg-serious-pressed fg-serious-pressed;
+        }
+      }
+
+      @variant color-critical {
+        @apply fg-critical-bold;
+
+        @variant hover {
+          @apply bg-critical-hover fg-a11y-on-accent;
+        }
+
+        @variant focus-visible {
+          @apply bg-critical-hover fg-a11y-on-accent;
+        }
+
+        @variant active {
+          @apply bg-critical-pressed fg-critical-pressed;
+        }
+      }
+
+      @variant disabled {
+        @apply bg-transparent fg-disabled;
+      }
+    }
+
+    &.icon {
+      @apply min-w-0;
+
+      @variant color-mono-muted {
+        @apply fg-primary-muted;
+
+        @variant hover {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant active {
+          @apply bg-interactive-muted-pressed fg-pressed;
+        }
+      }
+
+      @variant color-mono-bold {
+        @apply fg-primary-bold;
+
+        @variant hover {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant active {
+          @apply bg-interactive-muted-pressed fg-pressed;
+        }
+      }
+
+      @variant color-accent {
+        @apply fg-accent-primary-bold;
+
+        @variant hover {
+          @apply bg-interactive-muted-hover fg-accent-primary-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-interactive-muted-hover fg-accent-primary-hover;
+        }
+
+        @variant active {
+          @apply bg-interactive-muted-pressed fg-accent-primary-pressed;
+        }
+      }
+
+      @variant color-serious {
+        @apply fg-serious-bold;
+
+        @variant hover {
+          @apply bg-interactive-muted-hover fg-serious-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-interactive-muted-hover fg-serious-hover;
+        }
+
+        @variant active {
+          @apply bg-interactive-muted-pressed fg-serious-pressed;
+        }
+      }
+
+      @variant color-critical {
+        @apply fg-critical-bold;
+
+        @variant hover {
+          @apply bg-interactive-muted-hover fg-critical-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-interactive-muted-hover fg-critical-hover;
+        }
+
+        @variant active {
+          @apply bg-interactive-muted-pressed fg-critical-pressed;
+        }
+      }
+
+      @variant disabled {
+        @apply bg-transparent fg-disabled;
+      }
+
+      @variant size-large {
+        @apply p-xs;
+      }
+
+      @variant size-medium {
+        @apply p-xs;
+      }
+
+      @variant size-small {
+        @apply rounded-small p-xxs;
+      }
+
+      @variant size-xsmall {
+        @apply rounded-small p-xxs;
+      }
+    }
+
+    &.outline {
+      @variant color-mono-muted {
+        @apply bg-transparent fg-primary-bold outline outline-interactive;
+
+        @variant hover {
+          @apply bg-interactive-muted-hover outline-2 outline-interactive-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-interactive-muted-hover outline-2 outline-interactive-hover;
+        }
+
+        @variant active {
+          @apply bg-interactive-muted-pressed fg-pressed outline-2 outline-interactive-pressed;
+        }
+      }
+
+      @variant color-mono-bold {
+        @apply bg-transparent fg-primary-bold outline outline-mono-bold;
+
+        @variant hover {
+          @apply bg-interactive-muted-hover outline-2 outline-interactive-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-interactive-muted-hover outline-2 outline-interactive-hover;
+        }
+
+        @variant active {
+          @apply bg-interactive-muted-pressed fg-pressed outline-2 outline-mono-bold-pressed;
+        }
+      }
+
+      @variant color-accent {
+        @apply bg-transparent fg-primary-bold outline outline-accent-primary-bold;
+
+        @variant hover {
+          @apply bg-accent-primary-hover fg-a11y-on-accent outline-2 outline-accent-primary-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-accent-primary-hover fg-a11y-on-accent outline-2 outline-accent-primary-hover;
+        }
+
+        @variant active {
+          @apply bg-accent-primary-pressed fg-accent-primary-bold outline-2 outline-accent-primary-pressed;
+        }
+      }
+
+      @variant color-serious {
+        @apply bg-transparent fg-primary-bold outline outline-serious-bold;
+
+        @variant hover {
+          @apply bg-serious-hover fg-a11y-on-accent outline-2 outline-serious-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-serious-hover fg-a11y-on-accent outline-2 outline-serious-hover;
+        }
+
+        @variant active {
+          @apply bg-serious-pressed fg-serious-bold outline-2 outline-serious-pressed;
+        }
+      }
+
+      @variant color-critical {
+        @apply bg-transparent fg-primary-bold outline outline-critical-bold;
+
+        @variant hover {
+          @apply bg-critical-hover fg-a11y-on-accent outline-2 outline-critical-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-critical-hover fg-a11y-on-accent outline-2 outline-critical-hover;
+        }
+
+        @variant active {
+          @apply bg-critical-pressed fg-critical-pressed outline-2 outline-critical-pressed;
+        }
+      }
+
+      @variant disabled {
+        @apply pointer-events-none fg-disabled outline-interactive-disabled;
+      }
+    }
+  }
+
+  .toggle {
+    @variant motion-safe {
+      transition:
+        background-color var(--animation-duration-normal) var(--animation-easing-standard),
+        outline-color var(--animation-duration-normal) var(--animation-easing-standard);
+    }
+
+    &.flat {
+      @variant color-mono-muted {
+        @apply bg-transparent fg-primary-muted;
+
+        @variant hover {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant active {
+          @apply bg-interactive-muted-pressed fg-pressed;
+        }
+
+        @variant selected {
+          @apply bg-interactive-muted fg-primary-muted outline outline-interactive-hover;
+
+          @variant hover {
+            @apply bg-interactive-muted-hover outline-2;
+          }
+
+          @variant focus-visible {
+            @apply bg-interactive-muted-hover outline-2;
+          }
+
+          @variant active {
+            @apply bg-interactive-muted-pressed fg-pressed outline-2 outline-interactive-pressed;
+          }
+        }
+      }
+
+      @variant color-mono-bold {
+        @apply bg-transparent fg-primary-bold;
+
+        @variant hover {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant active {
+          @apply bg-interactive-muted-pressed fg-pressed;
+        }
+
+        @variant selected {
+          @apply fg-primary-bold outline outline-mono-bold;
+
+          @variant hover {
+            @apply bg-interactive-muted-hover fg-hover outline-2 outline-mono-bold-hover;
+          }
+
+          @variant focus-visible {
+            @apply bg-interactive-muted-hover outline-2 outline-mono-bold-hover;
+          }
+
+          @variant active {
+            @apply bg-interactive-muted-pressed fg-pressed outline-2 outline-interactive-pressed;
+          }
+        }
+      }
+
+      @variant color-accent {
+        @apply bg-transparent fg-primary-bold;
+
+        @variant hover {
+          @apply bg-accent-primary-muted fg-accent-primary-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-accent-primary-muted fg-accent-primary-hover;
+        }
+
+        @variant active {
+          @apply bg-accent-primary-pressed fg-accent-primary-bold;
+        }
+
+        @variant selected {
+          @apply bg-accent-primary-bold fg-a11y-on-accent outline outline-accent-primary-bold;
+
+          @variant hover {
+            @apply bg-accent-primary-hover fg-a11y-on-accent outline-2 outline-accent-primary-hover;
+          }
+
+          @variant focus-visible {
+            @apply bg-accent-primary-hover fg-a11y-on-accent outline-2 outline-accent-primary-hover;
+          }
+
+          @variant active {
+            @apply bg-accent-primary-pressed fg-accent-primary-bold outline-2 outline-accent-primary-pressed;
+          }
+        }
+      }
+
+      @variant color-serious {
+        @apply bg-transparent fg-serious-bold;
+
+        @variant hover {
+          @apply bg-serious-bold fg-serious-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-serious-muted fg-serious-hover;
+        }
+
+        @variant active {
+          @apply bg-serious-pressed fg-serious-bold;
+        }
+
+        @variant selected {
+          @apply bg-serious-muted fg-primary-bold outline outline-serious-bold;
+
+          @variant hover {
+            @apply bg-serious-hover fg-primary-bold outline-2 outline-serious-hover;
+          }
+
+          @variant focus-visible {
+            @apply bg-serious-hover fg-primary-bold outline-2 outline-serious-hover;
+          }
+
+          @variant active {
+            @apply bg-serious-pressed fg-serious-pressed outline-2 outline-serious-pressed;
+          }
+        }
+      }
+
+      @variant color-critical {
+        @apply bg-transparent fg-critical-bold;
+
+        @variant hover {
+          @apply bg-critical-muted fg-critical-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-critical-muted fg-critical-hover;
+        }
+
+        @variant active {
+          @apply bg-critical-pressed fg-critical-bold;
+        }
+
+        @variant selected {
+          @apply bg-critical-muted fg-primary-bold outline outline-critical-bold;
+
+          @variant hover {
+            @apply bg-critical-hover fg-a11y-on-accent outline-2;
+          }
+
+          @variant focus-visible {
+            @apply bg-critical-hover fg-a11y-on-accent outline-2;
+          }
+
+          @variant active {
+            @apply bg-critical-pressed fg-critical-bold outline-2 outline-critical-pressed;
+          }
+        }
+      }
+
+      @variant disabled {
+        @apply bg-transparent fg-disabled;
+
+        @variant selected {
+          @apply bg-interactive-disabled fg-disabled outline-interactive-disabled;
+        }
+      }
+    }
+
+    &.icon {
+      @variant color-mono-muted {
+        @apply fg-primary-muted;
+
+        @variant hover {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant active {
+          @apply bg-interactive-muted-pressed fg-pressed;
+        }
+
+        @variant selected {
+          @apply bg-interactive-muted fg-primary-muted;
+
+          @variant hover {
+            @apply bg-interactive-muted-hover fg-primary-bold;
+          }
+
+          @variant focus-visible {
+            @apply bg-interactive-muted-hover fg-primary-bold;
+          }
+
+          @variant active {
+            @apply bg-interactive-muted-pressed fg-pressed;
+          }
+        }
+      }
+
+      @variant color-mono-bold {
+        @apply fg-primary-bold;
+
+        @variant hover {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-interactive-muted-hover;
+        }
+
+        @variant active {
+          @apply bg-interactive-muted-pressed fg-pressed;
+        }
+
+        @variant selected {
+          @apply bg-interactive-bold fg-inverse-bold;
+
+          @variant hover {
+            @apply bg-interactive-bold-hover fg-inverse-bold;
+          }
+
+          @variant focus-visible {
+            @apply bg-interactive-bold-hover;
+          }
+
+          @variant active {
+            @apply bg-interactive-muted-pressed fg-pressed;
+          }
+        }
+      }
+
+      @variant color-accent {
+        @apply fg-primary-bold;
+
+        @variant hover {
+          @apply bg-accent-primary-muted fg-accent-primary-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-accent-primary-muted fg-accent-primary-hover;
+        }
+
+        @variant active {
+          @apply bg-accent-primary-pressed fg-accent-primary-pressed;
+        }
+
+        @variant selected {
+          @apply bg-accent-primary-muted fg-accent-primary-hover;
+
+          @variant hover {
+            @apply bg-accent-primary-hover fg-a11y-on-accent;
+          }
+
+          @variant focus-visible {
+            @apply bg-accent-primary-hover fg-a11y-on-accent;
+          }
+
+          @variant active {
+            @apply bg-accent-primary-pressed fg-accent-primary-pressed;
+          }
+        }
+      }
+
+      @variant color-serious {
+        @apply fg-serious-bold;
+
+        @variant hover {
+          @apply bg-serious-muted fg-serious-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-serious-muted fg-serious-hover;
+        }
+
+        @variant active {
+          @apply bg-serious-pressed fg-serious-pressed;
+        }
+
+        @variant selected {
+          @apply bg-serious-muted fg-serious-bold;
+
+          @variant hover {
+            @apply bg-serious-hover fg-primary-bold;
+          }
+
+          @variant focus-visible {
+            @apply bg-serious-hover fg-primary-bold;
+          }
+
+          @variant active {
+            @apply bg-serious-pressed fg-serious-pressed;
+          }
+        }
+      }
+
+      @variant color-critical {
+        @apply fg-critical-bold;
+
+        @variant hover {
+          @apply bg-critical-muted fg-critical-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-critical-muted fg-critical-hover;
+        }
+
+        @variant active {
+          @apply bg-critical-pressed fg-critical-pressed;
+        }
+
+        @variant selected {
+          @apply bg-critical-muted fg-critical-bold;
+
+          @variant hover {
+            @apply bg-critical-hover fg-a11y-on-accent;
+          }
+
+          @variant focus-visible {
+            @apply bg-critical-hover fg-a11y-on-accent;
+          }
+
+          @variant active {
+            @apply bg-critical-pressed fg-critical-pressed;
+          }
+        }
+      }
+
+      @variant disabled {
+        @apply bg-transparent fg-disabled;
+
+        @variant selected {
+          @apply bg-interactive-disabled fg-disabled;
+        }
+      }
+    }
+
+    &.outline {
+      @variant color-mono-muted {
+        @apply bg-transparent fg-primary-bold outline outline-interactive;
+
+        @variant hover {
+          @apply bg-interactive-muted-hover outline-2 outline-interactive-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-interactive-muted-hover outline-2 outline-interactive-hover;
+        }
+
+        @variant active {
+          @apply bg-interactive-muted-pressed fg-pressed outline-2 outline-interactive-pressed;
+        }
+
+        @variant selected {
+          @apply bg-interactive-muted fg-primary-muted outline outline-interactive-hover;
+
+          @variant hover {
+            @apply bg-interactive-muted-hover fg-hover outline-2;
+          }
+
+          @variant focus-visible {
+            @apply bg-interactive-muted-hover fg-hover outline-2;
+          }
+
+          @variant active {
+            @apply bg-interactive-muted-pressed fg-pressed outline-2 outline-interactive-pressed;
+          }
+        }
+      }
+
+      @variant color-mono-bold {
+        @apply bg-transparent fg-primary-bold outline outline-mono-bold;
+
+        @variant hover {
+          @apply bg-interactive-muted-hover outline-2 outline-mono-bold-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-interactive-muted-hover outline-2 outline-mono-bold-hover;
+        }
+
+        @variant active {
+          @apply bg-interactive-muted-pressed fg-pressed;
+        }
+
+        @variant selected {
+          @apply bg-interactive-muted-hover fg-primary-bold outline outline-mono-bold;
+
+          @variant hover {
+            @apply bg-interactive-bold-hover fg-inverse-bold outline-2 outline-mono-bold-hover;
+          }
+
+          @variant focus-visible {
+            @apply bg-interactive-bold-hover fg-inverse-bold outline-2 outline-mono-bold-hover;
+          }
+
+          @variant active {
+            @apply bg-interactive-muted-pressed fg-pressed outline-2 outline-mono-bold-pressed;
+          }
+        }
+      }
+
+      @variant color-accent {
+        @apply bg-transparent fg-primary-bold outline outline-mono-bold;
+
+        @variant hover {
+          @apply bg-accent-primary-muted fg-hover outline-2 outline-accent-primary-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-accent-primary-muted fg-hover outline-2 outline-accent-primary-hover;
+        }
+
+        @variant active {
+          @apply bg-interactive-muted-pressed fg-pressed outline-2 outline-accent-primary-pressed;
+        }
+
+        @variant selected {
+          @apply bg-accent-primary-muted fg-primary-bold outline outline-accent-primary-bold;
+
+          @variant hover {
+            @apply bg-accent-primary-hover fg-a11y-on-accent outline-2 outline-accent-primary-hover;
+          }
+
+          @variant focus-visible {
+            @apply bg-accent-primary-hover fg-a11y-on-accent outline-2 outline-accent-primary-hover;
+          }
+
+          @variant active {
+            @apply bg-accent-primary-pressed fg-accent-primary-pressed outline-2 outline-accent-primary-pressed;
+          }
+        }
+      }
+
+      @variant color-serious {
+        @apply bg-transparent fg-primary-bold outline outline-serious-bold;
+
+        @variant hover {
+          @apply bg-serious-bold fg-primary-bold outline-2 outline-serious-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-serious-muted fg-primary-bold outline-2 outline-serious-hover;
+        }
+
+        @variant active {
+          @apply bg-serious-pressed fg-serious-bold outline-2 outline-serious-pressed;
+        }
+
+        @variant selected {
+          @apply bg-serious-muted fg-serious-bold outline-serious-hover;
+
+          @variant hover {
+            @apply bg-serious-hover fg-primary-bold outline-serious-hover;
+          }
+
+          @variant focus-visible {
+            @apply bg-serious-hover fg-primary-bold outline-serious-hover;
+          }
+
+          @variant active {
+            @apply bg-serious-pressed fg-serious-pressed outline-2 outline-serious-pressed;
+          }
+        }
+      }
+
+      @variant color-critical {
+        @apply bg-transparent fg-primary-bold outline outline-critical-bold;
+
+        @variant hover {
+          @apply bg-critical-bold fg-primary-bold outline-2 outline-critical-hover;
+        }
+
+        @variant focus-visible {
+          @apply bg-critical-muted fg-primary-bold outline-2 outline-critical-hover;
+        }
+
+        @variant active {
+          @apply bg-critical-pressed fg-critical-bold outline-2 outline-critical-pressed;
+        }
+
+        @variant selected {
+          @apply bg-critical-muted fg-critical-bold outline-critical-hover;
+
+          @variant hover {
+            @apply bg-critical-hover fg-primary-bold outline-critical-hover;
+          }
+
+          @variant focus-visible {
+            @apply bg-critical-hover fg-primary-bold outline-critical-hover;
+          }
+
+          @variant active {
+            @apply bg-critical-pressed fg-critical-pressed outline-2 outline-critical-pressed;
+          }
+        }
+      }
+
+      @variant disabled {
+        @apply bg-transparent fg-disabled outline-interactive-disabled;
+
+        @variant selected {
+          @apply bg-interactive-disabled fg-disabled outline-interactive-disabled;
+        }
+      }
+    }
+  }
+}
