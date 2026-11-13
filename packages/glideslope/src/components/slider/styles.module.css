@@ -1,0 +1,268 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .slider {
+    @apply isolate flex gap-s;
+
+    @variant layout-grid {
+      @apply grid;
+    }
+
+    @variant layout-stack {
+      @apply flex;
+    }
+
+    @variant orientation-vertical {
+      @apply h-full w-fit;
+
+      @variant layout-grid {
+        grid-template-columns: auto auto auto;
+        grid-template-rows: auto auto 1fr auto;
+      }
+
+      @variant layout-stack {
+        @apply flex-col;
+      }
+    }
+
+    @variant orientation-horizontal {
+      @variant layout-grid {
+        grid-template-columns: auto 1fr auto;
+        grid-template-rows: auto auto auto;
+      }
+
+      @variant layout-stack {
+        @apply w-full items-center;
+      }
+    }
+  }
+
+  .label {
+    @apply order-1 fg-primary-bold;
+
+    @variant group-layout-grid/slider {
+      @apply col-start-1;
+
+      @variant group-orientation-vertical/slider {
+        @apply col-span-3;
+      }
+    }
+
+    @variant group-disabled/slider {
+      @apply fg-disabled;
+    }
+  }
+
+  .inputs {
+    @apply order-5 flex gap-s;
+
+    @variant group-layout-grid/slider {
+      @apply col-start-3 row-start-1;
+    }
+
+    @variant group-orientation-horizontal/slider {
+      @apply flex-row;
+    }
+
+    @variant group-orientation-vertical/slider {
+      @apply flex-col-reverse;
+
+      @variant group-layout-grid/slider {
+        @apply row-start-4;
+      }
+    }
+  }
+
+  .input {
+    @apply rounded-medium px-s py-xs font-display text-body-m fg-primary-bold outline outline-interactive;
+    /* Wide enough for the longest value; the component sets --input-chars from `max`. */
+    width: calc(var(--input-chars, 3) * 1ch + 2 * var(--spacing-s));
+    min-width: 50px;
+
+    @variant group-disabled/slider {
+      @apply cursor-not-allowed fg-disabled outline-interactive-disabled;
+    }
+  }
+
+  .track {
+    @apply relative order-3 h-full;
+
+    @variant group-orientation-horizontal/slider {
+      @apply w-full;
+      height: 20px;
+
+      @variant group-layout-grid/slider {
+        @apply col-span-3 row-start-2;
+      }
+    }
+
+    @variant group-orientation-vertical/slider {
+      @apply h-full;
+      width: 20px;
+
+      @variant group-layout-grid/slider {
+        @apply col-start-2 row-span-3 row-start-2;
+      }
+    }
+  }
+
+  .trackBackground {
+    @apply absolute rounded-full bg-surface-muted;
+
+    @variant group-orientation-horizontal/slider {
+      @apply top-1/2 h-xxs w-full -translate-y-1/2;
+    }
+
+    @variant group-orientation-vertical/slider {
+      @apply left-1/2 h-full w-xxs -translate-x-1/2;
+    }
+  }
+
+  .range {
+    @apply absolute rounded-full bg-accent-primary-bold;
+
+    @variant group-orientation-horizontal/slider {
+      @apply top-1/2 h-xxs -translate-y-1/2;
+    }
+
+    @variant group-orientation-vertical/slider {
+      @apply left-1/2 w-xxs -translate-x-1/2;
+    }
+  }
+
+  .thumb {
+    @apply z-10 h-m w-m rounded-full bg-(--fg-accent-primary-bold) outline-transparent;
+
+    @variant hover {
+      @apply bg-(--fg-accent-primary-hover);
+    }
+
+    @variant active {
+      --tw-ring-color: rgba(110, 209, 255, 0.08);
+      @apply bg-(--fg-a11y-on-accent) ring-8 outline outline-interactive-hover;
+    }
+
+    @variant focus-visible {
+      @apply outline-2 outline-accent-primary-bold;
+    }
+
+    /* Reka UI positions the thumb along the track; center it on the cross axis. */
+    @variant group-orientation-horizontal/slider {
+      @apply top-1/2 -translate-y-1/2;
+    }
+
+    @variant group-orientation-vertical/slider {
+      @apply left-1/2 -translate-x-1/2;
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed bg-(--fg-disabled);
+    }
+  }
+
+  .minValue {
+    @apply flex items-center font-display text-body-m fg-primary-muted;
+
+    @variant group-orientation-vertical/slider {
+      @apply order-4 col-start-1 row-start-4;
+
+      @variant group-layout-grid/slider {
+        @apply self-end justify-self-end;
+      }
+    }
+
+    @variant group-orientation-horizontal/slider {
+      @apply order-2;
+
+      @variant group-layout-grid/slider {
+        @apply col-start-1 row-start-3;
+      }
+    }
+
+    @variant group-disabled/slider {
+      @apply fg-disabled;
+    }
+  }
+
+  .maxValue {
+    @apply order-4 flex items-center font-display text-body-m fg-primary-muted;
+
+    @variant group-orientation-vertical/slider {
+      @apply order-2;
+
+      @variant group-layout-grid/slider {
+        @apply col-start-1 row-start-2 justify-self-end;
+      }
+    }
+
+    @variant group-orientation-horizontal/slider {
+      @variant group-layout-grid/slider {
+        @apply col-start-3 row-start-3 justify-self-end;
+      }
+    }
+
+    @variant group-disabled/slider {
+      @apply fg-disabled;
+    }
+  }
+
+  .markers {
+    @apply pointer-events-none absolute;
+
+    @variant group-orientation-horizontal/slider {
+      @apply top-1/2 right-0 left-0 h-0;
+    }
+
+    @variant group-orientation-vertical/slider {
+      @apply top-0 bottom-0 left-1/2 w-0;
+    }
+  }
+
+  .marker {
+    @apply absolute flex flex-col items-center;
+
+    @variant group-orientation-horizontal/slider {
+      left: calc(var(--marker-percent) * 1%);
+      translate: calc(-1 * var(--marker-percent) * 1%) 0;
+    }
+
+    @variant group-orientation-vertical/slider {
+      @apply flex-row;
+      bottom: calc(var(--marker-percent) * 1%);
+      translate: 0 calc(var(--marker-percent) * 1%);
+    }
+  }
+
+  .markerDot {
+    @apply rounded-full bg-surface-overlay;
+    @apply h-xs w-xs;
+
+    @variant group-orientation-horizontal/slider {
+      @apply -translate-y-1/2;
+    }
+
+    @variant group-orientation-vertical/slider {
+      @apply -translate-x-1/2;
+    }
+
+    @variant group-disabled/slider {
+      @apply bg-surface-muted;
+    }
+  }
+
+  .markerLabel {
+    @apply font-display text-body-xs whitespace-nowrap fg-primary-muted;
+
+    @variant group-orientation-horizontal/slider {
+      @apply mt-m;
+    }
+
+    @variant group-orientation-vertical/slider {
+      @apply ml-m;
+    }
+
+    @variant group-disabled/slider {
+      @apply fg-disabled;
+    }
+  }
+}

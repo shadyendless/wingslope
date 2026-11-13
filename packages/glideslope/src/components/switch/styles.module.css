@@ -1,0 +1,110 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .switch {
+    @apply flex cursor-pointer items-center gap-s;
+
+    @variant disabled {
+      @apply cursor-not-allowed;
+    }
+
+    &.start {
+      @apply flex-row-reverse;
+    }
+
+    &.end {
+      @apply flex-row;
+    }
+  }
+
+  .control {
+    @apply flex rounded-round bg-transparent p-xxs outline outline-interactive;
+
+    &:before {
+      @apply mr-l block size-m rounded-full bg-(--fg-primary-muted);
+      content: '';
+
+      @variant motion-safe {
+        transition:
+          margin var(--animation-duration-normal) var(--animation-easing-standard),
+          background-color var(--animation-duration-fast) var(--animation-easing-standard);
+      }
+    }
+
+    @variant group-hover/switch {
+      @apply bg-interactive-muted-hover outline-interactive-hover;
+
+      &:before {
+        @apply bg-(--fg-primary-bold);
+      }
+    }
+
+    @variant group-focus-visible/switch {
+      @apply bg-interactive-muted-hover outline-interactive-hover;
+
+      &:before {
+        @apply bg-(--fg-primary-bold);
+      }
+    }
+
+    @variant group-active/switch {
+      @apply bg-interactive-muted-pressed outline-interactive-pressed;
+
+      &:before {
+        @apply bg-(--fg-pressed);
+      }
+    }
+
+    @variant group-selected/switch {
+      @apply outline-accent-primary-bold;
+
+      &:before {
+        @apply mr-0 ml-l bg-(--fg-accent-primary-bold);
+      }
+
+      @variant group-hover/switch {
+        @apply bg-accent-primary-muted outline-accent-primary-bold;
+
+        &:before {
+          @apply bg-(--fg-accent-primary-hover);
+        }
+      }
+
+      @variant group-focus-visible/switch {
+        @apply bg-accent-primary-muted outline-interactive-hover;
+
+        &:before {
+          @apply bg-(--fg-accent-primary-hover);
+        }
+      }
+
+      @variant group-active/switch {
+        @apply bg-accent-primary-pressed outline-accent-primary-pressed;
+
+        &:before {
+          @apply bg-(--fg-accent-primary-pressed);
+        }
+      }
+    }
+
+    @variant group-disabled/switch {
+      @apply bg-transparent outline-interactive-disabled;
+
+      &:before {
+        @apply bg-(--fg-disabled);
+      }
+
+      @variant group-selected/switch {
+        @apply bg-interactive-disabled;
+      }
+    }
+  }
+
+  .label {
+    @apply text-body-s fg-primary-bold;
+
+    @variant group-disabled/switch {
+      @apply fg-disabled;
+    }
+  }
+}

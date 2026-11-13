@@ -65,6 +65,21 @@ Use the [Reka UI](https://reka-ui.com/docs/overview/introduction) primitive when
 
 - **Defaults for another family** (Button sizing the Icons in it, Avatar placing the Badges in it): use `createDefaults()` in `defaults.ts` and export `provide<Family>Defaults` publicly.
 - **Compound components** (List → ListItem): use a typed `InjectionKey` in `context.ts` with `provide…Context` / `inject…Context` helpers. Keep the context internal.
+- **One item, several containers:** `GsOption` renders a Reka `ListboxItem`, `SelectItem` or `ComboboxItem` depending on the `OptionsContext.kind` its container provides. Reuse this approach rather than adding per-container item components.
+
+## Fields
+
+Labeled form controls share the internal `GsFieldLayout`, which renders Reka UI's `FieldRoot` with `GsLabel`, the control slot, `FieldDescription` and `FieldError`.
+
+- **Shared props** (`label`, `description`, `errorMessage`, `size`, `invalid`, `disabled`, `required`, `name`, `validate`, `validationMode`) come from `GsFieldProps` in `field/types.ts`.
+- **Small size:** at `size="small"` the label isn't rendered. The layout passes `ariaLabel` to its slot; put it on the control.
+- **Attribute routing:** fields set `inheritAttrs: false` and use `useSplitAttrs()`. `rootAttrs` (class, style) go on the layout; `controlAttrs` go on the control.
+- **Native inputs** go through Reka's `FieldControl` (`GsInput` does this inside a field). Reka controls that already join `FieldRoot` (`SelectRoot`, `CheckboxRoot`, `DateFieldRoot`) need nothing extra. Wrap controls that don't (`TimeFieldRoot`) in the internal `GsFieldConnect`.
+- **Button-like controls** (select trigger, date segment group) get `:native-label="false"` so the label doesn't forward clicks to them.
+
+## Choice controls
+
+Checkbox, radio and switch use the Reka button (`CheckboxRoot`, `RadioGroupItem`, `SwitchRoot`) as the component root, with the indicator and label text inside it. The whole row is one control, the label is its accessible name, and state attributes (`data-state`, `data-disabled`) sit on the root where `group-*/checkbox` variants expect them. Keep them `<button>`s: Reka relies on native button keyboard handling.
 
 ## Styling
 
@@ -74,6 +89,8 @@ Follow the foundation's [styling guide](../foundation/src/documentation/tailwind
 - Never use inline style attributes in components or `<style>` blocks in SFCs.
 - Express props as `data-*` attributes (`data-size`, `data-color`) styled with `@variant size-large { … }`. Express mutually exclusive visual variants as module classes (`styles[variant]`).
 - Use semantic tokens only, and draw borders with `outline`, not `border`.
+- **Named groups work inside modules.** Put a literal `group/<name>` class on a component's root and use `@variant group-hover/<name>` (or any `group-*`/`peer-*` variant) in its stylesheet. `build/postcss-global-groups.js` keeps those class names from being hashed. Fields share `group/field` on the field root, which carries `data-size`, `data-invalid` and `data-disabled`.
+- **Values that vary per instance** (a marker position, an offset) go in a CSS variable set with `:style`, not typed `attr()`, which isn't supported across browsers.
 
 ## Accessibility
 
@@ -87,5 +104,6 @@ Preserve keyboard operation, accessible names, focus behavior and status feedbac
 ## Tests and stories
 
 - **Tests** (`<family>.test.ts`) use Vitest with `@testing-library/vue` and `user-event`. Query by role and name, and test behavior: provided defaults, `v-model`, disabled handling, ARIA. CSS Module class names are unhashed in tests (`toHaveClass('button', 'filled')`).
+- **Reka wires some things after mount:** label and description IDs, slider thumbs. Use `findBy…` or `waitFor` for those assertions rather than `getBy…` straight after `render`. Don't query with `{ hidden: true }` to make a test pass; a hidden element is usually a real accessibility bug.
 - **Stories** (`<family>.stories.ts`) are CSF3 with `satisfies Meta<typeof GsX>`. Include a `Playground` story wired to controls, plus stories for meaningful states. Story templates may use utility classes for layout.
 - Check every new component in both themes in Storybook, and in `apps/playground` when it affects how consumers use the library.

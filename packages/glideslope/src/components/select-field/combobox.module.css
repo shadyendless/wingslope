@@ -1,0 +1,107 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .combobox {
+    @apply select-none;
+  }
+
+  .control {
+    @apply flex items-center gap-xs rounded-medium px-s py-xs fg-primary-bold outline outline-interactive;
+
+    @variant hover {
+      @apply outline-interactive-hover;
+    }
+
+    @variant focus-within {
+      @apply outline-accent-primary-bold;
+    }
+
+    @variant active {
+      @apply outline-interactive-pressed;
+    }
+
+    @variant group-size-medium/combobox-field {
+      min-width: 160px;
+      max-width: 400px;
+    }
+
+    @variant group-size-small/combobox-field {
+      min-width: 80px;
+      max-width: 200px;
+    }
+
+    @variant group-invalid/field {
+      @apply outline-serious-bold;
+    }
+
+    @variant group-disabled/field {
+      @apply fg-disabled outline-interactive-disabled;
+    }
+
+    @variant read-only {
+      @apply px-0 outline-none;
+    }
+  }
+
+  .input {
+    @apply grow truncate font-display outline-none;
+
+    @variant placeholder-shown {
+      @apply fg-primary-muted;
+    }
+
+    @variant group-size-medium/combobox-field {
+      @apply text-body-s;
+    }
+
+    @variant group-size-small/combobox-field {
+      @apply text-body-xs;
+    }
+  }
+
+  .trigger {
+    @apply flex cursor-pointer fg-primary-bold;
+
+    @variant group-open/combobox-field {
+      @apply rotate-180 transform;
+    }
+
+    @variant group-disabled/field {
+      @apply cursor-not-allowed fg-disabled;
+    }
+  }
+
+  .empty {
+    @apply p-s text-body-s fg-primary-muted;
+  }
+
+  .popover {
+    @apply z-50 -ml-s select-none;
+    min-width: calc(var(--reka-combobox-trigger-width) + (var(--spacing-s) * 2));
+    max-height: min(200px, var(--reka-combobox-content-available-height));
+
+    @variant motion-safe {
+      @variant open {
+        animation: fade-enter var(--animation-duration-normal) var(--animation-easing-decelerate)
+          both;
+      }
+
+      @variant closed {
+        animation: fade-exit var(--animation-duration-fast) var(--animation-easing-accelerate) both;
+      }
+    }
+  }
+}
+
+@layer components.l2 {
+  /* The clear button only appears while the input has focus and text. */
+  .clear {
+    @apply pointer-events-none invisible;
+
+    @variant group-focus-within/combobox-field {
+      @variant group-not-data-empty/combobox-field {
+        @apply pointer-events-auto visible;
+      }
+    }
+  }
+}

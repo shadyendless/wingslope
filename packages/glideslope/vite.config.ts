@@ -2,6 +2,7 @@ import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 import { readFileSync } from 'node:fs'
 import { defineConfig } from 'vite'
+import globalGroups from './build/postcss-global-groups.js'
 
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf-8')) as {
   dependencies?: Record<string, string>
@@ -24,6 +25,7 @@ const cssTarget = ['chrome123', 'edge123', 'firefox128', 'safari18']
 export default defineConfig({
   plugins: [vue(), tailwindcss()],
   css: {
+    postcss: { plugins: [globalGroups()] },
     modules: {
       // Readable, deterministic class names, e.g. `gs-button_3hJk2`.
       generateScopedName: 'gs-[local]_[hash:base64:5]',

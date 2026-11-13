@@ -1,0 +1,91 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .field {
+    @apply flex h-fit items-center gap-s rounded-round p-s fg-primary-bold outline;
+
+    &.filled {
+      @apply bg-surface-raised outline-static;
+
+      @variant hover {
+        @apply outline-interactive-hover;
+      }
+
+      @variant focus-visible-within {
+        @apply outline-accent-primary-bold;
+      }
+
+      @variant active {
+        @apply outline-interactive-pressed;
+      }
+
+      @variant disabled {
+        @apply cursor-not-allowed fg-disabled outline-interactive-disabled;
+      }
+    }
+
+    &.outline {
+      @apply outline-interactive;
+
+      @variant hover {
+        @apply outline-interactive-hover;
+      }
+
+      @variant focus-visible-within {
+        @apply outline-accent-primary-bold;
+      }
+
+      @variant active {
+        @apply outline-interactive-pressed;
+      }
+
+      @variant disabled {
+        @apply cursor-not-allowed fg-disabled outline-interactive-disabled;
+      }
+    }
+  }
+}
+
+@layer components.l2 {
+  .input {
+    @apply block w-full font-display text-body-s outline-none;
+
+    &::-webkit-search-cancel-button {
+      @apply hidden;
+    }
+
+    @variant placeholder-shown {
+      @apply fg-primary-muted;
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed fg-disabled;
+    }
+  }
+
+  .clear {
+    @apply cursor-pointer fg-info-bold;
+
+    @variant hover {
+      @apply fg-info-hover;
+    }
+
+    @variant focus-visible {
+      @apply fg-info-hover;
+    }
+
+    @variant group-data-empty/search-field {
+      @apply invisible;
+    }
+
+    @variant group-disabled/search-field {
+      @apply invisible;
+    }
+  }
+
+  .loading {
+    @variant motion-safe {
+      @apply animate-spin;
+    }
+  }
+}

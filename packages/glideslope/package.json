@@ -34,6 +34,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@internationalized/date": "catalog:",
     "@wingbrace/glideslope-icons": "workspace:^",
     "reka-ui": "catalog:"
   },
@@ -51,9 +52,11 @@
     "@testing-library/user-event": "catalog:",
     "@testing-library/vue": "catalog:",
     "@types/node": "catalog:",
+    "@types/react": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@wingbrace/glideslope-foundation": "workspace:^",
     "jsdom": "catalog:",
+    "react": "catalog:",
     "storybook": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",

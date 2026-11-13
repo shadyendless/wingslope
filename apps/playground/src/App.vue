@@ -25,6 +25,7 @@ import {
 } from '@wingbrace/glideslope'
 import { AddIcon, BellIcon, BrightnessIcon, PinIcon, RadarIcon } from '@wingbrace/glideslope-icons'
 import { computed, ref } from 'vue'
+import FormsPanel from './FormsPanel.vue'
 import TokenSwatch from './TokenSwatch.vue'
 
 const theme = provideTheme({ defaultMode: 'dark' })
@@ -129,6 +130,10 @@ const modeLabel = computed(() => (theme.mode.value === 'dark' ? 'Light mode' : '
         <p v-else class="text-body-m">Loaded content.</p>
       </section>
     </div>
+
+    <GsDivider />
+
+    <FormsPanel />
 
     <GsDivider />
 

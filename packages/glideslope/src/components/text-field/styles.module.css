@@ -1,0 +1,8 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+/* Inside a field the input spans the field's width instead of capping at its standalone size. */
+@layer components.l2 {
+  .sizer {
+    @apply max-w-none;
+  }
+}

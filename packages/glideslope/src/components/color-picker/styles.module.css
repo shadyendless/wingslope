@@ -1,0 +1,105 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .container {
+    @apply flex flex-col gap-xs;
+  }
+
+  .row {
+    @apply flex flex-wrap items-center gap-s;
+  }
+
+  .picker {
+    @apply flex flex-wrap gap-s p-xxs;
+  }
+
+  .item {
+    @apply w-fit cursor-pointer outline outline-offset-1 outline-transparent;
+
+    @variant highlighted {
+      @apply outline-interactive-hover;
+    }
+
+    @variant hover {
+      @apply outline-interactive-hover;
+    }
+
+    @variant active {
+      @apply outline-interactive-pressed;
+    }
+
+    @variant selected {
+      @apply cursor-default outline-accent-primary-bold;
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed opacity-50;
+    }
+  }
+
+  .swatch {
+    @apply block size-l;
+    background: var(--reka-color-swatch-color);
+  }
+
+  .popover {
+    @apply z-50 flex flex-col gap-m rounded-medium bg-surface-overlay p-m shadow-elevation-overlay outline outline-static;
+    width: 240px;
+  }
+
+  .area {
+    @apply block;
+  }
+
+  .areaSurface {
+    @apply relative h-oversized w-full rounded-medium;
+    height: 160px;
+  }
+
+  .hue {
+    @apply relative block w-full;
+  }
+
+  .hueTrack {
+    @apply relative block h-m w-full rounded-full;
+  }
+
+  .thumb {
+    @apply block size-m rounded-full outline-2 outline-neutral-50;
+    box-shadow: var(--shadow-elevation-raised);
+    background: var(--reka-color-thumb-color, transparent);
+
+    @variant focus-visible {
+      @apply outline-accent-primary-bold;
+    }
+  }
+
+  .rgb {
+    @apply grid grid-cols-3 gap-xs;
+  }
+
+  .rgbField {
+    @apply flex flex-col gap-xxs;
+  }
+
+  .rgbLabel {
+    @apply text-body-xs fg-primary-muted;
+  }
+
+  .rgbInput {
+    @apply w-full rounded-medium bg-surface-default px-s py-xs text-body-s fg-primary-bold outline outline-interactive;
+
+    @variant focus-visible {
+      @apply outline-accent-primary-bold;
+    }
+  }
+}
+
+/* The selected custom/no-color buttons restyle GsButton. */
+@layer components.l2 {
+  .customTrigger {
+    @variant selected {
+      @apply rounded-none outline outline-offset-2 outline-accent-primary-bold;
+    }
+  }
+}

@@ -1,0 +1,7 @@
+export { default as GsOption } from './GsOption.vue'
+export { default as GsOptionContent } from './GsOptionContent.vue'
+export { default as GsOptionDescription } from './GsOptionDescription.vue'
+export { default as GsOptionLabel } from './GsOptionLabel.vue'
+export { default as GsOptions } from './GsOptions.vue'
+export { default as GsOptionSection } from './GsOptionSection.vue'
+export type { GsOptionProps, GsOptionSectionProps, GsOptionsProps } from './types'

@@ -1,0 +1,477 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .list {
+    @apply overflow-x-clip overflow-y-auto rounded-medium bg-surface-overlay shadow-elevation-overlay outline outline-static select-none;
+    max-height: 200px;
+  }
+
+  .section {
+    @apply mt-s;
+  }
+
+  .header {
+    @apply m-xs my-s text-header-xs fg-primary-muted;
+  }
+
+  .item {
+    @apply relative flex cursor-pointer items-center gap-s p-s text-body-s fg-primary-bold outline outline-transparent;
+
+    &:before {
+      @apply pointer-events-none absolute top-0 left-0 h-full;
+      width: 4px;
+      content: '';
+    }
+
+    @variant highlighted {
+      @apply fg-a11y-on-accent;
+    }
+
+    @variant highlighted {
+      @apply fg-a11y-on-accent;
+    }
+
+    @variant color-info {
+      @variant highlighted {
+        @apply bg-accent-primary-muted;
+      }
+
+      @variant highlighted {
+        @apply bg-accent-primary-muted;
+      }
+
+      @variant active {
+        @apply bg-accent-primary-pressed;
+      }
+
+      @variant selected {
+        @apply bg-accent-primary-muted;
+
+        &:before {
+          @apply bg-(--outline-accent-primary-bold);
+        }
+
+        @variant highlighted {
+          @apply bg-accent-primary-bold fg-a11y-on-accent;
+        }
+
+        @variant highlighted {
+          @apply bg-accent-primary-bold;
+        }
+
+        @variant active {
+          @apply bg-accent-primary-pressed fg-accent-primary-bold;
+
+          &:before {
+            @apply bg-(--outline-accent-primary-pressed);
+          }
+        }
+      }
+    }
+
+    @variant color-serious {
+      @variant highlighted {
+        @apply bg-serious-muted;
+      }
+
+      @variant highlighted {
+        @apply bg-serious-muted;
+      }
+
+      @variant active {
+        @apply bg-serious-pressed;
+      }
+
+      @variant selected {
+        @apply bg-serious-muted;
+
+        &:before {
+          @apply bg-(--outline-serious-bold);
+        }
+
+        @variant highlighted {
+          @apply bg-serious-bold fg-a11y-on-utility;
+
+          &:before {
+            @apply bg-(--outline-serious-hover);
+          }
+        }
+
+        @variant highlighted {
+          @apply bg-serious-bold fg-a11y-on-utility;
+        }
+
+        @variant active {
+          @apply bg-serious-pressed fg-serious-bold;
+
+          &:before {
+            @apply bg-(--outline-serious-pressed);
+          }
+        }
+      }
+    }
+
+    @variant color-critical {
+      @variant highlighted {
+        @apply bg-critical-muted;
+      }
+
+      @variant highlighted {
+        @apply bg-critical-muted;
+      }
+
+      @variant active {
+        @apply bg-critical-pressed;
+      }
+
+      @variant selected {
+        @apply bg-critical-muted;
+
+        &:before {
+          @apply bg-(--outline-critical-bold);
+        }
+
+        @variant highlighted {
+          @apply bg-critical-bold fg-a11y-on-utility;
+
+          &:before {
+            @apply bg-(--outline-critical-hover);
+          }
+        }
+
+        @variant highlighted {
+          @apply bg-critical-bold fg-a11y-on-utility;
+        }
+
+        @variant active {
+          @apply bg-critical-pressed fg-critical-bold;
+
+          &:before {
+            @apply bg-(--outline-critical-pressed);
+          }
+        }
+      }
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed bg-transparent;
+
+      @variant selected {
+        @apply bg-interactive-disabled;
+
+        &:before {
+          @apply bg-(--outline-interactive);
+        }
+      }
+    }
+
+    @variant group-size-small/options {
+      @apply pt-xs pb-xs;
+    }
+
+    @variant group-size-large/options {
+      @apply pt-s pb-s;
+    }
+  }
+
+  .content {
+    @apply flex min-w-0 flex-auto flex-col gap-xxs;
+  }
+
+  /* TODO: simplify, icon & label have the same colors, move up to item, and there is some overlap with description (only apply overrides for description) */
+  .icon {
+    @variant group-highlighted/options-item {
+      @apply fg-primary-bold;
+    }
+
+    @variant group-highlighted/options-item {
+      @apply fg-primary-bold;
+    }
+
+    @variant group-selected/options-item {
+      @apply fg-primary-bold;
+
+      @variant group-highlighted/options-item {
+        @apply fg-a11y-on-accent;
+      }
+
+      @variant group-highlighted/options-item {
+        @apply fg-a11y-on-accent;
+      }
+    }
+
+    @variant group-color-info/options-item {
+      @apply fg-primary-bold;
+
+      @variant group-active/options-item {
+        @apply fg-accent-primary-bold;
+      }
+
+      @variant group-selected/options-item {
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-accent;
+        }
+
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-accent;
+        }
+
+        @variant group-active/options-item {
+          @apply fg-accent-primary-bold;
+        }
+      }
+    }
+
+    @variant group-color-serious/options-item {
+      @apply fg-serious-bold;
+
+      @variant group-active/options-item {
+        @apply fg-serious-bold;
+      }
+
+      @variant group-selected/options-item {
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-utility;
+        }
+
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-utility;
+        }
+
+        @variant group-active/options-item {
+          @apply fg-serious-bold;
+        }
+      }
+    }
+
+    @variant group-color-critical/options-item {
+      @apply fg-critical-bold;
+
+      @variant group-active/options-item {
+        @apply fg-critical-bold;
+      }
+
+      @variant group-selected/options-item {
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-utility;
+        }
+
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-utility;
+        }
+
+        @variant group-active/options-item {
+          @apply fg-critical-bold;
+        }
+      }
+    }
+
+    @variant group-disabled/options-item {
+      @apply fg-disabled;
+    }
+  }
+
+  .label {
+    @apply truncate;
+
+    @variant group-highlighted/options-item {
+      @apply fg-primary-bold;
+    }
+
+    @variant group-highlighted/options-item {
+      @apply fg-primary-bold;
+    }
+
+    @variant group-selected/options-item {
+      @apply fg-primary-bold;
+
+      @variant group-highlighted/options-item {
+        @apply fg-a11y-on-accent;
+      }
+
+      @variant group-highlighted/options-item {
+        @apply fg-a11y-on-accent;
+      }
+    }
+
+    @variant group-color-info/options-item {
+      @apply fg-primary-bold;
+
+      @variant group-active/options-item {
+        @apply fg-accent-primary-bold;
+      }
+
+      @variant group-selected/options-item {
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-accent;
+        }
+
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-accent;
+        }
+
+        @variant group-active/options-item {
+          @apply fg-accent-primary-bold;
+        }
+      }
+    }
+
+    @variant group-color-serious/options-item {
+      @apply fg-serious-bold;
+
+      @variant group-active/options-item {
+        @apply fg-serious-bold;
+      }
+
+      @variant group-selected/options-item {
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-utility;
+        }
+
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-utility;
+        }
+
+        @variant group-active/options-item {
+          @apply fg-serious-bold;
+        }
+      }
+    }
+
+    @variant group-color-critical/options-item {
+      @apply fg-critical-bold;
+
+      @variant group-active/options-item {
+        @apply fg-critical-bold;
+      }
+
+      @variant group-selected/options-item {
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-utility;
+        }
+
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-utility;
+        }
+
+        @variant group-active/options-item {
+          @apply fg-critical-bold;
+        }
+      }
+    }
+
+    @variant group-disabled/options-item {
+      @apply fg-disabled;
+    }
+  }
+
+  .highlight {
+    @apply bg-transparent fg-accent-primary-bold;
+
+    @variant group-highlighted/options-item {
+      color: inherit;
+    }
+
+    @variant group-highlighted/options-item {
+      color: inherit;
+    }
+
+    @variant group-selected/options-item {
+      color: inherit;
+    }
+
+    @variant group-disabled/options-item {
+      color: inherit;
+    }
+  }
+
+  .description {
+    @apply truncate text-body-xs fg-primary-muted;
+
+    @variant group-highlighted/options-item {
+      @apply fg-primary-bold;
+    }
+
+    @variant group-highlighted/options-item {
+      @apply fg-primary-bold;
+    }
+
+    @variant group-selected/options-item {
+      @variant group-highlighted/options-item {
+        @apply fg-a11y-on-accent;
+      }
+
+      @variant group-highlighted/options-item {
+        @apply fg-a11y-on-accent;
+      }
+    }
+
+    @variant group-color-info/options-item {
+      @variant group-active/options-item {
+        @apply fg-accent-primary-bold;
+      }
+
+      @variant group-selected/options-item {
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-accent;
+        }
+
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-accent;
+        }
+
+        @variant group-active/options-item {
+          @apply fg-accent-primary-bold;
+        }
+      }
+    }
+
+    @variant group-color-serious/options-item {
+      @variant group-active/options-item {
+        @apply fg-serious-bold;
+      }
+
+      @variant group-selected/options-item {
+        @apply fg-primary-bold;
+
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-utility;
+        }
+
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-utility;
+        }
+
+        @variant group-active/options-item {
+          @apply fg-serious-bold;
+        }
+      }
+    }
+
+    @variant group-color-critical/options-item {
+      @variant group-active/options-item {
+        @apply fg-critical-bold;
+      }
+
+      @variant group-selected/options-item {
+        @apply fg-primary-bold;
+
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-utility;
+        }
+
+        @variant group-highlighted/options-item {
+          @apply fg-a11y-on-utility;
+        }
+
+        @variant group-active/options-item {
+          @apply fg-critical-bold;
+        }
+      }
+    }
+
+    @variant group-disabled/options-item {
+      @apply fg-disabled;
+    }
+  }
+}

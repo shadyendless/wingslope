@@ -1,0 +1,177 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .container {
+    @apply grid items-center gap-s rounded-medium px-s py-xs font-display outline outline-interactive;
+    grid-template-areas: 'input clear';
+    grid-template-columns: 1fr min-content;
+
+    @variant size-medium {
+      @apply text-body-s;
+    }
+
+    @variant size-small {
+      @apply text-body-xs;
+    }
+
+    @variant hover {
+      @apply outline-interactive-hover;
+    }
+
+    @variant focus-visible-within {
+      @apply outline-accent-primary-bold;
+    }
+
+    @variant active {
+      @apply outline-interactive-pressed;
+    }
+
+    @variant invalid {
+      @apply outline-serious-bold;
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed fg-disabled outline-interactive-disabled;
+    }
+
+    @variant read-only {
+      @apply px-0 outline-none;
+    }
+
+    &.hasPrefix {
+      grid-template-areas: 'prefix input';
+      grid-template-columns: min-content 1fr;
+    }
+
+    &.hasSuffix {
+      grid-template-areas: 'input suffix';
+      grid-template-columns: 1fr min-content;
+    }
+
+    &.hasPrefix.hasSuffix {
+      grid-template-areas: 'prefix input suffix';
+      grid-template-columns: min-content 1fr min-content;
+    }
+
+    &.isClearable {
+      &.hasPrefix {
+        grid-template-areas: 'prefix input clear';
+        grid-template-columns: min-content 1fr min-content;
+      }
+
+      &.hasSuffix {
+        grid-template-areas: 'input suffix-1 suffix-2';
+        grid-template-columns: 1fr min-content min-content;
+      }
+
+      &.hasPrefix.hasSuffix {
+        grid-template-areas: 'prefix input suffix-1 suffix-2';
+        grid-template-columns: min-content 1fr min-content min-content;
+      }
+    }
+  }
+
+  .prefix {
+    grid-area: prefix;
+  }
+
+  .sizer {
+    grid-area: input;
+
+    &:has([type='color']),
+    &:has([type='date']),
+    &:has([type='datetime-local']),
+    &:has([type='email']),
+    &:has([type='number']),
+    &:has([type='password']),
+    &:has([type='search']),
+    &:has([type='tel']),
+    &:has([type='text']),
+    &:has([type='time']),
+    &:has([type='url']) {
+      @variant group-size-medium/input {
+        min-width: 160px;
+        max-width: 400px;
+      }
+
+      @variant group-size-small/input {
+        min-width: 80px;
+        max-width: 200px;
+      }
+    }
+
+    &:has([type='number']),
+    &:has([type='text']) {
+      &.autoSize {
+        @variant group-size-medium/input {
+          width: calc(
+            (var(--length) * 1ch) + ((var(--length) - 1) * var(--typography-spacing-body-s))
+          );
+        }
+
+        @variant group-size-small/input {
+          min-width: calc(2ch + ((var(--length) - 1) * var(--typography-spacing-body-xs)));
+          width: calc(
+            (var(--length) * 1ch) + ((var(--length) - 1) * var(--typography-spacing-body-xs))
+          );
+        }
+      }
+    }
+  }
+
+  .input {
+    @apply w-full overflow-hidden text-ellipsis whitespace-nowrap outline-none;
+
+    &[type='number'] {
+      appearance: textfield;
+
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        appearance: none;
+      }
+    }
+
+    :global(.dark) &[type='date'],
+    :global(.dark) &[type='time'],
+    :global(.dark) &[type='datetime-local'] {
+      &::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+      }
+    }
+  }
+
+  .suffix {
+    grid-area: suffix;
+
+    &.hasSuffix.isClearable {
+      grid-area: suffix-2;
+
+      @variant group-focus-within/input {
+        @variant group-not-data-empty/input {
+          grid-area: suffix-1;
+        }
+      }
+    }
+  }
+
+  .clear {
+    @apply invisible -my-xs -mr-s;
+    grid-area: clear;
+
+    @variant group-focus-within/input {
+      @variant group-not-data-empty/input {
+        @apply visible;
+      }
+    }
+
+    &.hasSuffix.isClearable {
+      grid-area: suffix-1;
+
+      @variant group-focus-within/input {
+        @variant group-not-data-empty/input {
+          grid-area: suffix-2;
+        }
+      }
+    }
+  }
+}

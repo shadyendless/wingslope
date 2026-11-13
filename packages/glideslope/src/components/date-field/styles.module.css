@@ -1,0 +1,85 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .control {
+    @apply flex w-fit items-center gap-xs rounded-medium px-s py-xs fg-primary-bold outline outline-interactive;
+
+    @variant hover {
+      @apply outline-interactive-hover;
+    }
+
+    @variant focus-visible-within {
+      @apply outline-accent-primary-bold;
+    }
+
+    @variant active {
+      @apply outline-interactive-pressed;
+    }
+
+    @variant invalid {
+      @apply outline-serious-bold;
+    }
+
+    @variant disabled {
+      @apply fg-disabled outline-interactive-disabled;
+    }
+
+    @variant read-only {
+      @apply px-0 outline-none;
+    }
+  }
+
+  .input {
+    @apply flex gap-xs font-display;
+
+    @variant group-size-medium/field {
+      @apply text-body-s;
+    }
+
+    @variant group-size-small/field {
+      @apply text-body-xs;
+    }
+  }
+
+  /* Time segments sit closer together, separated by ":". */
+  .time .input {
+    @apply gap-0;
+  }
+
+  .segment {
+    @apply text-right outline-none;
+
+    @variant placeholder-shown {
+      @apply fg-primary-muted;
+    }
+
+    @variant focus {
+      @apply bg-accent-primary-bold fg-a11y-on-accent;
+    }
+
+    /* AM/PM follows the time with a space, since time segments otherwise sit flush. */
+    &[data-reka-time-field-segment='dayPeriod'] {
+      @apply ml-xs;
+    }
+
+    &[data-reka-date-field-segment='month'] {
+      @variant group-size-medium/field {
+        width: calc(2ch + (2 * var(--typography-spacing-body-s)));
+      }
+
+      @variant group-size-small/field {
+        width: calc(2ch + (2 * var(--typography-spacing-body-xs)));
+      }
+
+      &.shortMonth {
+        @variant group-size-medium/field {
+          width: calc(3ch + (3 * var(--typography-spacing-body-s)));
+        }
+
+        @variant group-size-small/field {
+          width: calc(3ch + (3 * var(--typography-spacing-body-xs)));
+        }
+      }
+    }
+  }
+}

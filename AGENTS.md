@@ -14,6 +14,10 @@ Durable, repo-specific instructions for coding agents. Project facts live in [RE
 - **State variants must stay zero-specificity (`:where()`).** Do not style components with Tailwind's built-in `hover` / `active` / `focus` variants, or they will override later `disabled` rules. Use the foundation's variants, which redefine them.
 - **The library CSS must start with the layer-order statement** (`src/styles/layers.css`, imported first in `src/index.ts`). It must match the foundation's `@layer` statement.
 - **Generated files** (`packages/foundation/src/tokens/{tokens.css,themes.css,types.ts,index.ts}`, `variants.css`, and `packages/icons/src/icons/*`, `packages/icons/src/index.ts`) are never edited by hand. Edit the JSON or SVG and run the package's `generate` script.
+- **Named groups in CSS Modules depend on `build/postcss-global-groups.js`.** It is registered in both `vite.config.ts` and `.storybook/vite.config.ts`. Keep both in sync, or `group-*/name` variants silently stop matching.
+- **Do not set `unmountOnHide: false` on a Reka combobox inside a portal.** Reka's `hideOthers()` then marks the open list `aria-hidden`. `GsOptionRegistry` exists to get option labels without that.
+- **Inputs that buffer typed text need a local draft.** Vue resets an `<input>`'s DOM value to its bound `:value` on any re-render. See the slider inputs.
+- **A Vite or Storybook config change needs a dev server restart.** HMR doesn't pick those up, and a stale server shows misleading story-index errors.
 
 ## Workflow
 

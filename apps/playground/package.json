@@ -11,6 +11,7 @@
     "typecheck": "vue-tsc --noEmit -p tsconfig.app.json && vue-tsc --noEmit -p tsconfig.node.json"
   },
   "dependencies": {
+    "@internationalized/date": "catalog:",
     "@fontsource-variable/roboto-flex": "catalog:",
     "@fontsource-variable/roboto-mono": "catalog:",
     "@wingbrace/glideslope": "workspace:*",

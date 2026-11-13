@@ -1,0 +1,19 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .field {
+    @apply flex flex-col gap-xs;
+  }
+
+  .description {
+    @apply text-body-xs fg-primary-muted;
+
+    @variant group-disabled/field {
+      @apply fg-disabled;
+    }
+  }
+
+  .error {
+    @apply text-body-xs fg-serious-bold;
+  }
+}

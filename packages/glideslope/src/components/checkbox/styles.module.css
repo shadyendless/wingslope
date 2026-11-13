@@ -1,0 +1,105 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .group {
+    @apply flex gap-xs;
+
+    @variant orientation-horizontal {
+      @apply flex-wrap;
+    }
+
+    @variant orientation-vertical {
+      @apply flex-col;
+    }
+
+    > .groupLabel {
+      @apply w-full;
+    }
+  }
+
+  .checkbox {
+    @apply flex cursor-pointer items-center gap-m;
+
+    &.labelStart {
+      .label {
+        order: -1;
+      }
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed;
+    }
+
+    @variant group-orientation-horizontal/checkbox-group {
+      @apply grow basis-1/3;
+    }
+
+    .label {
+      @apply text-body-s fg-primary-bold;
+
+      @variant group-disabled/checkbox {
+        @apply fg-disabled;
+      }
+    }
+  }
+
+  .control {
+    @apply my-xxs flex size-l items-center justify-center rounded-small fg-info-bold outline outline-interactive;
+
+    @variant group-hover/checkbox {
+      @apply outline-interactive-hover;
+    }
+
+    @variant group-focus-visible/checkbox {
+      @apply outline-interactive-hover;
+    }
+
+    @variant group-active/checkbox {
+      @apply outline-interactive-pressed;
+    }
+
+    @variant group-disabled/checkbox {
+      @apply fg-disabled outline-interactive-disabled;
+    }
+
+    @variant group-indeterminate/checkbox {
+      @apply bg-accent-primary-bold fg-a11y-on-accent outline-accent-primary-bold;
+
+      @variant group-hover/checkbox {
+        @apply bg-accent-primary-hover outline-accent-primary-hover;
+      }
+
+      @variant group-focus-visible/checkbox {
+        @apply bg-accent-primary-hover outline-accent-primary-hover;
+      }
+
+      @variant group-active/checkbox {
+        @apply bg-accent-primary-pressed outline-accent-primary-pressed;
+      }
+
+      @variant group-disabled/checkbox {
+        @apply bg-interactive-disabled;
+      }
+    }
+
+    @variant group-selected/checkbox {
+      @apply bg-accent-primary-bold fg-a11y-on-accent outline-accent-primary-bold;
+
+      @variant group-hover/checkbox {
+        @apply bg-accent-primary-hover outline-accent-primary-hover;
+      }
+
+      @variant group-focus-visible/checkbox {
+        @apply bg-accent-primary-hover outline-accent-primary-hover;
+      }
+
+      @variant group-active/checkbox {
+        @apply bg-accent-primary-pressed outline-accent-primary-pressed;
+      }
+
+      @variant group-disabled/checkbox {
+        @apply bg-interactive-disabled;
+      }
+    }
+  }
+}

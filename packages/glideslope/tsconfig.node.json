@@ -8,6 +8,7 @@
     "vite.config.ts",
     "vitest.config.ts",
     ".storybook/main.ts",
-    ".storybook/vite.config.ts"
+    ".storybook/vite.config.ts",
+    "build/*.d.ts"
   ]
 }

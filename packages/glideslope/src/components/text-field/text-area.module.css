@@ -1,0 +1,43 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .input {
+    @apply block w-full rounded-medium p-s font-display fg-primary-bold outline outline-interactive;
+
+    @variant placeholder-shown {
+      @apply fg-primary-muted;
+    }
+
+    @variant group-size-medium/field {
+      @apply text-body-s;
+    }
+
+    @variant group-size-small/field {
+      @apply text-body-xs;
+    }
+
+    @variant hover {
+      @apply outline-interactive-hover;
+    }
+
+    @variant focus-visible {
+      @apply outline-accent-primary-bold;
+    }
+
+    @variant active {
+      @apply outline-interactive-pressed;
+    }
+
+    @variant invalid {
+      @apply outline-serious-bold;
+    }
+
+    @variant disabled {
+      @apply fg-disabled outline-interactive-disabled;
+    }
+
+    @variant read-only {
+      @apply px-0 outline-none;
+    }
+  }
+}

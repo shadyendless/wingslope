@@ -1,0 +1,117 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .list {
+    @apply flex w-fit flex-wrap gap-xs;
+  }
+
+  .chip {
+    @apply inline-flex w-fit items-center justify-center gap-xxs rounded-full fg-primary-bold outline;
+
+    @variant size-medium {
+      @apply px-s py-xs text-body-s;
+    }
+
+    @variant size-small {
+      @apply px-s py-xs text-body-xs;
+    }
+
+    @variant color-info {
+      @apply bg-info-muted outline-info-bold;
+    }
+
+    @variant color-advisory {
+      @apply bg-advisory-muted outline-advisory-bold;
+    }
+
+    @variant color-normal {
+      @apply bg-normal-muted outline-normal-bold;
+    }
+
+    @variant color-serious {
+      @apply bg-serious-muted outline-serious-bold;
+    }
+
+    @variant color-critical {
+      @apply bg-critical-muted outline-critical-bold;
+    }
+  }
+
+  .selectable {
+    @apply cursor-pointer outline-interactive select-none;
+
+    @variant hover {
+      @apply outline-2 outline-interactive-hover;
+    }
+
+    @variant focus-visible {
+      @apply outline-2 outline-interactive-hover;
+    }
+
+    @variant active {
+      @apply outline-1 outline-accent-primary-pressed;
+    }
+
+    @variant selected {
+      @apply bg-accent-primary-muted outline-accent-primary-bold;
+
+      @variant hover {
+        @apply outline-accent-primary-bold;
+      }
+
+      @variant focus-visible {
+        @apply outline-accent-primary-bold;
+      }
+
+      @variant active {
+        @apply outline-accent-primary-pressed;
+      }
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed fg-disabled outline-interactive-disabled;
+
+      @variant selected {
+        @apply bg-interactive-disabled;
+      }
+    }
+  }
+
+  .deletable {
+    @apply cursor-default gap-xs fg-primary-muted outline-interactive select-none;
+
+    @variant has-group-hover/button {
+      @apply fg-hover;
+    }
+
+    @variant has-group-focus-visible/button {
+      @apply fg-hover;
+    }
+
+    @variant has-group-active/button {
+      @apply fg-pressed;
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed bg-interactive-disabled fg-disabled outline-interactive-disabled;
+    }
+  }
+}
+
+@layer components.l2 {
+  .remove {
+    @apply rounded-full p-0;
+
+    @variant hover {
+      @apply fg-hover;
+    }
+
+    @variant focus-visible {
+      @apply bg-transparent fg-primary-bold;
+    }
+
+    @variant active {
+      @apply fg-pressed;
+    }
+  }
+}

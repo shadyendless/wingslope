@@ -40,6 +40,8 @@ See [`apps/playground`](../../apps/playground) for a complete app.
 
 ## Components
 
+### Basics
+
 | Family           | Components                                                  | Built on                   |
 | ---------------- | ----------------------------------------------------------- | -------------------------- |
 | Avatar           | `GsAvatar`                                                  | Reka `Avatar`              |
@@ -50,11 +52,32 @@ See [`apps/playground`](../../apps/playground) for a complete app.
 | Hero             | `GsHero`, `GsHeroTitle`, `GsHeroSubtitle`                   | —                          |
 | Hotkey           | `GsHotkey`, `GsHotkeySet`                                   | —                          |
 | Icon             | `GsIcon`                                                    | —                          |
-| Label            | `GsLabel`                                                   | Reka `Label`               |
+| Label            | `GsLabel`                                                   | Reka `Label`, `FieldLabel` |
 | Lines            | `GsLines`                                                   | —                          |
 | Link             | `GsLink`                                                    | Reka `Primitive`           |
 | Skeleton         | `GsSkeleton`                                                | —                          |
 | Status indicator | `GsStatusIndicator`                                         | —                          |
+
+### Forms
+
+Labeled fields share one layout and use Reka UI's `FieldRoot`, so labels, descriptions, errors and validation (`required`, `validate`, `validation-mode`) are wired up the same way everywhere, including inside a Reka `FormRoot`.
+
+| Family        | Components                                                                                            | Built on                                                           |
+| ------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Input         | `GsInput`                                                                                             | Reka `FieldControl`                                                |
+| Text fields   | `GsTextField`, `GsTextAreaField`, `GsSearchField`                                                     | Reka `FieldRoot`, `FieldControl`                                   |
+| Checkbox      | `GsCheckbox`, `GsCheckboxGroup`                                                                       | Reka `Checkbox`                                                    |
+| Radio         | `GsRadio`, `GsRadioGroup`                                                                             | Reka `RadioGroup`                                                  |
+| Switch        | `GsSwitch`                                                                                            | Reka `Switch`                                                      |
+| Slider        | `GsSlider`                                                                                            | Reka `Slider`                                                      |
+| Options       | `GsOptions`, `GsOption`, `GsOptionSection`, `GsOptionLabel`, `GsOptionDescription`, `GsOptionContent` | Reka `Listbox` / `Select` / `Combobox` items                       |
+| Select        | `GsSelectField`                                                                                       | Reka `Select`                                                      |
+| Combo box     | `GsComboBoxField`                                                                                     | Reka `Combobox`                                                    |
+| Date and time | `GsDateField`, `GsTimeField`                                                                          | Reka `DateField`, `TimeField`                                      |
+| Chips         | `GsChip`, `GsChipList`, `GsSelectableChip`, `GsDeletableChip`                                         | Reka `TagGroup`                                                    |
+| Color picker  | `GsColorPicker`                                                                                       | Reka `ColorSwatchPicker`, `ColorArea`, `ColorSlider`, `ColorField` |
+
+Field components send `class` and `style` to the field wrapper and every other attribute (`id`, `autocomplete`, `aria-*`, listeners) to the actual control. Date and time values are `@internationalized/date` objects.
 
 Composables: `provideTheme` / `useTheme`, plus `provide*Defaults` for families whose defaults a parent can set (e.g. `provideButtonDefaults({ size: 'small' })`).
 
