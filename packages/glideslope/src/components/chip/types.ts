@@ -25,8 +25,18 @@ export interface GsChipItemProps extends GsChipStyleProps {
   textValue?: string
 }
 
+export interface GsDeletableChipProps extends GsChipItemProps {
+  /** Extra classes for the `remove` button. Classes on the component itself go on the chip. */
+  classes?: { remove?: string }
+}
+
 export interface GsChipListProps extends GsChipStyleProps {
   /** `single` / `multiple` make chips selectable, bound with `v-model`. @default 'none' */
   selectionMode?: 'none' | 'single' | 'multiple'
+  /**
+   * Keeps at least one chip selected: the last selected chip can't be deselected, and Escape
+   * doesn't clear the selection.
+   */
+  disallowEmptySelection?: boolean
   disabled?: boolean
 }

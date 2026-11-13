@@ -6,20 +6,21 @@ const meta = {
   component: GsLines,
   args: { size: 'medium', variant: 'branch', visible: true },
   argTypes: {
-    size: { control: 'inline-radio', options: ['large', 'medium', 'small'] },
-    variant: { control: 'inline-radio', options: ['branch', 'vert', 'last'] },
+    size: { control: 'select', options: ['large', 'medium', 'small'] },
+    variant: { control: 'select', options: ['branch', 'vert', 'last'] },
   },
-  render: (args) => ({
-    components: { GsLines },
-    setup: () => ({ args }),
-    template: '<div class="w-l"><GsLines v-bind="args" /></div>',
-  }),
 } satisfies Meta<typeof GsLines>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Playground: Story = {}
+export const Default: Story = {
+  render: (args) => ({
+    components: { GsLines },
+    setup: () => ({ args }),
+    template: '<div class="w-l"><GsLines v-bind="args" /></div>',
+  }),
+}
 
 /** How the variants combine to draw a small tree. */
 export const Tree: Story = {

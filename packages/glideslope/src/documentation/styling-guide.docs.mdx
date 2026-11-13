@@ -1,0 +1,505 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Styling Guide" />
+
+# Styling with the Design System
+
+This guide covers how to style your application using Glideslope's styling system. Glideslope's own components follow the same rules.
+
+## Contents
+
+- [TailwindCSS](#tailwindcss)
+  - [Colors](#colors)
+  - [Spacing](#spacing)
+  - [Radius](#radius)
+  - [Typography](#typography)
+  - [Outlines, Not Borders](#outlines-not-borders)
+  - [Variants](#variants-and-selectors)
+  - [Responsive design](#responsive-design)
+- [CSS Modules](#css-modules)
+  - [CSS Layers](#css-layers)
+  - [Named groups in CSS Modules](#named-groups-in-css-modules)
+- [Overriding Glideslope Component Styles](#overriding-glideslope-component-styles)
+  - [Simple Components: class](#simple-components-class)
+  - [Inner Parts: classes](#inner-parts-classes)
+  - [Discovering Available Class Props](#discovering-available-class-props)
+- [Conditional class rendering](#conditional-class-rendering)
+- [Breaking Out of the System Constraints](#breaking-out-of-the-system-constraints)
+  - [Arbitrary Tailwind Classes](#arbitrary-tailwind-classes)
+  - [Overriding Theme Variables](#overriding-theme-variables)
+
+## TailwindCSS
+
+Glideslope uses Tailwind CSS v4 as its styling foundation. If you're new to utility-first CSS, we recommend starting with the [Tailwind documentation](https://tailwindcss.com/docs/styling-with-utility-classes). The fundamental concepts of utility classes are critical to being able to style with Glideslope effectively.
+
+However, Glideslope uses Tailwind in a deliberately opinionated way, to keep code clean, readable and consistent. While many standard Tailwind classes work as expected, not all the Tailwind documentation will be relevant. `@wingbrace/glideslope-foundation` replaces Tailwind's default colors, spacing, radius, shadows, fonts and text sizes with its own semantic tokens. These classes ensure consistency with the design system and support light/dark mode theming out of the box. Reusable components are also styled with CSS Modules, despite the stance taken by Tailwind.
+
+Styles live in one of two places:
+
+- **A reusable component's `styles.module.css`** holds every style the component needs, in the `components.l1` … `components.l5` cascade layers.
+- **Utility classes in an app template** are for one-off tweaks in app and feature code. They sit in the `utilities` layer and always win.
+
+### Colors
+
+The foundation establishes an opinionated set of semantic color classes for background, foreground and outline colors (among other tokens). These colors ensure compatibility in our design and automatically adapt to light and dark mode. The tokens all have a prefix that will orient you to their intended use. They also target the CSS property that is relevant. For example, adding the `bg-surface-raised` class to a div applies the `--bg-surface-raised` CSS variable to its `background-color`.
+
+- **[Background colors](?path=/story/foundation-colors--background)** use the `bg-` prefix (e.g., `bg-surface-default`, `bg-accent-primary-bold`)
+- **[Foreground colors](?path=/story/foundation-colors--foreground)** (text, icons) use the `fg-` prefix (e.g., `fg-primary-bold`, `fg-primary-muted`). `fg-` also colors any icon inside the element.
+- **[Outline colors](?path=/story/foundation-colors--outline)** use the `outline-` prefix (e.g., `outline-static`, `outline-interactive`)
+- **Icon colors** use the `icon-` prefix with the foreground names (e.g., `icon-critical-bold`). They color only the icons inside the element, leaving its text color alone.
+
+Every color class accepts an opacity modifier: `bg-surface-raised/50`.
+
+See the **[Foundation / Colors](?path=/docs/foundation-colors--guide)** pages in Storybook for the complete color palette with visual examples.
+
+#### Prefer Semantic Colors
+
+Under the hood, semantic classes map to the primitive color palette based on the active theme (light or dark). This means you can use semantic classes like `bg-surface-default` or `fg-primary-bold` throughout your codebase without conditional logic to guarantee support for light/dark mode theming:
+
+```vue
+<!-- Good: the semantic class adapts to the theme automatically -->
+<div class="bg-surface-default fg-primary-bold">Content</div>
+
+<!-- Avoid: manual theme handling is unnecessary with semantic classes -->
+<div :class="mode === 'dark' ? 'bg-[black]' : 'bg-[white]'">Content</div>
+```
+
+This approach eliminates theme-checking ternaries scattered throughout the codebase and ensures consistent color usage across the application.
+
+#### Primitives for Prototyping and Edge Cases
+
+While most product experiences should comfortably live within the boundaries of the semantic colors, any mature application will inevitably include bespoke features that stretch beyond what the system has explicitly accounted for. In these rare cases, using the primitive color tokens (`packages/foundation/src/tokens/primitive.json`) directly is also supported. While relying on primitives or one-off values fragments the experience, introduces visual inconsistencies, and increases long-term maintenance costs, this will provide you with a syntactically clean escape hatch. Exceptions should be rare and deliberate.
+
+```vue
+<!-- Supported and preferred -->
+<div class="bg-surface-raised" />
+
+<!-- Ok, if prototyping or in rare edge cases -->
+<div class="bg-neutral-300" />
+<div class="fg-neutral-300" />
+<div class="outline-neutral-300" />
+```
+
+Domain colors work the same way, for the things they represent: `bg-classification-secret`, `fg-roe-hostile`.
+
+When the system lacks a token you need, raise it with design rather than working around it. Gaps are signals for the system to grow.
+
+### Spacing
+
+Glideslope uses a custom spacing scale instead of Tailwind's numeric scale to maintain consistency.
+
+#### Prefer Semantic Spacing
+
+- `xxs`: extra extra small (2px)
+- `xs`: extra small (4px)
+- `s`: small (8px)
+- `m`: medium (12px)
+- `l`: large (16px)
+- `xl`: extra large (24px)
+- `xxl`: extra extra large (40px)
+- `oversized`: oversized spacing (80px)
+
+Use these with the standard Tailwind spacing utilities (`p-`, `m-`, `gap-`, `w-`, `h-`, `size-`):
+
+```vue
+<div class="gap-l p-m"><!-- padding: medium, gap: large --></div>
+<div class="mt-xl mb-s"><!-- margin-top: xl, margin-bottom: small --></div>
+<div class="size-xxl"><!-- width and height: xxl --></div>
+```
+
+See the **[Foundation / Spacing](?path=/story/foundation-spacing--spacing)** story in Storybook for the exact values.
+
+#### Pixels for Prototyping and Edge Cases
+
+While the spacing tokens should cover the majority of cases and are preferred, it is possible to use arbitrary spacing values. Numeric utilities such as `w-<number>` and `size-<number>` are driven by the `--spacing` [theme variable](https://tailwindcss.com/docs/width#customizing-your-theme), which Glideslope sets to `1px`. That means numeric values translate directly to pixels (e.g., `gap-10` = 10px, `w-24` = 24px).
+
+```vue
+<!-- Preferred -->
+<div class="gap-m" />
+
+<!-- Ok, if prototyping or in rare edge cases: a 10px gap -->
+<div class="gap-10" />
+```
+
+### Radius
+
+Use the custom border radius scale with the `rounded-` prefix:
+
+- `rounded-none`: no border radius
+- `rounded-small`: small radius (2px)
+- `rounded-medium`: medium radius (4px)
+- `rounded-large`: large radius (8px)
+- `rounded-round`: fully rounded (pill shape)
+
+See the **[Foundation / Radius](?path=/story/foundation-radius--radius)** story in Storybook for visual examples.
+
+### Typography
+
+Glideslope provides two categories of typography classes: font families and text styles.
+
+#### Font Families
+
+Use these classes to set the font family:
+
+```
+font-primary    # Roboto Flex - for body text, headers
+font-display    # Roboto Mono - for code, labels, data
+```
+
+The page itself defaults to `font-primary`, `fg-primary-bold` and `bg-surface-default`, set on `html` by the foundation.
+
+#### Text Styles
+
+Text style classes (e.g., `text-header-xl`, `text-body-m`) set four CSS properties at once:
+
+- `font-size`
+- `font-weight`
+- `letter-spacing`
+- `line-height`
+
+These values align directly with the text styles designers use in Figma, ensuring pixel-perfect implementation of designs.
+
+See the **[Foundation / Typography](?path=/story/foundation-typography--fonts)** stories in Storybook for the complete type scale.
+
+### Outlines, Not Borders
+
+Glideslope implements outlines instead of borders so that the style doesn't impact box model dimensions. This way elements with or without a "border" are consistently sized based on content and padding alone. This also helps with sibling components rendering at the same size when their border styles may not match. The foundation's `outline` utility draws the outline 1px inside the element's edge.
+
+Do not implement borders, do implement outlines.
+
+You might have rare instances where you do need to use a border. For example, if you need a line only at the top of a div. In this situation, use an outline semantic color variable directly to ensure consistency with the color system:
+
+```vue
+<!-- Preferred -->
+<div class="outline outline-advisory-bold" />
+<div class="outline-2 outline-advisory-bold" />
+
+<!-- Ok, if prototyping or in rare edge cases -->
+<div class="border-t border-t-(--outline-advisory-bold)" />
+```
+
+### Variants and selectors
+
+Tailwind supports [variants](https://tailwindcss.com/docs/hover-focus-and-other-states) that allow for conditional application of styles, such as `:hover`, `:focus`, and `:active`. Glideslope's foundation adds variants for component props and for the states [Reka UI](https://reka-ui.com/docs/guides/styling) exposes as data attributes, and redefines `hover`, `focus`, `focus-visible` and `active`. Every one of them adds no specificity (it is wrapped in `:where()`), so inside a CSS Module the order you write them in decides which state wins. The full list is in `packages/foundation/src/variants/variants.json`:
+
+- **Component props:** `size-*`, `color-*`, `elevation-*`, `layout-*`, `orientation-*`, matching the `data-size`, `data-color`, … attributes components set.
+- **Floating placement:** `side-*`, `align-*`, matching `data-side` / `data-align` on Reka UI poppers.
+- **Interaction:** `hover` (only on devices that can hover), `focus`, `focus-visible`, `focus-within`, `focus-visible-within`, `active`.
+- **Open / selected:** `open`, `closed`, `expanded`, `checked`, `indeterminate`, `selected`, `highlighted`, `current`, `visited`.
+- **Form state:** `disabled`, `enabled`, `required`, `invalid`, `read-only`, `placeholder-shown`, `empty`.
+- **Theme:** `dark`, `light`.
+
+You can combine variants for additional complexity or use them with the [`group` class](https://tailwindcss.com/docs/hover-focus-and-other-states#styling-based-on-the-descendants-of-a-group). Glideslope components put a named group class on their root (`group/button` on buttons, `group/field` on every field), so you can style content by the component's state:
+
+```vue
+<div class="empty:hidden">{{ maybeContent }}</div>
+
+<!-- using state for conditional utility classes -->
+<GsToggleButton v-model="pinned" class="selected:bg-accent-primary-muted">Pin</GsToggleButton>
+
+<!-- can be used with grouped elements -->
+<GsToggleButton v-model="expanded" variant="icon" aria-label="Expand">
+  <GsIcon class="group-selected/button:rotate-180"><ChevronDownIcon /></GsIcon>
+</GsToggleButton>
+
+<!-- can be stacked -->
+<div class="md:hover:bg-critical-bold">Important thing...</div>
+```
+
+Avoid using arbitrary variants, for example with a `data-` selector. Instead prefer the supported variants or conditional classes with Vue's `:class` binding.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import styles from './styles.module.css'
+
+const { size } = defineProps<{ size: 'small' | 'large' }>()
+const pinned = ref(false)
+</script>
+
+<template>
+  <!-- Bad -->
+  <GsToggleButton v-model="pinned" class="data-[state=on]:foo data-[size=large]:bar" />
+
+  <!-- Ok, but only the foundation's variants are available -->
+  <GsToggleButton v-model="pinned" class="selected:foo" />
+
+  <!-- Good: use the state you bind with v-model (props and other state can be used too) -->
+  <GsToggleButton v-model="pinned" :class="[styles[size], { [styles.selected]: pinned }]" />
+
+  <!-- Good: the default slot receives the state, for styling the content -->
+  <GsToggleButton v-model="pinned" v-slot="{ pressed }">
+    <GsIcon :class="{ [styles.pinned]: pressed }"><PinIcon /></GsIcon>
+  </GsToggleButton>
+</template>
+```
+
+### Responsive design
+
+You can apply styles at specific breakpoints using prefixes like `sm:`, `md:`, `lg:`, and `xl:` using Tailwind's standard responsive utility classes as described in the [Tailwind responsive design documentation](https://tailwindcss.com/docs/responsive-design). All responsive utilities work exactly as documented in the official Tailwind guides.
+
+## CSS Modules
+
+For most use cases, applying Tailwind utility classes directly to your components is sufficient. However, when building reusable components or implementing complex styles, it's better to extract styles into a separate CSS module file (e.g., `styles.module.css`). This keeps your component focused on structure and behavior rather than styling details.
+
+Despite Tailwind's recommendation to avoid abstraction layers, CSS Modules are the preferred approach for reusable components to minimize runtime overhead and prevent class name collisions with other components or libraries.
+
+To access design tokens and Tailwind classes in your CSS module, include the `@reference` [directive](https://tailwindcss.com/docs/functions-and-directives#reference-directive) at the top of the file. You can then use the `@apply` [directive](https://tailwindcss.com/docs/functions-and-directives#apply-directive) to apply utility classes and the `@variant` [directive](https://tailwindcss.com/docs/functions-and-directives#variant-directive) to define variants. Express props as `data-*` attributes and style them with the prop variants (`@variant size-small`); express mutually exclusive visual variants as module classes (`styles[variant]`).
+
+```css
+/* styles.module.css */
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .button {
+    @apply p-s fg-primary-bold;
+
+    @variant size-small {
+      @apply p-xs;
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed fg-disabled;
+    }
+  }
+}
+```
+
+```vue
+<script setup lang="ts">
+import styles from './styles.module.css'
+
+const { variant = 'filled', size = 'medium' } = defineProps<{
+  variant?: 'filled' | 'flat'
+  size?: 'small' | 'medium'
+}>()
+</script>
+
+<template>
+  <button :class="[styles.button, styles[variant]]" :data-size="size"><slot /></button>
+</template>
+```
+
+Import the module from a separate `.module.css` file in `<script setup>`. Do not use a `<style module>` block in the SFC: `@tailwindcss/vite` does not process inline `<style module>` blocks, so `@apply` comes out untouched. An external file is also shared by every component that imports it, while `<style scoped>` gets a scope per SFC.
+
+The consumer's `class` merges onto the root element automatically (attribute fallthrough), so the component does not need a `class` prop.
+
+### CSS Layers
+
+The example above uses `@layer components.l1` to explicitly define where styles sit in the cascade hierarchy. The foundation declares this layer order, with five component layers (`components.l1` through `components.l5`) between Tailwind's `base` and `utilities` layers:
+
+```
+theme, base, components, components.l1 … components.l5, utilities
+```
+
+**Layer Guidelines:**
+
+- **`components.l1`** - Base components with no dependencies on other styled components
+- **`components.l2` through `components.l5`** - Higher-level components that wrap or restyle lower-level components. Use the next level up when building on top of existing styled components. Glideslope's own components use `components.l1` and `components.l2` today, so an app component that restyles a Glideslope component is safe in `components.l3` or above.
+
+CSS layers establish a clear cascade hierarchy where:
+
+- Component styles can override each other based on their layer (l2 beats l1, l3 beats l2, etc.)
+- Tailwind utility classes always win over component styles for one-off customizations
+- You maintain explicit control over style precedence without wrestling with specificity
+- The need for `!important` is eliminated and makes the cascade predictable and maintainable
+
+Keep your own styles inside a layer: CSS outside any layer beats every layer, utilities included.
+
+### Named groups in CSS Modules
+
+CSS Modules hash every class in a module's selectors, including the named group in a selector such as `@variant group-hover/card`. Components put the literal `group/card` class on their root, so the hashed selector never matches. Glideslope's builds register a small PostCSS plugin, `build/postcss-global-groups.js` in `packages/glideslope`, that keeps `group/<name>` and `peer/<name>` classes global in `*.module.css` files.
+
+The plugin is not published from any package yet. If your app uses named groups inside its own CSS Modules, register a copy of it in your Vite config:
+
+```ts
+// vite.config.ts
+import tailwindcss from '@tailwindcss/vite'
+import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite'
+// A copy of packages/glideslope/build/postcss-global-groups.js
+import globalGroups from './build/postcss-global-groups.js'
+
+export default defineConfig({
+  plugins: [vue(), tailwindcss()],
+  css: {
+    postcss: { plugins: [globalGroups()] },
+  },
+})
+```
+
+Group variants used as utility classes in templates (`class="group-hover/card:fg-accent-primary-bold"`) are not hashed and don't need the plugin.
+
+## Overriding Glideslope Component Styles
+
+Every Glideslope component accepts Tailwind utility classes as overrides.
+
+### Simple Components: `class`
+
+Classes you put on a component merge onto its root element (Vue's attribute fallthrough), so there is no `className` prop:
+
+```vue
+<script setup lang="ts">
+import { GsButton } from '@wingbrace/glideslope'
+</script>
+
+<template>
+  <GsButton class="mt-l">Submit</GsButton>
+</template>
+```
+
+Field components (`GsTextField`, `GsTextAreaField`, `GsSearchField`, `GsSelectField`, `GsComboBoxField`, `GsDateField`, `GsTimeField`) and `GsInput` send `class` and `style` to their outer wrapper, and every other attribute (`id`, `autocomplete`, `aria-*`, listeners) to the control inside it.
+
+### Inner Parts: `classes`
+
+Components with inner parts you may want to style take a `classes` prop. It accepts an object with a key per part:
+
+```vue
+<script setup lang="ts">
+import { GsInput } from '@wingbrace/glideslope'
+import { ref } from 'vue'
+
+const callsign = ref('')
+</script>
+
+<template>
+  <GsInput
+    v-model="callsign"
+    aria-label="Callsign"
+    class="w-full"
+    :classes="{ input: 'text-body-l', prefix: 'fg-accent-primary-bold' }"
+  >
+    <template #prefix>#</template>
+  </GsInput>
+</template>
+```
+
+These components have a `classes` prop today:
+
+- `GsInput`: `sizer`, `input`, `prefix`, `suffix`, `clear`
+- `GsAvatar`: `image`, `fallback`, `content`
+- `GsDetailsList`: `label`, `value` (applied to every label and value)
+- `GsHero`: `icon`, `title`, `subtitle`
+
+Compound components are made of separate components (`GsDialogTitle`, `GsTabList`, `GsMenuItem`, …), so style each part by putting a class on it.
+
+### Discovering Available Class Props
+
+TypeScript is useful for discovering which parts of a component can be styled. Check the component's prop types for `classes`:
+
+```ts
+// GsInputProps['classes']
+classes?: { sizer?: string; input?: string; prefix?: string; suffix?: string; clear?: string }
+```
+
+Hover over the `classes` prop in your IDE, or check the Props table on the component's docs page, to see the available styling targets.
+
+## Conditional class rendering
+
+Use Vue's array and object `:class` syntax for any dynamic class logic. No helper library such as `clsx` is needed.
+
+```vue
+<!-- Bad -->
+<div :class="`foo ${disabled && 'bar'}`" />
+<div :class="['foo', disabled ? 'bar' : undefined].join(' ')" />
+
+<!-- Good -->
+<div :class="['foo', { bar: disabled }]" />
+<div :class="[styles.foo, { [styles.bar]: disabled }]" />
+```
+
+## Breaking Out of the System Constraints
+
+While Glideslope provides a styling system that should fit many use cases, there will likely be situations where you need to operate outside of the constraints it provides. Here are some common examples:
+
+### Arbitrary Tailwind Classes
+
+Tailwind supports [arbitrary values](https://tailwindcss.com/docs/adding-custom-styles#using-arbitrary-values) for one-off styles that don't exist in the theme. While Tailwind provides bracketing to use arbitrary values, these should be avoided. Use theme values instead, and use these techniques sparingly and only when necessary:
+
+```vue
+<!-- Avoid the bracket syntax -->
+<div class="w-[325px]" />
+<div class="gap-[11px]" />
+
+<!-- Ok to use numeric spacing values, if necessary -->
+<div class="w-325" />
+
+<!-- Ok, if no utility exists: a theme variable -->
+<div class="gap-(--spacing-xxl)" />
+
+<!-- Good: the utility -->
+<div class="gap-xxl" />
+
+<!-- Ok: an arbitrary property, for CSS properties without utility classes -->
+<div class="[clip-path:circle(50%)]" />
+```
+
+When using arbitrary values, prefer referencing theme variables over hardcoding values:
+
+```vue
+<!-- Avoid hardcoding values that exist in the theme -->
+<div class="[--my-font-size:14px]" />
+
+<!-- Reference theme variables instead -->
+<div class="[--my-font-size:var(--typography-size-body-m)]" />
+```
+
+Also avoid selectors that reach into other components, such as `[&_span]:pl-s`. Pass a class to the element you want to style instead.
+
+If you find yourself reaching for arbitrary classes frequently, raise this with the design system team so they can consider whether the design system should be extended to support your use case.
+
+### Overriding Theme Variables
+
+You can override theme variables in your application's root CSS file. You can also create application-specific variables in this manner.
+
+Add overrides within the `@layer theme` block on `:root`, after the Glideslope imports. Semantic tokens hold both theme values as a `light-dark(<light>, <dark>)` pair, so set both.
+
+**Example:** Override the accent color to use a custom seafoam palette instead of the default:
+
+```css
+/* main.css */
+@import '@wingbrace/glideslope-foundation/styles';
+@import '@wingbrace/glideslope/styles.css';
+
+/* override accent color */
+@layer theme {
+  :root {
+    /* amorphous accent primitives */
+    --seafoam-primary-50: #ebfffa;
+    --seafoam-primary-100: #b9ffec;
+    --seafoam-primary-200: #8affdf;
+    --seafoam-primary-300: #5affd2;
+    --seafoam-primary-400: #28f5be;
+    --seafoam-primary-500: #16d3a0;
+    --seafoam-primary-600: #059971;
+    --seafoam-primary-700: #01684c;
+    --seafoam-primary-800: #014130;
+    --seafoam-primary-900: #012a1f;
+
+    /* light-dark(<light mode>, <dark mode>) */
+    --bg-accent-primary-bold: light-dark(var(--seafoam-primary-700), var(--seafoam-primary-700));
+    --bg-accent-primary-hover: light-dark(var(--seafoam-primary-600), var(--seafoam-primary-600));
+    --bg-accent-primary-pressed: light-dark(var(--seafoam-primary-800), var(--seafoam-primary-800));
+    --bg-accent-primary-muted: light-dark(var(--seafoam-primary-100), var(--seafoam-primary-900));
+
+    --fg-accent-primary-bold: light-dark(var(--seafoam-primary-600), var(--seafoam-primary-300));
+    --fg-accent-primary-hover: light-dark(var(--seafoam-primary-400), var(--seafoam-primary-200));
+    --fg-accent-primary-pressed: light-dark(var(--seafoam-primary-600), var(--seafoam-primary-600));
+
+    --outline-accent-primary-bold: light-dark(
+      var(--seafoam-primary-600),
+      var(--seafoam-primary-300)
+    );
+    --outline-accent-primary-hover: light-dark(
+      var(--seafoam-primary-200),
+      var(--seafoam-primary-200)
+    );
+    --outline-accent-primary-pressed: light-dark(
+      var(--seafoam-primary-600),
+      var(--seafoam-primary-600)
+    );
+  }
+}
+```
+
+Here, there are custom primitive colors that are then mapped to the semantic variables that use those primitives. We recommend you take this approach in your own application for maximum flexibility. To keep the JavaScript tokens (`useTheme().tokens`) in step, pass the same colors to `provideTheme({ overrides })`, as shown in [Getting Started](?path=/docs/getting-started--docs#overrides). Generally, overriding theme variables should not be something engineers do without first consulting with their design partners.

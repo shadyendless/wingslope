@@ -42,6 +42,7 @@
   "placeholder-shown": ":placeholder-shown, [data-placeholder]",
 
   "current": "[aria-current]:not([aria-current=\"false\"])",
+  "visited": "[data-visited], :visited",
 
   "required": ":required, [aria-required=\"true\"]",
   "invalid": ":user-invalid, [aria-invalid=\"true\"], [data-invalid]",

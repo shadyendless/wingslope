@@ -26,6 +26,7 @@ const {
   required = false,
   name,
   labelPosition,
+  classes,
 } = defineProps<GsCheckboxProps>()
 
 /** Checked state. Ignored inside a `GsCheckboxGroup`, which owns the values. */
@@ -54,12 +55,12 @@ const position = computed(() => labelPosition ?? defaults.value.labelPosition ??
       { [styles.labelStart ?? '']: position === 'start' },
     ]"
   >
-    <span :class="styles.control">
+    <span :class="[styles.control, classes?.control]">
       <GsIcon size="small">
         <CheckIcon v-if="state === true" />
         <RemoveIcon v-else-if="state === 'indeterminate'" />
       </GsIcon>
     </span>
-    <span v-if="$slots.default" :class="styles.label"><slot /></span>
+    <span v-if="$slots.default" :class="[styles.label, classes?.label]"><slot /></span>
   </CheckboxRoot>
 </template>

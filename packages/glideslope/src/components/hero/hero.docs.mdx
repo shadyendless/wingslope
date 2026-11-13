@@ -1,0 +1,88 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as HeroStories from './hero.stories'
+import GsHeroTitle from './GsHeroTitle.vue'
+import GsHeroSubtitle from './GsHeroSubtitle.vue'
+
+<Meta of={HeroStories} />
+
+# Hero
+
+A versatile hero component that displays an icon alongside primary and secondary content. Supports both stacked and grid layouts.
+
+Components:
+
+- **GsHero** - Container with automatic layout (renders as `<header>`)
+- **GsHeroTitle** - Primary heading (renders as `<h2>` by default)
+- **GsHeroSubtitle** - Secondary text content
+
+## Example usage
+
+```vue
+<GsHero>
+  <GsIcon><PlaceholderIcon /></GsIcon>
+  <GsHeroTitle>Primary Title</GsHeroTitle>
+  <GsHeroSubtitle>Secondary information</GsHeroSubtitle>
+</GsHero>
+```
+
+<Canvas of={HeroStories.Default} />
+
+### Compact layout
+
+```vue
+<GsHero compact>
+  <GsIcon><SettingsIcon /></GsIcon>
+  <GsHeroTitle>Settings</GsHeroTitle>
+  <GsHeroSubtitle>Configure your preferences</GsHeroSubtitle>
+</GsHero>
+```
+
+### Multiple subtitles
+
+```vue
+<GsHero>
+  <GsIcon><PersonIcon /></GsIcon>
+  <GsHeroTitle>John Doe</GsHeroTitle>
+  <GsHeroSubtitle>Software Engineer</GsHeroSubtitle>
+  <GsHeroSubtitle>San Francisco, CA</GsHeroSubtitle>
+</GsHero>
+```
+
+## Layouts
+
+| Layout | Prop               | Description                                                      |
+| ------ | ------------------ | ---------------------------------------------------------------- |
+| Stack  | `:compact="false"` | Vertical layout with larger icon above stacked content (default) |
+| Grid   | `compact`          | Horizontal layout with smaller icon beside content               |
+
+## Props
+
+### GsHero
+
+`classes` adds classes to the `icon`, `title` and `subtitle` parts; classes on the component go on the `<header>`.
+
+<ArgTypes of={HeroStories} />
+
+### GsHeroTitle
+
+Renders an `<h2>` heading unless `level` says otherwise. Exactly one per hero.
+
+<ArgTypes of={GsHeroTitle} />
+
+### GsHeroSubtitle
+
+Secondary text content. Zero or more per hero.
+
+<ArgTypes of={GsHeroSubtitle} />
+
+## Accessibility
+
+- Uses a semantic `<header>` element with proper heading hierarchy
+- `GsHeroTitle` renders as `<h2>` for screen reader navigation; set `level` to fit the page's outline
+
+## Implementation notes
+
+- The icon is sized and placed automatically for the layout, through `provideIconDefaults`
+- The title and subtitle get their styles from the hero through a provide/inject context
+- Children can appear in any order; the icon, title and subtitle are always laid out in that order

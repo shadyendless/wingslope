@@ -1,0 +1,87 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import GsTooltipProvider from './GsTooltipProvider.vue'
+import * as TooltipStories from './tooltip.stories'
+
+<Meta of={TooltipStories} />
+
+# Tooltip
+
+Contextual popup providing additional information on hover or focus.
+
+```vue
+<!-- Basic tooltip -->
+<GsTooltip>
+  <template #trigger><GsButton>Hover me</GsButton></template>
+  Helpful information
+</GsTooltip>
+
+<!-- With custom placement -->
+<GsTooltip side="top" :offset="10">
+  <template #trigger><GsButton>Click me</GsButton></template>
+  Tooltip above the button
+</GsTooltip>
+
+<!-- With icon -->
+<GsTooltip>
+  <template #trigger>
+    <GsButton variant="icon" aria-label="Information">
+      <GsIcon><InformationIcon /></GsIcon>
+    </GsButton>
+  </template>
+  Additional information
+</GsTooltip>
+
+<!-- With delay -->
+<GsTooltip :delay="500">
+  <template #trigger><GsButton>Delayed tooltip</GsButton></template>
+  Appears after 500ms
+</GsTooltip>
+```
+
+<Canvas of={TooltipStories.Default} />
+
+The trigger goes in the `#trigger` slot and must be a single focusable element, so keyboard users can reach the tooltip too. Bind `v-model:open` to control the open state.
+
+### Shared delay
+
+Place one `GsTooltipProvider` near the app root. Once a tooltip under it has opened, moving to another trigger shows the next tooltip without waiting for the delay again. Without a provider, each `GsTooltip` creates its own.
+
+```vue
+<GsTooltipProvider :delay="400">
+  <App />
+</GsTooltipProvider>
+```
+
+<Canvas of={TooltipStories.SharedProvider} />
+
+### Portal target
+
+Tooltips render into `body`. Set `portal-to` to an element or a selector to render one somewhere else, for example inside a container with its own stacking context or a fullscreen element.
+
+```vue
+<GsTooltip :portal-to="panel">
+  <template #trigger><GsButton>Hover me</GsButton></template>
+  Rendered inside the panel
+</GsTooltip>
+```
+
+## GsTooltip props
+
+<ArgTypes of={TooltipStories} />
+
+## GsTooltipProvider props
+
+<ArgTypes of={GsTooltipProvider} />
+
+## Accessibility
+
+- The tooltip describes its trigger for screen readers while it is open
+- Opens on keyboard focus as well as hover; Escape dismisses it
+- A tooltip is a visual hint, not an accessible name: icon-only triggers still need an `aria-label`
+- Flips to another side automatically when there is no room in the viewport
+
+## Related
+
+- [MenuButton with Tooltip](?path=/story/components-button-composition-menu-button--with-tooltip) - combining tooltips with menu triggers
+- [Reka UI Tooltip](https://reka-ui.com/docs/components/tooltip)

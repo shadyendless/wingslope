@@ -13,6 +13,7 @@
  */
 import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui'
 import { computed, ref, useId, watch } from 'vue'
+import GsTooltip from '../tooltip/GsTooltip.vue'
 import { normalizeMarkers, parseInputValue, snapToMarker } from './markers'
 import styles from './styles.module.css'
 import type { GsSliderProps } from './types'
@@ -32,6 +33,7 @@ const {
   showInput = false,
   showMarkerLabels = false,
   showValueLabels = true,
+  classes,
 } = defineProps<GsSliderProps>()
 
 const emit = defineEmits<{
@@ -116,14 +118,14 @@ function thumbLabel(index: number) {
     @update:model-value="update"
     @value-commit="commit"
   >
-    <span v-if="showLabel" :id="labelId" :class="styles.label">{{ label }}</span>
+    <span v-if="showLabel" :id="labelId" :class="[styles.label, classes?.label]">{{ label }}</span>
 
-    <div v-if="showInput" :class="styles.inputs">
+    <div v-if="showInput" :class="[styles.inputs, classes?.inputs]">
       <input
         v-for="(_, index) in values"
         :key="index === 0 ? 'min' : 'max'"
         v-model="drafts[index]"
-        :class="styles.input"
+        :class="[styles.input, classes?.input]"
         :style="{ '--input-chars': String(max).length + 1 }"
         inputmode="decimal"
         :aria-label="thumbLabel(index)"
@@ -132,31 +134,49 @@ function thumbLabel(index: number) {
       />
     </div>
 
-    <SliderTrack :class="styles.track">
-      <div :class="styles.trackBackground" />
-      <div v-if="normalizedMarkers.length" :class="styles.markers" aria-hidden="true">
+    <SliderTrack :class="[styles.track, classes?.track]">
+      <div :class="[styles.trackBackground, classes?.trackBackground]" />
+      <div
+        v-if="normalizedMarkers.length"
+        :class="[styles.markers, classes?.markers]"
+        aria-hidden="true"
+      >
         <div
           v-for="marker in normalizedMarkers"
           :key="marker.value"
-          :class="styles.marker"
+          :class="[styles.marker, classes?.marker]"
           :style="{ '--marker-percent': markerPercent(marker.value) }"
         >
-          <div :class="styles.markerDot" />
-          <span v-if="showMarkerLabels && marker.label" :class="styles.markerLabel">
+          <div :class="[styles.markerDot, classes?.markerDot]" />
+          <span
+            v-if="showMarkerLabels && marker.label"
+            :class="[styles.markerLabel, classes?.markerLabel]"
+          >
             {{ marker.label }}
           </span>
         </div>
       </div>
-      <SliderRange :class="styles.range" />
-      <SliderThumb
-        v-for="(_, index) in values"
+      <SliderRange :class="[styles.range, classes?.trackValue]" />
+      <!-- The value shows in a tooltip on hover/focus, unless the number inputs already show it. -->
+      <GsTooltip
+        v-for="(value, index) in values"
         :key="index"
-        :class="styles.thumb"
-        :aria-label="thumbLabel(index)"
-      />
+        side="top"
+        :delay="0"
+        :disabled="showInput"
+      >
+        <template #trigger>
+          <SliderThumb :class="[styles.thumb, classes?.thumb]" :aria-label="thumbLabel(index)" />
+        </template>
+        {{ value }}
+      </GsTooltip>
     </SliderTrack>
 
-    <span :class="styles.minValue" :hidden="hideMinValue" aria-hidden="true">{{ min }}</span>
-    <span :class="styles.maxValue" :hidden="hideMaxValue" aria-hidden="true">{{ max }}</span>
+    <span :class="[styles.minValue, classes?.minValue]" :hidden="hideMinValue" aria-hidden="true">{{
+      min
+    }}</span>
+    <span :class="[styles.maxValue, classes?.maxValue]" :hidden="hideMaxValue" aria-hidden="true">{{
+      max
+    }}</span>
   </SliderRoot>
 </template>

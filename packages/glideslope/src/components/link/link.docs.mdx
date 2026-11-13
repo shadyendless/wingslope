@@ -1,0 +1,106 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as LinkStories from './link.stories'
+
+<Meta of={LinkStories} />
+
+# Link
+
+An accessible inline text link with optional visited state tracking. Use `as-child` to render a router link with the link's styles.
+
+- **GsLink** - Link with visited state tracking
+- **provideLinkDefaults** - Sets default props for every link below a component
+
+## Example usage
+
+```vue
+<GsLink href="/dashboard">Go to Dashboard</GsLink>
+
+<GsLink href="https://example.com" target="_blank">External Link</GsLink>
+
+<GsLink allows-visited href="/page">This link tracks visited state</GsLink>
+
+<!-- With Vue Router -->
+<GsLink as-child>
+  <RouterLink to="/dashboard">Go to Dashboard</RouterLink>
+</GsLink>
+```
+
+<Canvas of={LinkStories.Default} />
+
+### Custom visited styles
+
+With `allows-visited`, a link gets a `data-visited` attribute once it is clicked, or while `visited` is set. Style it with the foundation's `visited:` variant (it matches `data-visited`), here for every link below a component through `provideLinkDefaults()`. Bind `v-model:visited` to keep the state, for example in your app's history.
+
+```vue
+<script setup lang="ts">
+import { provideLinkDefaults } from '@wingbrace/glideslope'
+import { ref } from 'vue'
+
+provideLinkDefaults({
+  allowsVisited: true,
+  class: 'enabled:visited:fg-accent-primary-pressed enabled:visited:underline',
+})
+
+const seen = ref({ link2: false })
+</script>
+
+<template>
+  <GsLink href="/link1">Link One</GsLink>
+  <GsLink v-model:visited="seen.link2" href="/link2">Link Two</GsLink>
+</template>
+```
+
+<Canvas of={LinkStories.CustomVisitedStyles} />
+
+### Inline links
+
+```vue
+<p>
+  Learn more about our <GsLink href="/features">amazing features</GsLink> and get started today.
+</p>
+```
+
+<Canvas of={LinkStories.Multiple} />
+
+## Props
+
+### GsLink
+
+Attributes such as `target` and `rel` pass through to the `<a>`.
+
+<ArgTypes of={LinkStories} />
+
+### provideLinkDefaults
+
+`provideLinkDefaults()` sets the default `allowsVisited` (and an extra `class`) of every link rendered below the calling component. An `allows-visited` set on a link still wins; the class adds to the link's own.
+
+```vue
+<script setup lang="ts">
+import { provideLinkDefaults } from '@wingbrace/glideslope'
+
+provideLinkDefaults({ allowsVisited: true })
+</script>
+
+<template>
+  <GsLink href="/link1">Link One</GsLink>
+  <GsLink href="/link2">Link Two</GsLink>
+</template>
+```
+
+## Accessibility
+
+- Keyboard: Enter to activate
+- A native `<a>` element with semantic HTML
+- A disabled link drops its `href`, leaves the tab order and is announced as disabled
+- Visible focus indicators
+
+## Implementation notes
+
+- Renders an `<a>` through Reka UI's `Primitive`; `as` and `as-child` render another element or component
+- The visited state is exposed as a `data-visited` attribute, set only while `allows-visited` is on; the link has no visited look of its own
+- Icons in the link line up with its text; set their `size` explicitly
+
+**Related:**
+
+- [Reka UI Primitive](https://reka-ui.com/docs/utilities/primitive)

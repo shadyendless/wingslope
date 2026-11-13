@@ -1,0 +1,84 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as PaginationStories from './pagination.stories'
+
+<Meta of={PaginationStories} />
+
+# Pagination
+
+`GsPagination` is a lightweight component for navigating between pages. It displays up to 5 page numbers at a time, with previous and next controls.
+
+## Basic
+
+```vue
+<GsPagination :total="10" />
+```
+
+<Canvas of={PaginationStories.Default} />
+
+## Controlled
+
+Bind the current page (1-based) with `v-model`.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const page = ref(1)
+</script>
+
+<template>
+  <GsPagination v-model="page" :total="10" />
+</template>
+```
+
+<Canvas of={PaginationStories.Example} />
+
+## Uncontrolled
+
+Without `v-model`, the component keeps the page itself. It starts on `default-value` (page 1 when omitted). Listen to `@update:model-value` to react to changes.
+
+```vue
+<GsPagination :default-value="1" :total="10" @update:model-value="handleChange" />
+```
+
+## Loading
+
+`loading` hides the page numbers while results load. The previous and next controls stay.
+
+```vue
+<GsPagination v-model="page" :total="10" :loading="isFetching" />
+```
+
+## Props
+
+<ArgTypes of={PaginationStories} />
+
+### classes
+
+`class` goes on the `<nav>` container, which lays out the buttons. `classes` styles the buttons:
+
+| Key     | Applied to          |
+| ------- | ------------------- |
+| `prev`  | Previous button     |
+| `pages` | Page number buttons |
+| `next`  | Next button         |
+
+```vue
+<GsPagination
+  v-model="page"
+  :total="10"
+  class="justify-center"
+  :classes="{ pages: 'fg-primary-bold' }"
+/>
+```
+
+## Accessibility
+
+- Renders a semantic `<nav>` element whose `aria-label` gives the current page (`Page 2 of 10`)
+- The previous and next buttons have `aria-label` descriptions
+- The current page button has `aria-current="page"`
+
+## Related
+
+- [Reka UI Pagination](https://reka-ui.com/docs/components/pagination)

@@ -1,0 +1,150 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .tabs {
+    @apply flex;
+
+    @variant orientation-horizontal {
+      @apply flex-col;
+    }
+
+    @variant orientation-vertical {
+      @apply h-full flex-row;
+    }
+  }
+
+  .list {
+    @apply flex;
+
+    @variant orientation-horizontal {
+      @apply relative w-full flex-row;
+
+      &:before {
+        @apply absolute bottom-0 left-0 block h-px w-full bg-(--outline-static);
+        content: '';
+      }
+    }
+
+    @variant orientation-vertical {
+      @apply h-full flex-col;
+    }
+  }
+
+  .tab {
+    @apply relative flex cursor-pointer items-center gap-xs rounded-small p-s fg-primary-muted;
+    max-width: 200px;
+
+    @variant hover {
+      @apply fg-primary-bold;
+    }
+
+    @variant focus-visible {
+      @apply fg-primary-bold;
+    }
+
+    @variant active {
+      @apply fg-pressed;
+    }
+
+    @variant selected {
+      @apply bg-accent-primary-muted fg-accent-primary-bold;
+
+      @variant hover {
+        @apply bg-accent-primary-hover fg-accent-primary-hover;
+      }
+
+      @variant focus-visible {
+        @apply bg-accent-primary-hover fg-accent-primary-hover;
+      }
+
+      @variant active {
+        @apply bg-interactive-muted-pressed fg-accent-primary-pressed;
+      }
+    }
+
+    @variant group-orientation-horizontal/tabs {
+      @apply rounded-b-none;
+
+      &:after {
+        @apply absolute bottom-0 left-0 block h-px w-full bg-(--outline-static);
+        content: '';
+      }
+
+      &.flex {
+        @apply grow;
+      }
+
+      &.center {
+        @apply justify-center;
+      }
+
+      &.end {
+        @apply justify-end;
+      }
+
+      @variant hover {
+        &:after {
+          @apply bg-(--outline-interactive-hover);
+        }
+      }
+
+      @variant focus-visible {
+        &:after {
+          @apply bg-(--outline-accent-primary-bold);
+        }
+      }
+
+      @variant active {
+        &:after {
+          @apply bg-(--outline-interactive-pressed);
+        }
+      }
+
+      @variant selected {
+        &:after {
+          @apply bg-(--outline-accent-primary-bold);
+        }
+
+        @variant hover {
+          &:after {
+            @apply bg-(--outline-accent-primary-hover);
+          }
+        }
+
+        @variant focus-visible {
+          &:after {
+            @apply bg-(--outline-accent-primary-hover);
+          }
+        }
+
+        @variant active {
+          &:after {
+            @apply bg-(--outline-accent-primary-pressed);
+          }
+        }
+      }
+    }
+
+    @variant group-orientation-vertical/tabs {
+      @apply flex-col;
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed fg-disabled;
+
+      @variant selected {
+        @apply bg-interactive-disabled;
+      }
+
+      @variant group-orientation-horizontal/tabs {
+        &:after {
+          @apply bg-(--outline-interactive-disabled);
+        }
+      }
+    }
+  }
+
+  .panel {
+    @apply p-s fg-primary-bold;
+  }
+}

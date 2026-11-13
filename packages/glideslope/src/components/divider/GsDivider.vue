@@ -15,12 +15,23 @@
  * ```
  */
 import { Separator } from 'reka-ui'
+import { computed } from 'vue'
+import { injectDividerDefaults } from './defaults'
 import styles from './styles.module.css'
 import type { GsDividerProps } from './types'
 
-const { orientation = 'horizontal', decorative = false } = defineProps<GsDividerProps>()
+const { orientation, decorative = false } = defineProps<GsDividerProps>()
+
+const defaults = injectDividerDefaults()
+const resolvedOrientation = computed(
+  () => orientation ?? defaults.value.orientation ?? 'horizontal',
+)
 </script>
 
 <template>
-  <Separator :orientation="orientation" :decorative="decorative" :class="styles.divider" />
+  <Separator
+    :orientation="resolvedOrientation"
+    :decorative="decorative"
+    :class="[styles.divider, defaults.class]"
+  />
 </template>

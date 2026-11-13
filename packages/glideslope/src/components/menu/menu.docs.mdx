@@ -1,0 +1,296 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import GsContextMenu from './GsContextMenu.vue'
+import GsMenuCheckboxItem from './GsMenuCheckboxItem.vue'
+import GsMenuItem from './GsMenuItem.vue'
+import GsMenuItemDescription from './GsMenuItemDescription.vue'
+import GsMenuItemLabel from './GsMenuItemLabel.vue'
+import GsMenuRadioGroup from './GsMenuRadioGroup.vue'
+import GsMenuRadioItem from './GsMenuRadioItem.vue'
+import GsMenuSection from './GsMenuSection.vue'
+import GsMenuSeparator from './GsMenuSeparator.vue'
+import GsMenuSubmenu from './GsMenuSubmenu.vue'
+import * as MenuStories from './menu.stories'
+
+<Meta of={MenuStories} />
+
+# Menu
+
+A menu displays a list of actions or options that a user can choose.
+
+Menu is a composed component made up of smaller subcomponents: `GsMenu` (or `GsContextMenu`), `GsMenuItem`, `GsMenuItemLabel`, `GsMenuItemDescription`, `GsMenuCheckboxItem`, `GsMenuRadioGroup`, `GsMenuRadioItem`, `GsMenuSeparator`, `GsMenuSection`, and `GsMenuSubmenu`. You can also compose `GsIcon` components within menu items, and show a keyboard shortcut with the `hotkey` prop.
+
+> **Important:** `GsMenu` includes its own trigger and floating panel. Put the trigger in its `#trigger` slot and the items in the default slot; do not wrap it in a `GsPopover`. Position it with the `side`, `align` and `offset` props.
+
+<Canvas of={MenuStories.Basic} />
+
+## Dynamic
+
+Render items from data with `v-for`.
+
+```vue
+<GsMenu>
+  <template #trigger>
+    <GsButton variant="icon" aria-label="Menu"><GsIcon><KebabIcon /></GsIcon></GsButton>
+  </template>
+  <GsMenuSubmenu v-for="group in groups" :key="group.id" :label="group.name">
+    <GsMenuItem
+      v-for="bird in group.children"
+      :key="bird.id"
+      :disabled="bird.disabled"
+      :color="bird.color"
+    >
+      <GsMenuItemLabel>{{ bird.name }}</GsMenuItemLabel>
+      <GsMenuItemDescription>{{ bird.description }}</GsMenuItemDescription>
+    </GsMenuItem>
+  </GsMenuSubmenu>
+</GsMenu>
+```
+
+<Canvas of={MenuStories.Dynamic} />
+
+## Simple Menu
+
+A minimal menu without icons or descriptions. The `label` prop is shorthand for a `GsMenuItemLabel` in the default slot.
+
+<Canvas of={MenuStories.SimpleMenu} />
+
+```vue
+<GsMenu>
+  <template #trigger><GsButton>Open Menu</GsButton></template>
+  <GsMenuItem label="Item" />
+  <GsMenuSeparator />
+  <GsMenuItem label="Item" />
+</GsMenu>
+```
+
+## Custom Placement
+
+Use `side` and `align` to customize the menu position relative to the trigger.
+
+<Canvas of={MenuStories.CustomPlacement} />
+
+```vue
+<GsMenu side="top" align="end">
+  <template #trigger><GsButton>Open Menu</GsButton></template>
+  <GsMenuItem label="Item 1" />
+  <GsMenuItem label="Item 2" />
+</GsMenu>
+```
+
+`side` is `'bottom'` (default), `'top'`, `'left'` or `'right'`; `align` is `'start'` (default), `'center'` or `'end'`. The menu flips to the opposite side when there is no room.
+
+## With Offset
+
+Use `offset` to control spacing between the trigger and menu.
+
+<Canvas of={MenuStories.WithOffset} />
+
+```vue
+<GsMenu side="bottom" align="center" :offset="8">
+  <template #trigger><GsButton>Open Menu</GsButton></template>
+  <GsMenuItem label="Item" />
+</GsMenu>
+```
+
+## With Action Handler
+
+Give each `GsMenuItem` a `value` and handle them all with the menu's `@action`, which receives the chosen item's `value` (items in submenus included). To handle one item on its own, use its `@select`. The menu closes afterwards unless a `select` handler calls `event.preventDefault()`.
+
+<Canvas of={MenuStories.WithActionHandler} />
+
+```vue
+<GsMenu @action="(value) => console.log('Selected:', value)">
+  <template #trigger><GsButton>Actions</GsButton></template>
+  <GsMenuItem value="edit" label="Edit" />
+  <GsMenuItem value="delete" label="Delete" />
+</GsMenu>
+```
+
+## Selection Modes
+
+Selection is set per item rather than on the menu: checkbox items toggle independently, and radio items in a group select one value.
+
+### Single Selection
+
+Use a `GsMenuRadioGroup` with `GsMenuRadioItem`s to allow selecting one item at a time.
+
+<Canvas of={MenuStories.SingleSelection} />
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const fontSize = ref('medium')
+</script>
+
+<template>
+  <GsMenu>
+    <template #trigger><GsButton>Font Size</GsButton></template>
+    <GsMenuRadioGroup v-model="fontSize">
+      <GsMenuRadioItem value="small" label="Small" />
+      <GsMenuRadioItem value="medium" label="Medium" />
+    </GsMenuRadioGroup>
+  </GsMenu>
+</template>
+```
+
+### Multiple Selection
+
+Use `GsMenuCheckboxItem`s to allow selecting multiple items. Add `@select.prevent` to keep the menu open while toggling.
+
+<Canvas of={MenuStories.MultipleSelection} />
+
+```vue
+<script setup lang="ts">
+import { reactive } from 'vue'
+
+const selected = reactive({ item1: true, item2: false })
+</script>
+
+<template>
+  <GsMenu>
+    <template #trigger><GsButton>Select Items</GsButton></template>
+    <GsMenuCheckboxItem v-model="selected.item1" label="Item 1" @select.prevent />
+    <GsMenuCheckboxItem v-model="selected.item2" label="Item 2" @select.prevent />
+  </GsMenu>
+</template>
+```
+
+## Color Variants
+
+Menu items support three color variants: `info` (default), `serious`, and `critical`.
+
+<Canvas of={MenuStories.ColorVariants} />
+
+## Disabled Items
+
+Use `disabled` on individual menu items to prevent interaction.
+
+<Canvas of={MenuStories.DisabledItems} />
+
+## Context Menu
+
+`GsContextMenu` opens at the pointer when its `#trigger` area is right-clicked, or long-pressed on a touch screen. It takes the same items as `GsMenu`, including sections, checkbox and radio items and submenus, and emits the same `@action`. Make the area focusable so keyboard users can open the menu with the context-menu key or Shift+F10. Set `disabled` to keep the browser's own context menu.
+
+<Canvas of={MenuStories.ContextMenu} />
+
+```vue
+<GsContextMenu @action="run">
+  <template #trigger>
+    <div tabindex="0" class="h-[300px]">right-click for context menu</div>
+  </template>
+  <GsMenuItem value="copy" label="Copy" hotkey="⌘C" />
+  <GsMenuSubmenu label="Export as">
+    <GsMenuItem value="csv" label="CSV" />
+  </GsMenuSubmenu>
+</GsContextMenu>
+```
+
+## Dynamic Section Header
+
+`GsMenuSection` groups items under a heading. Use the `title` prop for plain text, or the `#title` slot for custom formatting.
+
+<Canvas of={MenuStories.DynamicMenuHeader} />
+
+```vue
+<GsMenu>
+  <template #trigger><GsButton>Open Menu</GsButton></template>
+  <GsMenuItem label="Item" />
+  <GsMenuSection title="Additional Notable Species">
+    <GsMenuItem hotkey="⌘V">
+      <GsMenuItemLabel>Mallard</GsMenuItemLabel>
+      <GsMenuItemDescription>Anas platyrhynchos</GsMenuItemDescription>
+    </GsMenuItem>
+  </GsMenuSection>
+  <GsMenuSection>
+    <template #title>
+      <div class="text-body-m">Additional Notable Species</div>
+      <div class="text-body-xs">These birds sound made up.</div>
+    </template>
+    <GsMenuItem label="Chimney swift" />
+  </GsMenuSection>
+</GsMenu>
+```
+
+## With Submenu
+
+The submenu's `label` names the item that opens it; its `#trigger` slot adds content such as an icon to that item.
+
+```vue
+<GsMenu>
+  <template #trigger><GsButton>Open Menu</GsButton></template>
+  <GsMenuItem label="Item" />
+  <GsMenuSubmenu label="Item With Children">
+    <template #trigger><GsIcon><PlaceholderIcon /></GsIcon></template>
+    <GsMenuItem label="Blue Jay" />
+  </GsMenuSubmenu>
+</GsMenu>
+```
+
+## Props
+
+Each part accepts `classes` for its inner parts: `popover` (the panel) on `GsMenu`, `GsContextMenu` and `GsMenuSubmenu`; `text`, `icon` and `hotkey` on items; `more` (the chevron) on `GsMenuSubmenu`; `header` on `GsMenuSection`. Classes on a menu go to its trigger.
+
+### GsMenu
+
+Bind `v-model:open` to control the open state.
+
+<ArgTypes of={MenuStories} />
+
+### GsContextMenu
+
+<ArgTypes of={GsContextMenu} />
+
+### GsMenuItem
+
+<ArgTypes of={GsMenuItem} />
+
+### GsMenuCheckboxItem
+
+<ArgTypes of={GsMenuCheckboxItem} />
+
+### GsMenuRadioGroup
+
+<ArgTypes of={GsMenuRadioGroup} />
+
+### GsMenuRadioItem
+
+<ArgTypes of={GsMenuRadioItem} />
+
+### GsMenuSection
+
+<ArgTypes of={GsMenuSection} />
+
+### GsMenuItemLabel
+
+<ArgTypes of={GsMenuItemLabel} />
+
+### GsMenuItemDescription
+
+<ArgTypes of={GsMenuItemDescription} />
+
+### GsMenuSeparator
+
+<ArgTypes of={GsMenuSeparator} />
+
+### GsMenuSubmenu
+
+See [Reka UI Dropdown Menu](https://reka-ui.com/docs/components/dropdown-menu#sub) for submenu behavior.
+
+<ArgTypes of={GsMenuSubmenu} />
+
+## Accessibility
+
+- Full keyboard navigation with Arrow keys
+- Type-ahead selection support
+- Submenu navigation with Arrow Left/Right
+- Escape closes menu and returns focus to trigger
+- A context menu opens with right-click, a long press, or the context-menu key (Shift+F10) on its focused trigger area
+- Checkbox and radio items expose their checked state to screen readers
+
+## Related
+
+- [MenuButton with Tooltip](?path=/story/components-button-composition-menu-button--with-tooltip) - combining a menu with a tooltip on the trigger
+- [Reka UI Dropdown Menu](https://reka-ui.com/docs/components/dropdown-menu)
+- [Reka UI Context Menu](https://reka-ui.com/docs/components/context-menu)

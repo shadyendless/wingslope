@@ -6,6 +6,7 @@ Durable, repo-specific instructions for coding agents. Project facts live in [RE
 
 - Read [`packages/glideslope/AUTHORING.md`](./packages/glideslope/AUTHORING.md) before adding or changing a component, and [`packages/foundation/src/documentation/tailwind.md`](./packages/foundation/src/documentation/tailwind.md) before writing styles.
 - When porting a component from `standard-toolkit/packages/design-toolkit`, port its behavior and styles, but use Vue and Reka UI idioms rather than mirroring the React or react-aria API. Do not reintroduce react-aria-specific variants or attributes.
+- Port a component's Storybook stories and `*.docs.mdx` page with it: same sidebar title, story names and order as the Design Toolkit's, one Glideslope story file per Design Toolkit story file (see AUTHORING's "Tests and stories").
 
 ## Hard-won constraints
 

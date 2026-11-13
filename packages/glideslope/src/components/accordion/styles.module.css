@@ -1,0 +1,104 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .group {
+    @apply flex w-full flex-col;
+  }
+
+  .accordion {
+    @apply flex w-full flex-col bg-transparent;
+  }
+
+  .header {
+    @apply flex w-full items-center gap-s rounded-medium px-s py-xs fg-primary-bold outline-none;
+
+    @variant focus-visible-within {
+      @apply bg-interactive-muted-hover;
+    }
+
+    @variant hover {
+      @apply bg-interactive-muted-hover;
+    }
+
+    @variant active {
+      @apply bg-interactive-muted-pressed;
+    }
+
+    @variant group-disabled/accordion {
+      @apply cursor-not-allowed fg-disabled;
+    }
+  }
+
+  .heading {
+    @apply grow;
+  }
+
+  /* Reka UI measures the content into --reka-accordion-content-height for the open/close motion. */
+  .panel {
+    @apply overflow-hidden;
+
+    @variant motion-safe {
+      @variant open {
+        animation: expand var(--animation-duration-normal) var(--animation-easing-standard);
+      }
+
+      @variant closed {
+        animation: collapse var(--animation-duration-normal) var(--animation-easing-standard);
+      }
+    }
+  }
+
+  .panelContent {
+    @apply p-s;
+  }
+
+  @keyframes expand {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--reka-accordion-content-height);
+    }
+  }
+
+  @keyframes collapse {
+    from {
+      height: var(--reka-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+
+  .triggerChevron {
+    @apply transform;
+
+    @variant group-open/accordion {
+      @apply rotate-180;
+    }
+
+    @variant motion-safe {
+      transition: transform var(--animation-duration-normal) var(--animation-easing-standard);
+    }
+  }
+}
+
+@layer components.l2 {
+  .menu {
+    @variant focus-visible {
+      @apply outline-mono-bold-pressed;
+    }
+  }
+
+  .trigger {
+    @apply w-full justify-start px-0 transition-none select-none;
+
+    &.cozy {
+      @apply gap-s text-header-m;
+    }
+
+    &.compact {
+      @apply gap-xs text-header-s;
+    }
+  }
+}

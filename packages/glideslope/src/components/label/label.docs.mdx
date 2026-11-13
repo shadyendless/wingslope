@@ -1,0 +1,79 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as LabelStories from './label.stories'
+
+<Meta of={LabelStories} />
+
+# Label
+
+A semantic label component for form elements with automatic optional/required indicators.
+
+- **GsLabel** - Label with required/optional text handling
+- **provideLabelDefaults** - Sets default props for every label below a component
+
+## Example usage
+
+```vue
+<GsLabel for="email">Email Address</GsLabel>
+
+<GsLabel for="password" required>Password</GsLabel>
+
+<GsLabel for="account" disabled>Account Number</GsLabel>
+```
+
+<Canvas of={LabelStories.Default} />
+
+### Inside a field
+
+Inside a Glideslope field such as [TextField](?path=/docs/components-textfield--docs) (or any Reka UI `FieldRoot`), the label is wired to the field's control automatically and follows the field's `disabled` and `required` state, so `for`, `disabled` and `required` aren't needed.
+
+## Props
+
+### GsLabel
+
+<ArgTypes of={LabelStories} />
+
+### provideLabelDefaults
+
+`provideLabelDefaults()` sets the default `required` and `disabled` state of every label rendered below the calling component.
+
+```vue
+<script setup lang="ts">
+import { provideLabelDefaults } from '@wingbrace/glideslope'
+
+provideLabelDefaults({ required: true })
+</script>
+
+<template>
+  <GsLabel for="first-name">First Name</GsLabel>
+  <GsLabel for="last-name">Last Name</GsLabel>
+  <GsLabel for="email">Email</GsLabel>
+</template>
+```
+
+<Canvas of={LabelStories.Provider} />
+
+`disabled` and `required` resolve in this order:
+
+1. The prop set on the label
+2. The surrounding field's state (inside a Glideslope field or Reka UI `FieldRoot`)
+3. `provideLabelDefaults()`
+4. `false`
+
+A field always knows whether it is required or disabled, so provided defaults only reach labels outside a field. Set `required` / `disabled` on the field instead.
+
+## Accessibility
+
+- Renders a semantic `<label>` element
+- Use `for` with the `id` of a form control to associate them outside a field
+- Automatic "(optional)" text for non-required fields
+
+## Implementation notes
+
+- Wraps Reka UI's `Label`, or `FieldLabel` inside a field
+- Automatically appends "(optional)" when `required` is false
+- Sets `data-disabled` and `data-required` for styling states
+
+**Related:**
+
+- [Reka UI Label docs](https://reka-ui.com/docs/components/label)

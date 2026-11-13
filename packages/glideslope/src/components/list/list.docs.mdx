@@ -1,0 +1,188 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as ListStories from './list.stories'
+import GsListItem from './GsListItem.vue'
+import GsListItemContent from './GsListItemContent.vue'
+import GsListItemDescription from './GsListItemDescription.vue'
+import GsListItemTitle from './GsListItemTitle.vue'
+
+<Meta of={ListStories} />
+
+# List
+
+A flexible grid list component for displaying selectable items with rich content. Built on Reka UI's `TagGroup`, which implements grid-list semantics.
+
+Components:
+
+- **GsList** - Main list container with variant and selection options
+- **GsListItem** - Individual selectable item
+- **GsListItemContent** - Container for title and description
+- **GsListItemTitle** - Primary text content
+- **GsListItemDescription** - Secondary text content
+
+## Example usage
+
+```vue
+<GsList aria-label="Items list" class="h-[400px]">
+  <GsListItem value="item-1" text-value="Item 1">
+    <GsIcon><PlaceholderIcon /></GsIcon>
+    <GsListItemContent>
+      <GsListItemTitle>Item 1</GsListItemTitle>
+      <GsListItemDescription>Description text</GsListItemDescription>
+    </GsListItemContent>
+  </GsListItem>
+</GsList>
+```
+
+<Canvas of={ListStories.Default} />
+
+### With selection
+
+Set `selection-mode` to `single` or `multiple` and bind the selected rows' values with `v-model`.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const selected = ref(['item-1'])
+</script>
+
+<template>
+  <GsList v-model="selected" selection-mode="multiple" aria-label="Selectable list">
+    <GsListItem value="item-1" text-value="Item 1">
+      <GsListItemContent>
+        <GsListItemTitle>Item 1</GsListItemTitle>
+      </GsListItemContent>
+    </GsListItem>
+  </GsList>
+</template>
+```
+
+<Canvas of={ListStories.Stateful} />
+
+### Dynamic rendering
+
+Render rows from data with `v-for`. A row that only needs a title can use `label` instead of the default slot.
+
+```vue
+<GsList aria-label="Animals">
+  <GsListItem v-for="item in animals" :key="item.id" :value="item.id" :text-value="item.name">
+    <GsListItemContent>
+      <GsListItemTitle>{{ item.name }}</GsListItemTitle>
+      <GsListItemDescription>{{ item.description }}</GsListItemDescription>
+    </GsListItemContent>
+  </GsListItem>
+</GsList>
+
+<GsList aria-label="Animals">
+  <GsListItem v-for="item in animals" :key="item.id" :value="item.id" :label="item.name" />
+</GsList>
+```
+
+### Row actions
+
+Put controls such as a row [Menu](?path=/docs/components-menu--docs) in the `#actions` slot. Using them doesn't select the row, they aren't part of the row's accessible name, and Tab reaches them only in the focused row. Give each control its own `aria-label`.
+
+In a list without selection (`selection-mode="none"`, the default), clicking a row or pressing Enter on it emits `action`.
+
+```vue
+<GsList aria-label="Animals">
+  <GsListItem
+    v-for="item in animals"
+    :key="item.id"
+    :value="item.id"
+    :label="item.name"
+    @action="open(item)"
+  >
+    <template #actions>
+      <GsMenu>
+        <template #trigger>
+          <GsButton variant="icon" :aria-label="`${item.name} actions`">
+            <GsIcon><KebabIcon /></GsIcon>
+          </GsButton>
+        </template>
+        <GsMenuItem label="Edit" @select="edit(item)" />
+        <GsMenuItem label="Delete" color="critical" @select="remove(item)" />
+      </GsMenu>
+    </template>
+  </GsListItem>
+</GsList>
+```
+
+<Canvas of={ListStories.RowActions} />
+
+### Links
+
+Give a row `href` to make it a link, in a list without selection: clicking the row or pressing Enter on it opens `href` (and emits `action`). Ctrl or Cmd opens it in a new tab, and `target` and `rel` work as on an `<a>`. In a selectable list, rows select instead, so `href` is ignored; it is also ignored while the row is disabled.
+
+```vue
+<GsList aria-label="Missions">
+  <GsListItem
+    v-for="mission in missions"
+    :key="mission.id"
+    :value="mission.id"
+    :label="mission.name"
+    :href="`/missions/${mission.id}`"
+  />
+</GsList>
+```
+
+A grid row can't itself be a link (its role stays `row`), so the row's text part is rendered as a real `<a>`, stretched over the row and kept out of the tab order. Keyboard users move between rows and press Enter; pointer users get the browser's own link behavior (middle-click, the context menu, the address on hover); screen reader users find a link inside the row. React Aria instead keeps the row a plain element and opens the address from script. For links handled by your app's router, leave out `href` and navigate in `@action`.
+
+## Variants
+
+| Variant   | Description                                         |
+| --------- | --------------------------------------------------- |
+| `cozy`    | Standard spacing with comfortable padding (default) |
+| `compact` | Reduced spacing for dense layouts                   |
+
+## Props
+
+### GsList
+
+<ArgTypes of={ListStories} />
+
+### GsListItem
+
+<ArgTypes of={GsListItem} />
+
+`class` goes on the row. `classes.icon` goes on every `GsIcon` in the row's content (icons inside buttons keep their own styling):
+
+```vue
+<GsListItem value="item-1" text-value="Item 1" :classes="{ icon: 'fg-accent-primary-bold' }">
+  <GsIcon><PlaceholderIcon /></GsIcon>
+  <GsListItemContent>
+    <GsListItemTitle>Item 1</GsListItemTitle>
+  </GsListItemContent>
+</GsListItem>
+```
+
+### GsListItemContent
+
+<ArgTypes of={GsListItemContent} />
+
+### GsListItemTitle
+
+<ArgTypes of={GsListItemTitle} />
+
+### GsListItemDescription
+
+<ArgTypes of={GsListItemDescription} />
+
+## Accessibility
+
+- Keyboard: arrow keys, Home/End, Space/Enter for selection, type-ahead to jump to a row
+- ARIA grid role with proper row structure
+- Screen reader announcements for selection changes
+- `aria-label` or `aria-labelledby` required
+- Link rows keep the `row` role; their text is a link, out of the tab order, that Enter opens
+
+## Implementation notes
+
+- Wraps Reka UI's `TagGroupRoot` and `TagGroupItem`
+- Icons are sized automatically through `provideIconDefaults` (large for cozy, small for compact)
+- Supports inline actions such as `GsMenu` or `GsButton` in a row's `#actions` slot
+
+**Related:**
+
+- [Reka UI TagGroup](https://reka-ui.com/docs/components/tag-group)

@@ -49,6 +49,7 @@ const resolvedSize = computed(() => size ?? defaults.value.size ?? 'medium')
 
 - **Props:** declare them in `types.ts` as an `interface` with JSDoc on every prop (it becomes the Storybook docs), then use reactive props destructure with defaults (`const { x = 1 } = defineProps<…>()`). Use Vue naming: `disabled`, not `isDisabled`.
 - **Defaults a parent may provide:** leave props without a default and resolve them as `prop ?? defaults.value.prop ?? fallback`, so an explicit prop beats a provided default, which beats the component default.
+- **Optional booleans that mean something when unset:** Vue casts an absent `boolean` prop to `false`, so `prop ?? fallback` never reaches the fallback. Give such props an explicit `= undefined` default (`GsLabel`'s `required`).
 - **Two-way state:** use `defineModel()`, so consumers bind with `v-model` and the component still works uncontrolled.
 - **Events:** native events (`@click`, `@focus`) fall through to the root element, so don't redeclare them. Declare custom events with `defineEmits<…>()`.
 - **Slots:** always declare them with `defineSlots`. Scoped slots replace React render props (`<slot :pressed="pressed" />`).
@@ -64,8 +65,20 @@ Use the [Reka UI](https://reka-ui.com/docs/overview/introduction) primitive when
 ## Sharing state with descendants
 
 - **Defaults for another family** (Button sizing the Icons in it, Avatar placing the Badges in it): use `createDefaults()` in `defaults.ts` and export `provide<Family>Defaults` publicly.
+- **Controls inside a composite widget's rows** (list and tree row actions) are named out of the row (`aria-labelledby` / `aria-label`), stop clicks from reaching the row, and use `useRowTabStop()` so Tab reaches them only in the row that is the roving tab stop.
+- **Module-level state** (the notice queue in `notice/use-notices.ts`) is for state that must be reachable outside components. It is shared across server-side requests, so document it as client-only.
 - **Compound components** (List → ListItem): use a typed `InjectionKey` in `context.ts` with `provide…Context` / `inject…Context` helpers. Keep the context internal.
-- **One item, several containers:** `GsOption` renders a Reka `ListboxItem`, `SelectItem` or `ComboboxItem` depending on the `OptionsContext.kind` its container provides. Reuse this approach rather than adding per-container item components.
+- **One item, several containers:** `GsOption` renders a Reka `ListboxItem`, `SelectItem` or `ComboboxItem` depending on the `OptionsContext.kind` its container provides, and menu items pick Reka's `DropdownMenu*` or `ContextMenu*` parts from `menuParts[kind]` the same way. Reuse this approach rather than adding per-container item components.
+
+## Overlays
+
+Tooltip, popover, dialog and menu share one shape:
+
+- The trigger goes in a `#trigger` slot, rendered inside Reka's `…Trigger as-child`, so it must be a single element or component (usually a `GsButton`). `GsDialog`'s trigger is optional; open it with `v-model:open` instead.
+- The default slot is the content and receives `close`.
+- Overlays set `inheritAttrs: false` and bind `$attrs` to their `…Trigger`. Their root is a fragment (trigger plus portal), so otherwise an outer overlay's trigger attributes and listeners are dropped when one overlay is another's trigger.
+- Content is portalled to `body`. Styles reach it through module classes on the Reka content part, not through ancestors in the page.
+- Reka labels popover content by its trigger and gives that precedence over attributes we pass, so `GsPopoverTitle` points the panel's `aria-labelledby` at itself after it mounts, and `GsPopover`'s `label` renders a hidden span the panel is labelled by.
 
 ## Fields
 
@@ -105,5 +118,7 @@ Preserve keyboard operation, accessible names, focus behavior and status feedbac
 
 - **Tests** (`<family>.test.ts`) use Vitest with `@testing-library/vue` and `user-event`. Query by role and name, and test behavior: provided defaults, `v-model`, disabled handling, ARIA. CSS Module class names are unhashed in tests (`toHaveClass('button', 'filled')`).
 - **Reka wires some things after mount:** label and description IDs, slider thumbs. Use `findBy…` or `waitFor` for those assertions rather than `getBy…` straight after `render`. Don't query with `{ hidden: true }` to make a test pass; a hidden element is usually a real accessibility bug.
-- **Stories** (`<family>.stories.ts`) are CSF3 with `satisfies Meta<typeof GsX>`. Include a `Playground` story wired to controls, plus stories for meaningful states. Story templates may use utility classes for layout.
+- **Stories mirror the Design Toolkit's.** For a ported component, keep one story file per Design Toolkit story file, with the same file name, `title` and story names, in the same order (`Default` is the controls-driven story). Add a story only when it shows Vue-specific API (a `v-model`, a slot, `provide*Defaults`), after the ported ones. Stories are CSF3 with `satisfies Meta<typeof GsX>`; templates may use utility classes for layout.
+- **Docs pages** (`<name>.docs.mdx`, next to the stories, `<Meta of={…Stories} />`) follow the Design Toolkit's page with Vue code samples. Use `<ArgTypes>` for props, events and slots, which are generated from the components' JSDoc, rather than hand-written tables.
+- **`src/stories.test.ts` renders every story** and fails on Vue warnings. Story templates are strings, so it is the only check that catches an unregistered or misspelled component in one.
 - Check every new component in both themes in Storybook, and in `apps/playground` when it affects how consumers use the library.

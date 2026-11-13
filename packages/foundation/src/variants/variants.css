@@ -33,6 +33,7 @@
 @custom-variant expanded (&:where([aria-expanded="true"], [data-expanded]));
 @custom-variant placeholder-shown (&:where(:placeholder-shown, [data-placeholder]));
 @custom-variant current (&:where([aria-current]:not([aria-current="false"])));
+@custom-variant visited (&:where([data-visited], :visited));
 @custom-variant required (&:where(:required, [aria-required="true"]));
 @custom-variant invalid (&:where(:user-invalid, [aria-invalid="true"], [data-invalid]));
 @custom-variant read-only (&:where([readonly], [aria-readonly="true"], [data-readonly]));

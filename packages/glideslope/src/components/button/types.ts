@@ -1,4 +1,5 @@
 import type { PrimitiveProps } from 'reka-ui'
+import type { Component } from 'vue'
 
 export type GsButtonSize = 'large' | 'medium' | 'small' | 'xsmall'
 export type GsButtonColor = 'mono-muted' | 'mono-bold' | 'accent' | 'serious' | 'critical'
@@ -36,7 +37,14 @@ export interface GsToggleButtonProps extends Omit<GsButtonStyleProps, 'variant'>
   disabled?: boolean
 }
 
-export type GsButtonDefaults = GsButtonStyleProps
+export type GsButtonDefaults = GsButtonStyleProps & {
+  /** Disables every button below the provider that doesn't set `disabled` itself. */
+  disabled?: boolean
+  /** Class added to each button's root, after its own styles. */
+  class?: string
+  /** Icon shown in buttons that have no content of their own, e.g. a header's menu buttons. */
+  icon?: Component
+}
 export type GsLinkButtonDefaults = GsButtonStyleProps
 export type GsToggleButtonDefaults = Omit<GsButtonStyleProps, 'variant'> & {
   variant?: GsToggleButtonVariant

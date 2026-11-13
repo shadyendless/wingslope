@@ -1,0 +1,118 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as TextFieldStories from './text-field.stories'
+
+<Meta of={TextFieldStories} />
+
+# TextField
+
+`GsTextField` is a single-line text input with an integrated label, description and error message. Bind its value with `v-model`.
+
+```vue
+<!-- Basic text field -->
+<GsTextField v-model="username" label="Username" />
+
+<!-- With validation -->
+<GsTextField
+  v-model="email"
+  label="Email"
+  description="We'll never share your email"
+  error-message="Please enter a valid email"
+  required
+  type="email"
+  placeholder="example@email.com"
+/>
+
+<!-- With prefix and suffix -->
+<GsTextField v-model="price" label="Price" type="number">
+  <template #prefix>$</template>
+  <template #suffix>USD</template>
+</GsTextField>
+
+<!-- Small size with clearable input -->
+<GsTextField v-model="query" label="Search" size="small" type="search" clearable />
+
+<!-- Readonly -->
+<GsTextField v-model="username" label="Username" readonly />
+```
+
+<Canvas of={TextFieldStories.Default} />
+
+## Validation
+
+Validation runs through Reka UI's `FieldRoot`: native constraints (`required`, `type`, `pattern`, `min-length`, `max-length`, …) plus an optional `validate` function that returns error messages. `validation-mode` sets when it runs (`onSubmit` by default, `onBlur` or `onChange`). Setting `error-message` (or `invalid`) marks the field invalid yourself, for example when another library manages validation.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const callsign = ref('')
+const validate = (value: unknown) => (String(value).length < 3 ? 'Use at least 3 characters' : null)
+</script>
+
+<template>
+  <GsTextField
+    v-model="callsign"
+    label="Callsign"
+    validation-mode="onChange"
+    :validate="validate"
+  />
+</template>
+```
+
+<Canvas of={TextFieldStories.CustomValidation} />
+
+## Props
+
+`GsTextField` takes the input's props (`type`, `placeholder`, `clearable`, `auto-size`) directly, and its `#prefix` and `#suffix` slots go to the input. `min-length` and `max-length` limit the number of characters: the input stops accepting text past `max-length`, and validation reports a value shorter than `min-length` once the user has typed. `class` and `style` go on the field wrapper; every other attribute (`autocomplete`, `inputmode`, `pattern`, `aria-*`, listeners) goes on the `<input>`.
+
+<ArgTypes of={TextFieldStories} />
+
+**`classes`:**
+
+| Key           | Description                                                                                                   |
+| ------------- | ------------------------------------------------------------------------------------------------------------- |
+| `label`       | Label element                                                                                                 |
+| `input`       | Input parts: [Input](?path=/docs/components-input--docs)'s `classes` keys, plus `container` for its outer box |
+| `description` | Description text                                                                                              |
+| `error`       | Error message                                                                                                 |
+
+```vue
+<GsTextField
+  v-model="callsign"
+  label="Callsign"
+  :classes="{ label: 'uppercase', input: { container: 'w-full', input: 'font-mono' } }"
+/>
+```
+
+## provideTextFieldDefaults
+
+`provideTextFieldDefaults()` sets defaults for every `GsTextField` rendered below the calling component: `size`, `disabled`, `required`, `readonly`, `clearable`, `auto-size`, `validation-mode` and `classes`. A prop set on a field still wins.
+
+```vue
+<script setup lang="ts">
+import { provideTextFieldDefaults } from '@wingbrace/glideslope'
+
+provideTextFieldDefaults({ required: true })
+</script>
+
+<template>
+  <GsTextField v-model="firstName" label="First name" placeholder="Enter first name" />
+  <GsTextField v-model="lastName" label="Last name" placeholder="Enter last name" />
+</template>
+```
+
+<Canvas of={TextFieldStories.Provider} />
+
+## Accessibility
+
+- The label, description and error message are linked to the input with `aria-labelledby` and `aria-describedby`.
+- At `size="small"` the label isn't shown; it becomes the input's `aria-label`.
+- Error messages are shown in place of the description while the field is invalid.
+- Required fields are marked on the input, and optional fields are labeled "(optional)".
+
+## Related
+
+- [Input](?path=/docs/components-input--docs)
+- [TextAreaField](?path=/docs/components-textareafield--docs)
+- [Reka UI Field](https://reka-ui.com/docs/components/field)

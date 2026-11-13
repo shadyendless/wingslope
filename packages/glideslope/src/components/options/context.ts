@@ -1,5 +1,5 @@
 import type { AcceptableValue } from 'reka-ui'
-import { inject, provide, type InjectionKey } from 'vue'
+import { inject, provide, type InjectionKey, type Ref } from 'vue'
 
 /**
  * Which Reka UI collection the options belong to. `registry` is a render-less pass in which
@@ -9,6 +9,10 @@ export type OptionsKind = 'select' | 'combobox' | 'listbox' | 'registry'
 
 export interface OptionsContext {
   kind: OptionsKind
+  /** `false` in a `GsOptions` with `selection-mode="none"`: choosing an option emits `action`. */
+  selectable?: Readonly<Ref<boolean>>
+  /** The whole list is disabled. */
+  disabled?: Readonly<Ref<boolean>>
   /** Lets a combobox show the label of the selected value in its input. */
   registerLabel?: (value: AcceptableValue, label: string) => () => void
 }

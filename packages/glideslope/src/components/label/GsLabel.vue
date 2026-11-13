@@ -3,7 +3,8 @@
  * Form field label. Marks optional fields with "(optional)" rather than marking required ones.
  *
  * Inside a Glideslope field (or any Reka UI `FieldRoot`) it is wired to the field's control
- * automatically and follows the field's `disabled` / `required` state.
+ * automatically and follows the field's `disabled` / `required` state. `disabled` and `required`
+ * resolve in this order: the prop, the surrounding field, `provideLabelDefaults()`, then `false`.
  *
  * @example
  * ```vue
@@ -12,6 +13,7 @@
  */
 import { FieldLabel, Label, injectFieldRootContext } from 'reka-ui'
 import { computed } from 'vue'
+import { injectLabelDefaults } from './defaults'
 import styles from './styles.module.css'
 import type { GsLabelProps } from './types'
 
@@ -28,9 +30,15 @@ defineSlots<{
 }>()
 
 const field = injectFieldRootContext(null)
+const defaults = injectLabelDefaults()
 
-const isDisabled = computed(() => disabled ?? field?.disabled.value ?? false)
-const isRequired = computed(() => required ?? field?.required.value ?? false)
+// The field's state is always a boolean, so provided defaults only reach labels outside a field.
+const isDisabled = computed(
+  () => disabled ?? field?.disabled.value ?? defaults.value.disabled ?? false,
+)
+const isRequired = computed(
+  () => required ?? field?.required.value ?? defaults.value.required ?? false,
+)
 </script>
 
 <template>

@@ -1,52 +1,87 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import GsDivider from './GsDivider.vue'
+import { provideDividerDefaults } from './defaults'
 
 const meta = {
   title: 'Components/Divider',
   component: GsDivider,
-  args: { orientation: 'horizontal', decorative: false },
-  argTypes: { orientation: { control: 'inline-radio', options: ['horizontal', 'vertical'] } },
+  args: {
+    orientation: 'horizontal',
+  },
+  argTypes: {
+    orientation: {
+      control: 'select',
+      options: ['horizontal', 'vertical'],
+    },
+  },
 } satisfies Meta<typeof GsDivider>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Horizontal: Story = {
+/** In a block container with a definite size, the divider fills its width or height. */
+export const Default: Story = {
   render: (args) => ({
     components: { GsDivider },
     setup: () => ({ args }),
     template: `
-      <div style="width: 320px" class="flex flex-col gap-s fg-primary-bold text-body-m">
-        <span>Above</span>
+      <div class="size-[200px]">
         <GsDivider v-bind="args" />
-        <span>Below</span>
+      </div>`,
+  }),
+}
+
+export const Horizontal: Story = {
+  args: {
+    orientation: 'horizontal',
+  },
+  render: (args) => ({
+    components: { GsDivider },
+    setup: () => ({ args }),
+    template: `
+      <div class="fg-primary-bold">
+        <div>Content above</div>
+        <GsDivider v-bind="args" />
+        <div>Content below</div>
       </div>`,
   }),
 }
 
 /** In a flex row, a vertical divider stretches to the row height. */
-export const VerticalInFlex: Story = {
-  args: { orientation: 'vertical' },
+export const Vertical: Story = {
+  args: {
+    orientation: 'vertical',
+  },
   render: (args) => ({
     components: { GsDivider },
     setup: () => ({ args }),
     template: `
-      <div class="flex items-center gap-s fg-primary-bold text-body-m">
-        <span>One</span>
+      <div class="fg-primary-bold flex gap-s p-s">
+        <div>Content left</div>
         <GsDivider v-bind="args" />
-        <span class="py-l">Two (taller)</span>
-        <GsDivider v-bind="args" />
-        <span>Three</span>
+        <div>Content right</div>
       </div>`,
   }),
 }
 
-/** In a block container with a definite height, a vertical divider fills it. */
-export const VerticalInBlock: Story = {
-  args: { orientation: 'vertical' },
+/** `provideDividerDefaults()` sets the orientation of every divider below the calling component. */
+export const Provider: Story = {
+  args: {
+    orientation: 'vertical',
+  },
   render: (args) => ({
     components: { GsDivider },
-    setup: () => ({ args }),
-    template: '<div class="h-xxl"><GsDivider v-bind="args" /></div>',
+    setup: () => {
+      provideDividerDefaults(() => ({ orientation: args.orientation }))
+      return { args }
+    },
+    template: `
+      <div class="fg-primary-bold flex gap-s p-s">
+        <div>One</div>
+        <GsDivider />
+        <div>Two</div>
+        <GsDivider />
+        <div>Three</div>
+      </div>`,
   }),
 }

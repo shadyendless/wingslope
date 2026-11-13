@@ -73,6 +73,48 @@ describe('GsSlider', () => {
     expect(model.value).toBe(100)
   })
 
+  it('adds classes to its parts', async () => {
+    renderSlider(50, {
+      showInput: true,
+      markers: [{ value: 0, label: 'Low' }, { value: 100 }],
+      showMarkerLabels: true,
+      classes: {
+        label: 'my-label',
+        inputs: 'my-inputs',
+        input: 'my-input',
+        track: 'my-track',
+        trackBackground: 'my-track-background',
+        trackValue: 'my-track-value',
+        thumb: 'my-thumb',
+        minValue: 'my-min',
+        maxValue: 'my-max',
+        markers: 'my-markers',
+        marker: 'my-marker',
+        markerDot: 'my-marker-dot',
+        markerLabel: 'my-marker-label',
+      },
+    })
+    expect(await screen.findByRole('slider')).toHaveClass('thumb', 'my-thumb')
+    const input = screen.getByRole('textbox', { name: 'Opacity' })
+    expect(input).toHaveClass('input', 'my-input')
+    expect(input.parentElement).toHaveClass('inputs', 'my-inputs')
+    expect(screen.getByText('Opacity')).toHaveClass('label', 'my-label')
+    expect(screen.getByText('Low')).toHaveClass('markerLabel', 'my-marker-label')
+    expect(screen.getByText('100')).toHaveClass('maxValue', 'my-max')
+    // Hidden behind the labeled marker at 0, but still carries the class.
+    expect(document.querySelector('.minValue')).toHaveClass('my-min')
+    for (const [part, custom] of [
+      ['track', 'my-track'],
+      ['trackBackground', 'my-track-background'],
+      ['range', 'my-track-value'],
+      ['markers', 'my-markers'],
+      ['marker', 'my-marker'],
+      ['markerDot', 'my-marker-dot'],
+    ]) {
+      expect(document.querySelector(`.${part}`)).toHaveClass(custom!)
+    }
+  })
+
   it('accepts typed values in the inputs', async () => {
     const model = renderSlider(10, { showInput: true })
     const input = screen.getByRole('textbox', { name: 'Opacity' })
@@ -134,6 +176,62 @@ describe('GsChipList', () => {
     screen.getByRole('row', { name: 'Sam' }).focus()
     await userEvent.keyboard('{Backspace}')
     expect(removed).toEqual([['jo'], ['sam']])
+  })
+
+  it('keeps the last chip selected with disallowEmptySelection', async () => {
+    const model = ref<string>('air')
+    render(() =>
+      h(
+        GsChipList,
+        {
+          'aria-label': 'Domain',
+          selectionMode: 'single',
+          disallowEmptySelection: true,
+          modelValue: model.value,
+          'onUpdate:modelValue': (v: unknown) => (model.value = v as string),
+        },
+        () => [
+          h(GsSelectableChip, { value: 'air' }, () => 'Air'),
+          h(GsSelectableChip, { value: 'sea' }, () => 'Sea'),
+        ],
+      ),
+    )
+    await userEvent.click(screen.getByText('Air'))
+    expect(model.value).toBe('air')
+
+    screen.getByRole('row', { name: 'Air' }).focus()
+    await userEvent.keyboard('{Escape}')
+    expect(model.value).toBe('air')
+
+    await userEvent.click(screen.getByText('Sea'))
+    expect(model.value).toBe('sea')
+  })
+
+  it('allows deselecting every chip by default', async () => {
+    const model = ref<string | undefined>('air')
+    render(() =>
+      h(
+        GsChipList,
+        {
+          'aria-label': 'Domain',
+          selectionMode: 'single',
+          modelValue: model.value,
+          'onUpdate:modelValue': (v: unknown) => (model.value = v as string | undefined),
+        },
+        () => h(GsSelectableChip, { value: 'air' }, () => 'Air'),
+      ),
+    )
+    await userEvent.click(screen.getByText('Air'))
+    expect(model.value).toBeUndefined()
+  })
+
+  it('adds a class to the remove button of a deletable chip', () => {
+    render(() =>
+      h(GsChipList, { 'aria-label': 'Tags', onRemove: () => {} }, () =>
+        h(GsDeletableChip, { value: 'a', classes: { remove: 'my-remove' } }, () => 'Alpha'),
+      ),
+    )
+    expect(screen.getByRole('button', { name: /Remove/ })).toHaveClass('remove', 'my-remove')
   })
 
   it('leaves chips non-removable without a remove listener', async () => {

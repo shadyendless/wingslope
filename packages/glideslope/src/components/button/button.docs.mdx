@@ -1,0 +1,190 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as ButtonStories from './button.stories'
+import * as MenuButtonStories from './composition/menu-button.stories'
+import * as SplitButtonStories from './composition/split-button.stories'
+import GsLinkButton from './GsLinkButton.vue'
+import GsToggleButton from './GsToggleButton.vue'
+
+<Meta of={ButtonStories} />
+
+# Button
+
+Interactive elements for user actions, navigation and form submissions, with keyboard and screen reader support built in.
+
+Components:
+
+- **GsButton** - Standard button for actions
+- **GsLinkButton** - Button-styled link for navigation
+- **GsToggleButton** - Button with a pressed and unpressed state
+
+## Example usage
+
+### GsButton
+
+```vue
+<GsButton @click="save">Click me</GsButton>
+<GsButton variant="outline" color="mono-bold">Outline Button</GsButton>
+<GsButton variant="flat">Flat Button</GsButton>
+<GsButton variant="icon" aria-label="Settings">
+  <GsIcon><SettingsIcon /></GsIcon>
+</GsButton>
+```
+
+<Canvas of={ButtonStories.Default} />
+
+### GsLinkButton
+
+Button-styled link for navigation. Use `as-child` to render a router link instead of an `<a>`.
+
+```vue
+<GsLinkButton href="/dashboard" variant="outline">Go to Dashboard</GsLinkButton>
+
+<GsLinkButton as-child>
+  <RouterLink to="/dashboard">Go to Dashboard</RouterLink>
+</GsLinkButton>
+```
+
+<Canvas of={ButtonStories.Link} />
+
+### GsToggleButton
+
+Button with a pressed and unpressed state, bound with `v-model`. Note: the `filled` variant is not available for `GsToggleButton`.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const enabled = ref(false)
+</script>
+
+<template>
+  <GsToggleButton v-model="enabled" variant="flat">Toggle Feature</GsToggleButton>
+  <GsToggleButton variant="outline" color="accent">Toggle with Color</GsToggleButton>
+  <GsToggleButton variant="icon" aria-label="Placeholder">
+    <GsIcon><PlaceholderIcon /></GsIcon>
+  </GsToggleButton>
+</template>
+```
+
+<Canvas of={ButtonStories.Toggle} />
+
+### Composite menu button
+
+Examples of using a button in a very common compositional pattern: the button goes in the `#trigger` slot of a [Menu](?path=/docs/components-menu--docs).
+
+```vue
+<GsMenu v-model:open="open">
+  <template #trigger>
+    <GsButton>
+      Menu
+      <GsIcon><ChevronDownIcon /></GsIcon>
+    </GsButton>
+  </template>
+  <GsMenuItem label="Option 1" @select="choose(1)" />
+  <GsMenuItem label="Option 2" @select="choose(2)" />
+</GsMenu>
+```
+
+<Canvas of={MenuButtonStories.Default} />
+
+To add a tooltip, make the menu the [GsTooltip](?path=/docs/components-tooltip--docs)'s trigger. Overlays pass their attributes to their trigger, so both attach to the same button.
+
+```vue
+<GsTooltip :disabled="open">
+  <template #trigger>
+    <GsMenu v-model:open="open">
+      <template #trigger>
+        <GsButton variant="icon" aria-label="More options">
+          <GsIcon><PlaceholderIcon /></GsIcon>
+        </GsButton>
+      </template>
+      <GsMenuItem label="Edit" />
+    </GsMenu>
+  </template>
+  More options
+</GsTooltip>
+```
+
+<Canvas of={MenuButtonStories.WithTooltip} />
+
+### Composite split menu button
+
+Examples of using a split icon button and dropdown menu button pattern.
+
+<Canvas of={SplitButtonStories.Default} />
+
+### Shared defaults
+
+`provideButtonDefaults()`, `provideLinkButtonDefaults()` and `provideToggleButtonDefaults()` set the `variant`, `color` and `size` of every button of that kind rendered below the calling component. A prop set on a button still wins.
+
+```vue
+<script setup lang="ts">
+import { provideButtonDefaults } from '@wingbrace/glideslope'
+
+provideButtonDefaults({ size: 'small', variant: 'outline' })
+</script>
+```
+
+## Variants
+
+| Variant   | Description                         | Available on                 |
+| --------- | ----------------------------------- | ---------------------------- |
+| `filled`  | Solid background (default)          | GsButton, GsLinkButton       |
+| `outline` | Transparent background with border  | All                          |
+| `flat`    | Transparent background, text only   | All (default for the toggle) |
+| `icon`    | Square button for icon-only content | All                          |
+
+## Colors
+
+| Color        | Description                        |
+| ------------ | ---------------------------------- |
+| `mono-muted` | Monochromatic styling (default)    |
+| `mono-bold`  | Monochromatic with bolder accents  |
+| `accent`     | Primary accent for main actions    |
+| `serious`    | Orange for warning/caution actions |
+| `critical`   | Red for destructive actions        |
+
+## Sizes
+
+| Size     | Description                        |
+| -------- | ---------------------------------- |
+| `large`  | Prominent size for primary actions |
+| `medium` | Standard size (default)            |
+| `small`  | Compact size for secondary actions |
+| `xsmall` | Minimal size for tight spaces      |
+
+## Props
+
+### GsButton
+
+<ArgTypes of={ButtonStories} />
+
+### GsLinkButton
+
+<ArgTypes of={GsLinkButton} />
+
+### GsToggleButton
+
+<ArgTypes of={GsToggleButton} />
+
+## Accessibility
+
+- Keyboard: Enter and Space activate buttons; Enter follows a link button
+- Icon-only buttons need an `aria-label`
+- Visible focus indicators
+- `GsToggleButton` exposes its state with `aria-pressed`
+- A disabled `GsLinkButton` drops its `href` and leaves the tab order
+
+## Implementation notes
+
+- `GsButton` renders a `<button type="button">` through Reka UI's `Primitive`; `as` and `as-child` render another element or component
+- `GsLinkButton` renders an `<a>`, also through `Primitive`
+- `GsToggleButton` wraps Reka UI's `Toggle`, which sets `data-state="on" | "off"`
+- Native events such as `@click` pass through to the rendered element
+- Icons scale with the button's size through `provideIconDefaults`
+
+**Related:**
+
+- [Reka UI Primitive](https://reka-ui.com/docs/utilities/primitive)
+- [Reka UI Toggle](https://reka-ui.com/docs/components/toggle)

@@ -1,0 +1,178 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as ChipStories from './chip.stories'
+import GsChipList from './GsChipList.vue'
+import GsDeletableChip from './GsDeletableChip.vue'
+import GsSelectableChip from './GsSelectableChip.vue'
+
+<Meta of={ChipStories} />
+
+# Chip
+
+Compact, interactive elements for displaying tags, categories, filters and selectable items. Chip lists are built on Reka UI's Tag Group, with keyboard and screen reader support out of the box.
+
+Components:
+
+- **`GsChip`**: displays tags and labels
+- **`GsChipList`**: a container for grouping chips with shared behavior
+- **`GsSelectableChip`**: a chip that can be selected and deselected for filtering
+- **`GsDeletableChip`**: a chip with a remove button for dynamic content
+
+## Example usage
+
+### Basic chip
+
+```vue
+<GsChip>Tag</GsChip>
+<GsChip color="info">Information</GsChip>
+<GsChip color="advisory">Warning</GsChip>
+<GsChip color="normal">Success</GsChip>
+<GsChip color="serious">Caution</GsChip>
+<GsChip color="critical">Error</GsChip>
+```
+
+<Canvas of={ChipStories.Default} />
+
+### Chip list
+
+Inside a list, give each chip a `value`. Give the list an accessible name with `aria-label` or `aria-labelledby`.
+
+```vue
+<GsChipList aria-label="Technologies">
+  <GsChip value="vue" color="info">Vue</GsChip>
+  <GsChip value="typescript" color="advisory">TypeScript</GsChip>
+  <GsChip value="node" color="normal">Node.js</GsChip>
+</GsChipList>
+```
+
+<Canvas of={ChipStories.List} />
+
+### Selectable chips
+
+Chips that can be selected for filtering or multi-select interfaces. `v-model` on the list holds the selected value (`selection-mode="single"`) or values (`"multiple"`). Set `disallow-empty-selection` to keep at least one chip selected: the last selected chip can't be deselected, and Escape doesn't clear the selection.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const frameworks = ref(['vue'])
+</script>
+
+<template>
+  <GsChipList
+    v-model="frameworks"
+    selection-mode="multiple"
+    disallow-empty-selection
+    aria-label="Frameworks"
+  >
+    <GsSelectableChip value="react">React</GsSelectableChip>
+    <GsSelectableChip value="vue">Vue</GsSelectableChip>
+    <GsSelectableChip value="angular">Angular</GsSelectableChip>
+  </GsChipList>
+</template>
+```
+
+<Canvas of={ChipStories.SelectableChipList} />
+
+### Selectable chips with colors
+
+```vue
+<GsChipList v-model="status" selection-mode="single" aria-label="Status">
+  <GsSelectableChip value="up" color="normal">UP</GsSelectableChip>
+  <GsSelectableChip value="down" color="critical">DOWN</GsSelectableChip>
+  <GsSelectableChip value="all" color="info">All</GsSelectableChip>
+</GsChipList>
+```
+
+<Canvas of={ChipStories.SelectableChipListWithColors} />
+
+### Deletable chips
+
+Chips with a remove button. The list emits `remove` with the removed values; remove them from your data. Without a `@remove` listener, chips can't be removed.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const tags = ref(['JavaScript', 'Python', 'Go'])
+const remove = (values: unknown[]) =>
+  (tags.value = tags.value.filter((tag) => !values.includes(tag)))
+</script>
+
+<template>
+  <GsChipList aria-label="Tags" @remove="remove">
+    <GsDeletableChip v-for="tag in tags" :key="tag" :value="tag">{{ tag }}</GsDeletableChip>
+  </GsChipList>
+</template>
+```
+
+<Canvas of={ChipStories.DeletableChipList} />
+
+## Colors
+
+| Color      | Description                                                 |
+| ---------- | ----------------------------------------------------------- |
+| `info`     | Neutral styling for general informational content (default) |
+| `advisory` | Blue styling for advisory content                           |
+| `normal`   | Green styling for normal or success content                 |
+| `serious`  | Amber styling for serious issues                            |
+| `critical` | Red styling for critical errors or alerts                   |
+
+## Sizes
+
+| Size     | Description                                                                 |
+| -------- | --------------------------------------------------------------------------- |
+| `medium` | Standard size (default for `GsChip`, `GsSelectableChip`, `GsDeletableChip`) |
+| `small`  | Compact size (default inside `GsChipList`)                                  |
+
+## Props
+
+### GsChip
+
+<ArgTypes of={ChipStories} />
+
+### GsChipList
+
+A list's `color` and `size` apply to every chip in it; a chip's own props override them.
+
+<ArgTypes of={GsChipList} />
+
+### GsSelectableChip
+
+<ArgTypes of={GsSelectableChip} />
+
+### GsDeletableChip
+
+`classes` adds a class to the `remove` button; classes on the component go on the chip.
+
+<ArgTypes of={GsDeletableChip} />
+
+### Shared defaults
+
+`provideChipDefaults()` sets `color` and `size` for every chip rendered below the calling component. A prop set on a chip still wins.
+
+```vue
+<script setup lang="ts">
+import { provideChipDefaults } from '@wingbrace/glideslope'
+
+provideChipDefaults({ size: 'small', color: 'info' })
+</script>
+```
+
+## Accessibility
+
+- Keyboard: Tab moves into the list, arrow keys move between chips, Space or Enter selects a selectable chip, and Backspace or Delete removes a deletable chip.
+- ARIA attributes for screen readers, and selection state announcements.
+- Focus management and visible focus indicators.
+- Each chip is named by its text, not by its remove button. Set `text-value` when the content isn't plain text.
+
+## Implementation notes
+
+- `GsChip` renders a `<div>` on its own, or Reka UI's `TagGroupItem` inside a `GsChipList` (when it has a `value`).
+- `GsSelectableChip` and `GsDeletableChip` wrap Reka UI's `TagGroupItem`.
+- `GsChipList` wraps Reka UI's `TagGroupRoot`.
+- Icons scale automatically with the chip's size.
+
+**Related:**
+
+- [Reka UI Tag Group](https://reka-ui.com/docs/components/tag-group)

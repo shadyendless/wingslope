@@ -41,6 +41,7 @@ const {
   shortMonth = true,
   locale,
   readonly = false,
+  classes,
 } = defineProps<GsDateFieldProps>()
 
 /** The date, or `null` when empty. */
@@ -71,6 +72,7 @@ function segmentText(segment: Segment) {
     :validate="validate"
     :validation-mode="validationMode"
     :native-label="false"
+    :classes="classes"
   >
     <DateFieldRoot
       v-slot="{ segments }"
@@ -84,10 +86,10 @@ function segmentText(segment: Segment) {
       :locale="locale"
       :disabled="disabled"
       :readonly="readonly"
-      :class="styles.control"
+      :class="[styles.control, classes?.control]"
     >
       <GsIcon v-if="!readonly && size === 'medium'"><CalendarIcon /></GsIcon>
-      <div :class="styles.input">
+      <div :class="[styles.input, classes?.input]">
         <template v-for="(segment, index) in segments" :key="`${segment.part}-${index}`">
           <span v-if="isVisibleLiteral(segment)" aria-hidden="true">:</span>
           <DateFieldInput
@@ -96,6 +98,7 @@ function segmentText(segment: Segment) {
             :class="[
               styles.segment,
               { [styles.shortMonth ?? '']: segment.part === 'month' && shortMonth },
+              classes?.segment,
             ]"
             :data-placeholder="isPlaceholderSegment(segment) ? '' : undefined"
           >

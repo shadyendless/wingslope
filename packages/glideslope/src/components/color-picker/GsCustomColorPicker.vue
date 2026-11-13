@@ -1,10 +1,16 @@
 <script setup lang="ts">
 /**
- * @internal The custom color button and popover used by `GsColorPicker`: a saturation/brightness
- * area, a hue slider and RGB inputs.
+ * A button that opens a full color picker in a popover: a saturation/brightness area, a hue slider
+ * and RGB inputs. `GsColorPicker` uses it with `show-custom-picker`; use it on its own to build
+ * your own color controls. Bind the color with `v-model`.
  *
  * The working color is kept as a Reka UI `Color` (HSB) so the hue survives when saturation or
- * brightness reaches zero; the model receives hex strings.
+ * brightness reaches zero. The model is updated in the format of the bound value (see `format`).
+ *
+ * @example
+ * ```vue
+ * <GsCustomColorPicker v-model="color" />
+ * ```
  */
 import ColorPickerIcon from '@wingbrace/glideslope-icons/color-picker'
 import {
@@ -20,7 +26,6 @@ import {
   PopoverPortal,
   PopoverRoot,
   PopoverTrigger,
-  colorToHex,
   getAreaBackgroundStyle,
   parseColor,
   type Color,
@@ -28,28 +33,29 @@ import {
 import { computed, shallowRef, watch } from 'vue'
 import GsButton from '../button/GsButton.vue'
 import GsIcon from '../icon/GsIcon.vue'
+import { toColor, toHex, type GsColorInput } from './colors'
 import styles from './styles.module.css'
+import type { GsCustomColorPickerProps } from './types'
+import { useColorFormat } from './use-color-format'
 
-const { active = false, disabled = false } = defineProps<{
-  /** The current selection is a custom color. */
-  active?: boolean
-  disabled?: boolean
-}>()
+const { active = undefined, disabled = false, format } = defineProps<GsCustomColorPickerProps>()
 
-/** The custom color as a hex string. */
-const model = defineModel<string>({ required: true })
+/** The color: a CSS color string, an RGBA tuple (0–255) or a Reka UI `Color`. */
+const model = defineModel<GsColorInput>({ default: '#ecece6' })
 
-const color = shallowRef<Color>(parseColor(model.value))
+const output = useColorFormat(model, () => format)
+const color = shallowRef<Color>(toColor(model.value))
 
-watch(model, (hex) => {
-  if (colorToHex(color.value).toLowerCase() !== hex.toLowerCase()) color.value = parseColor(hex)
+watch(model, (value) => {
+  if (toHex(color.value) !== toHex(value)) color.value = toColor(value)
 })
 
 function update(next: string | Color) {
   color.value = typeof next === 'string' ? parseColor(next) : next
-  model.value = colorToHex(color.value).toLowerCase()
+  model.value = output(color.value)
 }
 
+const hex = computed(() => toHex(color.value))
 const areaStyle = computed(() =>
   getAreaBackgroundStyle(color.value, 'saturation', 'brightness', 'hsb'),
 )
@@ -72,7 +78,7 @@ const channels = [
         :disabled="disabled"
         :class="styles.customTrigger"
       >
-        <GsIcon :style="{ '--icon-color': model }"><ColorPickerIcon /></GsIcon>
+        <GsIcon :style="{ '--icon-color': hex }"><ColorPickerIcon /></GsIcon>
       </GsButton>
     </PopoverTrigger>
     <PopoverPortal>

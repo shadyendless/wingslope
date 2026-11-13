@@ -1,0 +1,74 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as StatusIndicatorStories from './status-indicator.stories'
+
+<Meta of={StatusIndicatorStories} />
+
+# StatusIndicator
+
+`GsStatusIndicator` renders a small, non-interactive visual indicator used to communicate a current status at a glance. It is intended for places like tables, lists, headers, and health/availability summaries where you need a compact, consistent status shape.
+
+It is composed of a single element:
+
+- **GsStatusIndicator** — a `span` that renders the status shape via styling and a `data-status` attribute. To pair it with text, use the `label` prop, which renders the shape and the text side by side.
+
+## Example usage
+
+```vue
+<!-- Basic usage -->
+<GsStatusIndicator status="good" />
+
+<!-- Degraded status -->
+<GsStatusIndicator status="degraded" />
+
+<!-- Poor status -->
+<GsStatusIndicator status="poor" />
+
+<!-- Pending status -->
+<GsStatusIndicator status="pending" />
+
+<!-- Unknown status -->
+<GsStatusIndicator status="unknown" />
+
+<!-- With custom styling hook -->
+<GsStatusIndicator status="good" class="ring-2 ring-offset-2" />
+
+<!-- With label -->
+<GsStatusIndicator status="good" label="Status Normal" />
+```
+
+## Statuses
+
+The component supports the following statuses (mapped via `data-status`). Each has a distinct shape, so the status doesn't rely on color alone:
+
+- `good` — normal/healthy state (circle)
+- `degraded` — partial issues / warning state (diamond)
+- `poor` — unhealthy / critical state (triangle)
+- `pending` — waiting for information (ring)
+- `unknown` — status not known (dot)
+
+Note: the visual treatment for each status is defined in the component's CSS module (`styles.module.css`) using `data-status` variants.
+
+<Canvas of={StatusIndicatorStories.Demo} />
+
+## Props
+
+Classes and attributes go on the indicator (or, with a `label`, on the element that holds the indicator and the label).
+
+<ArgTypes of={StatusIndicatorStories} />
+
+## Accessibility
+
+Without a `label`, the indicator has `role="img"` and the status name (for example "degraded") as its accessible name. To announce something more specific, set `aria-label`:
+
+```vue
+<GsStatusIndicator aria-label="Status: good" status="good" />
+```
+
+With a `label`, the shape is hidden from assistive technology and the visible text carries the meaning.
+
+## Implementation notes
+
+The component uses a CSS Module (`styles.module.css`) to apply the base shape styling and to style variants via the `data-status` attribute.
+
+The component is intentionally non-interactive and does not handle keyboard or mouse events. To give it a [tooltip](?path=/docs/components-tooltip--docs), make it the tooltip's trigger and add `tabindex="0"` so keyboard users can reach it.

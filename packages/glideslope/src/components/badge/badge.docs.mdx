@@ -1,0 +1,80 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as BadgeStories from './badge.stories'
+
+<Meta of={BadgeStories} />
+
+# Badge
+
+`GsBadge` displays a small status indicator, notification count or label, optionally pinned to an edge or corner of another element. Use badges for notification counts, status indicators, priority levels and other small pieces of information that need to stand out from the content around them.
+
+## Example usage
+
+### Basic
+
+Without content, a badge renders as a dot.
+
+```vue
+<GsBadge color="normal" />
+```
+
+<Canvas of={BadgeStories.Default} />
+
+### With text
+
+```vue
+<GsBadge color="critical">99+</GsBadge>
+```
+
+<Canvas of={BadgeStories.WithText} />
+
+### Positioned badge
+
+`placement` pins the badge to its nearest positioned ancestor. When it's composed with another component, such as [Avatar](?path=/docs/components-avatar--docs), that component positions it.
+
+```vue
+<script setup lang="ts">
+import { designTokens } from '@wingbrace/glideslope-foundation/tokens'
+</script>
+
+<template>
+  <span class="relative inline-flex">
+    <GsIcon size="large"><BellIcon /></GsIcon>
+    <GsBadge placement="top right" :offset="designTokens.spacing.xs">3</GsBadge>
+  </span>
+</template>
+```
+
+<Canvas of={BadgeStories.Placement} />
+
+### Shared defaults
+
+`provideBadgeDefaults()` sets defaults for every badge rendered below the calling component. A prop set on a badge still wins.
+
+```vue
+<script setup lang="ts">
+import { provideBadgeDefaults } from '@wingbrace/glideslope'
+
+provideBadgeDefaults({ color: 'critical', placement: 'top right' })
+</script>
+```
+
+## Colors
+
+| Color      | Use                             |
+| ---------- | ------------------------------- |
+| `info`     | Informational content (default) |
+| `advisory` | Advisory content                |
+| `normal`   | Normal or successful states     |
+| `serious`  | Serious issues                  |
+| `critical` | Critical errors or alerts       |
+
+## Props
+
+<ArgTypes of={BadgeStories} />
+
+## Implementation notes
+
+- Renders a `span`. Attributes and classes you add go on it.
+- An empty badge renders as a dot; a badge with content grows to fit it.
+- Placement and offset are applied with CSS custom properties.

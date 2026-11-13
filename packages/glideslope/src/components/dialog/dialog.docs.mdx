@@ -1,0 +1,159 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as DialogStories from './dialog.stories'
+import GsDialogClose from './GsDialogClose.vue'
+import GsDialogContent from './GsDialogContent.vue'
+import GsDialogFooter from './GsDialogFooter.vue'
+import GsDialogTitle from './GsDialogTitle.vue'
+
+<Meta of={DialogStories} />
+
+# Dialog
+
+A modal dialog component that provides a focused, accessible overlay for user interactions. Uses a compound component pattern with proper focus management and accessibility features.
+
+Components:
+
+- **GsDialog** - Modal overlay container with configurable size and dismissal behavior. Its `#trigger` slot holds the element that opens it, and `v-model:open` controls it
+- **GsDialogTitle** - Semantic heading element for dialog titles (renders as `<h2>`); it names the dialog
+- **GsDialogContent** - Wrapper for the main dialog content
+- **GsDialogFooter** - Container for action buttons
+- **GsDialogClose** - Closes the dialog when the button inside it is clicked
+
+## Example Usage
+
+```vue
+<GsDialog size="small" dismissable>
+  <template #trigger><GsButton>Open Dialog</GsButton></template>
+  <GsDialogTitle>Dialog Title</GsDialogTitle>
+  <GsDialogContent>Dialog content goes here...</GsDialogContent>
+  <GsDialogFooter>
+    <GsDialogClose><GsButton variant="flat">Cancel</GsButton></GsDialogClose>
+    <GsDialogClose><GsButton>Confirm</GsButton></GsDialogClose>
+  </GsDialogFooter>
+</GsDialog>
+```
+
+<Canvas of={DialogStories.Default} />
+
+## Sizes
+
+| Size    | Description                                                                   |
+| ------- | ----------------------------------------------------------------------------- |
+| `small` | Compact dialog (default), suitable for simple confirmations or brief messages |
+| `large` | Spacious dialog, ideal for complex forms or detailed content                  |
+
+## Props
+
+### GsDialog
+
+<ArgTypes of={DialogStories} />
+
+`classes` styles the inner parts: `overlay` (the backdrop) and `dialog` (the panel). The Design Toolkit's separate `modal` container and `dialog` are one element here, so `dialog` covers both. Classes on `GsDialog` itself go to its trigger.
+
+### GsDialogTitle
+
+<ArgTypes of={GsDialogTitle} />
+
+### GsDialogContent
+
+<ArgTypes of={GsDialogContent} />
+
+### GsDialogFooter
+
+Buttons inside match the dialog's size: small buttons in a small dialog, medium buttons in a large one.
+
+<ArgTypes of={GsDialogFooter} />
+
+### GsDialogClose
+
+<ArgTypes of={GsDialogClose} />
+
+## Examples
+
+### Local Portal
+
+The dialog renders into `body` by default, with a backdrop over the whole viewport. `portalTo` takes an element or a selector to render it somewhere else; the backdrop then covers only that element, so give it `position: relative` (the `relative` utility).
+
+```vue
+<script setup lang="ts">
+import { useTemplateRef } from 'vue'
+
+const panel = useTemplateRef<HTMLElement>('panel')
+</script>
+
+<template>
+  <GsDialog :portal-to="panel">...</GsDialog>
+  <div ref="panel" class="relative" />
+</template>
+```
+
+<Canvas of={DialogStories.LocalPortal} />
+
+### Controlled
+
+Dialogs can be controlled with external state through `v-model:open`. The `#trigger` slot is optional when you open the dialog from code.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const open = ref(false)
+</script>
+
+<template>
+  <GsDialog v-model:open="open">
+    <template #trigger><GsButton disabled>Disabled Trigger</GsButton></template>
+    <GsDialogTitle>Dialog Title</GsDialogTitle>
+    <GsDialogContent>Content here...</GsDialogContent>
+    <GsDialogFooter>
+      <GsDialogClose><GsButton variant="flat">Cancel</GsButton></GsDialogClose>
+      <GsDialogClose><GsButton>Confirm</GsButton></GsDialogClose>
+    </GsDialogFooter>
+  </GsDialog>
+  <GsButton @click="open = true">Open Dialog</GsButton>
+</template>
+```
+
+<Canvas of={DialogStories.Controlled} />
+
+### Closing from the slot
+
+The default slot receives `close`, for actions that finish their work before closing, such as a form submit.
+
+```vue
+<GsDialog v-model:open="open" size="large">
+  <template #default="{ close }">
+    <form @submit.prevent="save().then(close)">
+      <GsDialogTitle>Rename track</GsDialogTitle>
+      <GsDialogContent>
+        <GsTextField v-model="callsign" label="Callsign" required />
+      </GsDialogContent>
+      <GsDialogFooter>
+        <GsButton variant="flat" @click="close">Cancel</GsButton>
+        <GsButton color="accent" type="submit">Save</GsButton>
+      </GsDialogFooter>
+    </form>
+  </template>
+</GsDialog>
+```
+
+<Canvas of={DialogStories.CloseFromSlot} />
+
+## Accessibility
+
+- Focus moves into the dialog when it opens and returns to the trigger when it closes
+- Focus trapping within the dialog while open; the page behind it is hidden from assistive technology
+- Escape key closes the dialog, unless `keyboard-dismiss-disabled` is set
+- `GsDialogTitle` names the dialog for screen readers
+
+## Implementation Notes
+
+- Built on Reka UI's `DialogRoot`, `DialogPortal`, `DialogOverlay` and `DialogContent`
+- `GsDialogFooter` automatically sizes buttons to match the dialog size
+- Footer buttons close the dialog only when wrapped in `GsDialogClose` or when they call the slot's `close`
+- Clicking the backdrop closes the dialog only when `dismissable` is set; Escape closes it unless `keyboard-dismiss-disabled` is set
+
+**Related:**
+
+- [Reka UI Dialog Docs](https://reka-ui.com/docs/components/dialog)

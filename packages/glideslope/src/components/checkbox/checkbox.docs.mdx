@@ -1,0 +1,91 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as CheckboxStories from './checkbox.stories'
+
+<Meta of={CheckboxStories} />
+
+# Checkbox
+
+Interactive checkbox for form inputs, settings and multi-selection interfaces. Built on Reka UI's `CheckboxRoot`, with keyboard and screen reader support out of the box.
+
+Components:
+
+- **`GsCheckbox`**: an individual checkbox for binary selections
+- **[`GsCheckboxGroup`](?path=/docs/components-checkboxgroup--docs)**: a container for grouping several checkboxes
+
+## Example usage
+
+```vue
+<GsCheckbox>Accept terms and conditions</GsCheckbox>
+```
+
+<Canvas of={CheckboxStories.Default} />
+
+### Controlled
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const subscribed = ref(false)
+</script>
+
+<template>
+  <GsCheckbox v-model="subscribed">Subscribe to newsletter</GsCheckbox>
+</template>
+```
+
+### Indeterminate
+
+Used for "select all" scenarios with partial selection. The model takes `'indeterminate'` as a third state.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const all = ref<boolean | 'indeterminate'>('indeterminate')
+</script>
+
+<template>
+  <GsCheckbox v-model="all">Select all items</GsCheckbox>
+</template>
+```
+
+## States
+
+| State         | Description                          |
+| ------------- | ------------------------------------ |
+| Unselected    | Default state, empty checkbox        |
+| Selected      | Checked state with checkmark icon    |
+| Indeterminate | Partial selection with minus icon    |
+| Disabled      | Non-interactive with reduced opacity |
+
+## Props
+
+<ArgTypes of={CheckboxStories} />
+
+**`classes`:**
+
+| Key       | Description                       |
+| --------- | --------------------------------- |
+| `control` | The checkbox control (square box) |
+| `label`   | The label text                    |
+
+Classes on `GsCheckbox` itself go on the checkbox container (the root button).
+
+## Accessibility
+
+- Keyboard: Space toggles the checkbox.
+- The whole row is one control with `role="checkbox"`, so the label is its accessible name and clicking the label toggles it. An indeterminate checkbox reports `aria-checked="mixed"`.
+- Focus management and visible focus indicators.
+- Takes part in forms through `name` and `required`.
+
+## Implementation notes
+
+- Wraps Reka UI's `CheckboxRoot`, rendered as a `<button>` that contains the box and the label.
+- Shows a check icon when selected and a remove icon when indeterminate.
+- Use within `GsCheckboxGroup` for multi-selection with shared state; there the group's `v-model` holds the values and each checkbox needs a `value`.
+
+**Related:**
+
+- [Reka UI Checkbox](https://reka-ui.com/docs/components/checkbox)

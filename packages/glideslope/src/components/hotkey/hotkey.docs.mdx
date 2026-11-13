@@ -1,0 +1,89 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as HotkeyStories from './hotkey.stories'
+import GsHotkeySet from './GsHotkeySet.vue'
+
+<Meta of={HotkeyStories} />
+
+# Hotkey
+
+Visual representation of keyboard keys and shortcuts. Used to show keyboard shortcuts in documentation, help systems and UI elements.
+
+Components:
+
+- **GsHotkey** - Individual key display (renders as `<kbd>`)
+- **GsHotkeySet** - Container for grouping the keys of one shortcut
+- **provideHotkeyDefaults** - Sets default props for every hotkey below a component
+
+## Example usage
+
+```vue
+<GsHotkey>CMD</GsHotkey>
+```
+
+<Canvas of={HotkeyStories.Default} />
+
+## Variants
+
+| Variant   | Description                                             |
+| --------- | ------------------------------------------------------- |
+| `outline` | Renders with borders (default)                          |
+| `flat`    | Plain text, appropriate for use in menu items           |
+| `icon`    | For icon content with proper sizing, never has a border |
+
+## Props
+
+### GsHotkey
+
+<ArgTypes of={HotkeyStories} />
+
+### GsHotkeySet
+
+Container for grouping several `GsHotkey` components and separators such as "+" or "or".
+
+```vue
+<GsHotkeySet>
+  <GsHotkey>CMD</GsHotkey>
+  <span>+</span>
+  <GsHotkey variant="icon">
+    <GsIcon><MouseRightClickIcon /></GsIcon>
+  </GsHotkey>
+</GsHotkeySet>
+```
+
+<Canvas of={HotkeyStories.KeysSet} />
+
+<ArgTypes of={GsHotkeySet} />
+
+### provideHotkeyDefaults
+
+`provideHotkeyDefaults()` sets the default `variant` of every hotkey rendered below the calling component. A `variant` set on a hotkey still wins.
+
+```vue
+<script setup lang="ts">
+import { provideHotkeyDefaults } from '@wingbrace/glideslope'
+
+provideHotkeyDefaults({ variant: 'flat' })
+</script>
+
+<template>
+  <GsHotkey>Ctrl</GsHotkey>
+  <GsHotkey>C</GsHotkey>
+</template>
+```
+
+<Canvas of={HotkeyStories.Provider} />
+
+## Accessibility
+
+- Uses the semantic `<kbd>` HTML element for keyboard input
+- Screen readers announce the content as keyboard keys
+
+## Implementation notes
+
+- `GsHotkey` renders a native `<kbd>`
+- `GsHotkeySet` sizes the icons inside it through `provideIconDefaults`
+
+**Related:**
+
+- [MDN kbd element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/kbd)

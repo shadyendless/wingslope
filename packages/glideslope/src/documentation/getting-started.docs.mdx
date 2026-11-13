@@ -1,0 +1,275 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Getting Started" />
+
+# Getting Started
+
+Glideslope is a Vue 3 design system: design tokens and a Tailwind CSS v4 foundation, Vue components built on [Reka UI](https://reka-ui.com/docs/overview/introduction), and an icon set. It is made of three packages:
+
+- **`@wingbrace/glideslope-foundation`**: tokens, the Tailwind theme, variants and utilities. No framework dependency.
+- **`@wingbrace/glideslope`**: the Vue 3 components and composables.
+- **`@wingbrace/glideslope-icons`**: the icons as Vue components.
+
+### Availability
+
+The packages are not published to a registry yet. They are versioned `0.0.0` and consumed through pnpm workspace links, so for now an app that uses Glideslope lives inside the Glideslope repository, under `apps/`. `apps/playground` is a complete app set up the way this guide describes; use it as the working reference.
+
+### Add Glideslope
+
+Add the packages to your app's `package.json` with the `workspace:*` protocol, and take the other versions from the workspace catalog (`pnpm-workspace.yaml`):
+
+```json
+{
+  "dependencies": {
+    "@fontsource-variable/roboto-flex": "catalog:",
+    "@fontsource-variable/roboto-mono": "catalog:",
+    "@wingbrace/glideslope": "workspace:*",
+    "@wingbrace/glideslope-foundation": "workspace:*",
+    "@wingbrace/glideslope-icons": "workspace:*",
+    "vue": "catalog:"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vue-tsc": "catalog:"
+  }
+}
+```
+
+Add `@internationalized/date` too if your code creates date or time values: `GsDateField` and `GsTimeField` take its date objects.
+
+Then install and build. Apps consume each package's built `dist` output, so build the packages before starting your app, and again after changing them:
+
+```bash
+pnpm install
+pnpm build
+```
+
+### Required versions
+
+- Node 22.12 or later (24 recommended) and pnpm 10
+- Vue 3.5
+- Tailwind CSS 4, through the `@tailwindcss/vite` plugin
+- TypeScript with `"moduleResolution": "bundler"` (the Vite default). If you type-check with `vue-tsc`, stay on TypeScript 6.0: `vue-tsc` does not run on TypeScript 7.
+- Browsers with native `light-dark()`, relative color syntax and cascade layers: Chrome and Edge 123, Firefox 128, Safari 18 or later. The theme depends on these, and the CSS ships without fallbacks.
+
+### Peer dependencies
+
+The `package.json` above covers every peer dependency:
+
+- `@wingbrace/glideslope` needs `@wingbrace/glideslope-foundation` and `vue`. It brings Reka UI, `@internationalized/date` and the icons with it.
+- `@wingbrace/glideslope-foundation` needs `tailwindcss` and the two `@fontsource-variable` font packages, which its stylesheet imports.
+- `@wingbrace/glideslope-icons` needs `vue`. Install it directly when your own code imports icons.
+
+## Theming
+
+Glideslope's styling is built on Tailwind CSS. Its component styles ship pre-compiled in `@wingbrace/glideslope/styles.css`, inside cascade layers below Tailwind's utilities, so Tailwind only needs to generate the utility classes your own code uses. For more about how Glideslope uses Tailwind, [read the Styling Guide](?path=/docs/styling-guide--docs).
+
+### Tailwind config
+
+#### Configure Vite
+
+Add the Vue and Tailwind plugins to `vite.config.ts`. No PostCSS config or Tailwind config file is needed.
+
+```ts
+// vite.config.ts
+import tailwindcss from '@tailwindcss/vite'
+import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  plugins: [vue(), tailwindcss()],
+})
+```
+
+If you use named groups (`group-hover/card`) in your own CSS Modules, you also need a PostCSS plugin. See [Named groups in CSS Modules](?path=/docs/styling-guide--docs#named-groups-in-css-modules).
+
+#### Add imports to your root CSS file
+
+Make Glideslope available to your app by importing the foundation and the component styles into your Tailwind entry stylesheet. Here it is `src/main.css`, but any name works.
+
+```css
+/* src/main.css */
+
+/* 1. The foundation: Tailwind, Glideslope tokens, variants and utilities, and the layer order. */
+@import '@wingbrace/glideslope-foundation/styles';
+
+/* 2. Pre-compiled component styles. They live in `components.l*` layers, below utilities. */
+@import '@wingbrace/glideslope/styles.css';
+```
+
+Do not add `@import 'tailwindcss'` yourself. The foundation stylesheet already imports it, and importing it again brings back Tailwind's default colors and scales, which Glideslope replaces with its own tokens.
+
+Import the stylesheet from your entry module:
+
+```ts
+// src/main.ts
+import { createApp } from 'vue'
+import App from './App.vue'
+import './main.css'
+
+createApp(App).mount('#app')
+```
+
+#### Reference the foundation from CSS Modules
+
+To use Glideslope's tokens, utilities and variants in a CSS Module without emitting the theme again, reference the foundation at the top of the file:
+
+```css
+/* styles.module.css */
+@reference '@wingbrace/glideslope-foundation/styles';
+```
+
+The [Styling Guide](?path=/docs/styling-guide--docs#css-modules) shows how to write those modules.
+
+#### Use the components
+
+Components and composables are named exports of `@wingbrace/glideslope`, and icons are named exports of `@wingbrace/glideslope-icons` (each icon is also the default export of `@wingbrace/glideslope-icons/<name>`). Both tree-shake per component.
+
+```vue
+<script setup lang="ts">
+import { GsButton, GsIcon } from '@wingbrace/glideslope'
+import { AddIcon } from '@wingbrace/glideslope-icons'
+</script>
+
+<template>
+  <GsButton color="accent">
+    <GsIcon><AddIcon /></GsIcon>
+    Add track
+  </GsButton>
+</template>
+```
+
+#### Set up the theme
+
+`provideTheme()` holds the light/dark mode, applies it to the page and provides it to every component below it. Call it once near the root of your app, for example in `App.vue`:
+
+```vue
+<!-- App.vue -->
+<script setup lang="ts">
+import { provideTheme } from '@wingbrace/glideslope'
+
+const theme = provideTheme({ defaultMode: 'dark' })
+</script>
+```
+
+It puts a `dark` or `light` class and the matching `color-scheme` on `<html>`, which switches every Glideslope color through CSS `light-dark()`. Pass `target` to apply the mode to another element, or `target: null` to manage the class yourself. Without `provideTheme()`, set the `dark` or `light` class (or `data-theme="dark"`) on `<html>` or any ancestor yourself.
+
+`defaultMode` is only the initial mode; `provideTheme()` does not remember the user's choice. To keep it, store it yourself:
+
+```ts
+import { provideTheme } from '@wingbrace/glideslope'
+import { watch } from 'vue'
+
+const theme = provideTheme({
+  defaultMode: localStorage.getItem('theme') === 'light' ? 'light' : 'dark',
+})
+watch(theme.mode, (mode) => localStorage.setItem('theme', mode))
+```
+
+The class is applied when `App.vue` sets up, so the page shows its default (light) colors until the app mounts. To avoid that flash, put the same class on `<html>` in `index.html`.
+
+### Overrides
+
+Glideslope's accent colors are blue out of the box, but you can override them with a different palette.
+
+#### CSS
+
+In your root CSS file, after the two imports, override the semantic tokens in the `theme` layer. Each semantic token is a `light-dark(<light>, <dark>)` pair, so give every override both values if you support both modes. While you can override any CSS variable in the theme this way, it is HIGHLY RECOMMENDED you only override colors to ensure consistent behavior from the components. The pre-compiled component styles read these variables at runtime, so components pick up your colors.
+
+```css
+/* src/main.css */
+@import '@wingbrace/glideslope-foundation/styles';
+@import '@wingbrace/glideslope/styles.css';
+
+@layer theme {
+  :root {
+    --orange-bold: #ff6b1a;
+    --orange-hover: #9e4820;
+    --orange-pressed: #7a361a;
+    --orange-muted: #b35123;
+
+    --lime-bold: #c4d300;
+    --lime-hover: #d1e000;
+    --lime-pressed: #8a9400;
+    --lime-muted: #4f5400;
+
+    /* light-dark(<light mode>, <dark mode>) */
+    --bg-accent-primary-bold: light-dark(var(--orange-bold), var(--lime-bold));
+    --bg-accent-primary-hover: light-dark(var(--orange-hover), var(--lime-hover));
+    --bg-accent-primary-pressed: light-dark(var(--orange-pressed), var(--lime-pressed));
+    --bg-accent-primary-muted: light-dark(var(--orange-muted), var(--lime-muted));
+    --fg-accent-primary-bold: light-dark(var(--orange-bold), var(--lime-bold));
+    --fg-accent-primary-hover: light-dark(var(--orange-hover), var(--lime-hover));
+    --fg-accent-primary-pressed: light-dark(var(--orange-pressed), var(--lime-pressed));
+    --outline-accent-primary-bold: light-dark(var(--orange-bold), var(--lime-bold));
+    --outline-accent-primary-hover: light-dark(var(--orange-hover), var(--lime-hover));
+    --outline-accent-primary-pressed: light-dark(var(--orange-pressed), var(--lime-pressed));
+  }
+}
+```
+
+#### TypeScript
+
+Repeat those overrides in `provideTheme()` so the JavaScript tokens (`useTheme().tokens`, used for canvas and WebGL rendering) match the CSS. Colors are RGBA tuples with every channel 0–255, including alpha. `overrides` is deep-merged over the Glideslope tokens and can be a ref or getter.
+
+```ts
+import { provideTheme } from '@wingbrace/glideslope'
+
+const theme = provideTheme({
+  defaultMode: 'dark',
+  overrides: {
+    light: {
+      bg: {
+        accent: {
+          primary: {
+            bold: [255, 107, 26, 255],
+          },
+        },
+      },
+    },
+    dark: {
+      bg: {
+        accent: {
+          primary: {
+            bold: [196, 211, 0, 255],
+          },
+        },
+      },
+    },
+  },
+})
+```
+
+### Light Mode / Dark Mode
+
+Glideslope supports both light mode and dark mode. `provideTheme()` defaults to `dark`; set `defaultMode` to start in `light`. To read or change the mode from any component below it, use `useTheme()`:
+
+```vue
+<script setup lang="ts">
+import { GsButton, useTheme } from '@wingbrace/glideslope'
+
+const { mode, setMode, toggleMode } = useTheme()
+</script>
+
+<template>
+  <GsButton @click="toggleMode()">{{ mode === 'dark' ? 'Light mode' : 'Dark mode' }}</GsButton>
+  <GsButton @click="setMode('dark')">Dark</GsButton>
+</template>
+```
+
+Without a `provideTheme()` above it, `useTheme()` returns the dark theme with setters that do nothing, so components never need a null check.
+
+### Shared defaults
+
+Some component families let a parent set their defaults for everything rendered below it: `provideBadgeDefaults`, `provideButtonDefaults`, `provideChipDefaults`, `provideIconDefaults`, `provideLinkButtonDefaults` and `provideToggleButtonDefaults`. A prop set on a component still wins.
+
+```ts
+import { provideButtonDefaults } from '@wingbrace/glideslope'
+
+// Every GsButton below this component defaults to small, unless it says otherwise.
+provideButtonDefaults({ size: 'small' })
+```

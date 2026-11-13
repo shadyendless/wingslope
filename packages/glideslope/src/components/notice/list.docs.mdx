@@ -1,0 +1,324 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as ListStories from './list.stories'
+
+<Meta of={ListStories} />
+
+# NoticeList
+
+The NoticeList component provides queue management and display functionality for multiple notice notifications. It's built on Reka UI's Toast and provides accessibility out of the box. Notice lists are commonly used to manage system-wide notifications, user feedback queues, and alert systems that need to display multiple messages with automatic timeout and dismissal capabilities.
+
+## Example usage
+
+### Basic Queue Management
+
+```vue
+<script setup lang="ts">
+import { GsButton, GsNoticeList, useNotices } from '@wingbrace/glideslope'
+
+const { queue } = useNotices()
+
+function addNotice() {
+  queue({
+    message: 'This is a flexible notice that can be either a single or double line',
+    color: 'info',
+    timeout: 5000,
+  })
+}
+</script>
+
+<template>
+  <div class="relative">
+    <GsNoticeList placement="top right" default-color="info" :limit="3" />
+    <GsButton @click="addNotice">Add Notice</GsButton>
+  </div>
+</template>
+```
+
+<Canvas of={ListStories.Default} />
+
+A list shows at most `limit` notices (3 by default), newest first. Newer notices push older ones out of view; those wait in the queue and come back as visible ones close. Closing a notice (close button, action with `closeOnAction`, timeout, Escape or swipe) removes it from the queue.
+
+### Multiple Notice Lists
+
+A list with an `id` shows only the notices queued with that `target`; a list without one shows the notices that have no `target`. Give each list its own `label` too: it names the list's region for screen readers, which can't tell two "Notifications" regions apart.
+
+```vue
+<script setup lang="ts">
+// Create separate lists for different types of notifications
+const infoListId = 'info-notices'
+const errorListId = 'error-notices'
+</script>
+
+<template>
+  <GsNoticeList
+    :id="infoListId"
+    label="Updates"
+    placement="top right"
+    default-color="info"
+    :limit="5"
+  />
+  <GsNoticeList
+    :id="errorListId"
+    label="Errors"
+    placement="bottom right"
+    default-color="critical"
+    :limit="3"
+  />
+</template>
+```
+
+### Targeted Queue Management
+
+```ts
+// Queue notices to specific lists
+queue({
+  message: 'Information message',
+  target: infoListId,
+  color: 'info',
+})
+
+queue({
+  message: 'Error message',
+  target: errorListId,
+  color: 'critical',
+})
+```
+
+## Placement Options
+
+Without a `placement`, the list renders in place, in the page flow, and its notices fill its width. With one, it is pinned to an edge or corner of its nearest positioned ancestor (an element with `position: relative`):
+
+- **top left** - Top left corner of the container
+- **top** - Top center of the container
+- **top right** - Top right corner of the container
+- **right** - Middle right of the container
+- **bottom right** - Bottom right corner of the container
+- **bottom** - Bottom center of the container
+- **bottom left** - Bottom left corner of the container
+- **left** - Middle left of the container
+
+Set `global` to render the list at the end of `body` (outside any clipping or stacking context of the page) and pin it to the viewport instead. Use it with a `placement`, typically for one app-wide list:
+
+```vue
+<GsNoticeList global placement="bottom right" />
+```
+
+## Props
+
+<ArgTypes of={ListStories} />
+
+## The `useNotices()` queue
+
+Notices live in one app-wide queue, so they can be queued from anywhere, including outside components (stores, request handlers). The queue is module-level state shared across server-side requests, so only queue notices on the client.
+
+| Member               | Description                                                                                                                                                                        |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `notices`            | Every queued notice, oldest first (read-only)                                                                                                                                      |
+| `queue(notice)`      | Add a notice `{ id?, message, color?, primary?, secondary?, metadata?, timeout?, target?, showClose?, hideIcon?, closeOnAction? }`; returns its id                                 |
+| `dequeue(filter)`    | Remove notice(s) matching `{ id?, color?, target?, metadata? }`, or the one with an id                                                                                             |
+| `clear(target?)`     | Remove every notice, or only those targeting one list                                                                                                                              |
+| `onAction(listener)` | Listen for primary and secondary actions; the listener receives `{ id, metadata, action }` where `action` is `'primary'` or `'secondary'`. Returns a function that stops listening |
+| `onClose(listener)`  | Listen for notices a list closes; the listener receives `{ id, metadata }`. Returns a function that stops listening                                                                |
+
+`onAction` and `onClose` listeners added in a component's `setup` stop when the component unmounts. `onClose` fires when a list closes a notice: its close button, Escape, a swipe, its timeout, an action with `closeOnAction`, or "Clear all". Removing notices from code with `dequeue` or `clear` doesn't fire it.
+
+## Queue Management
+
+### Adding Notices
+
+```ts
+import { useNotices } from '@wingbrace/glideslope'
+
+const { queue } = useNotices()
+
+// Basic notice
+queue({
+  message: 'Operation completed successfully',
+  color: 'normal',
+})
+
+// Notice with custom timeout
+queue({
+  message: 'Warning: Action required',
+  color: 'advisory',
+  timeout: 10000,
+})
+
+// Notice with actions
+queue({
+  message: 'Delete item?',
+  color: 'critical',
+  primary: { label: 'Delete' },
+  secondary: { label: 'Cancel' },
+})
+
+// Notice with metadata for tracking
+queue({
+  message: 'File uploaded',
+  color: 'info',
+  metadata: { fileId: '123', userId: 'user-456' },
+})
+
+// Notice with action buttons and metadata
+queue({
+  message: 'Layer failed to load',
+  primary: { label: 'Center On' },
+  metadata: { layerId: 'layer-123', geometry: featureCollection },
+})
+```
+
+Each notice can also set `showClose`, `hideIcon` and `closeOnAction`. A notice shows a close button unless it has a timeout and both actions, keeps its icon, and stays open after an action.
+
+### Handling Action Events with Metadata
+
+Action events include metadata so you can handle button clicks with full context, wherever the notice was queued from:
+
+```vue
+<script setup lang="ts">
+import { GsNoticeList, useNotices } from '@wingbrace/glideslope'
+
+const centerOn = useCenterOn()
+const { queue, onAction } = useNotices()
+
+// Queue a notice with metadata and an action button
+function showLayerError(layer: Layer) {
+  queue({
+    message: `Layer "${layer.name}" failed to load`,
+    color: 'critical',
+    primary: { label: 'Center On' },
+    metadata: { layerId: layer.id, geometry: layer.geometry },
+    target: 'map-notices',
+  })
+}
+
+// Handle primary action clicks; metadata is passed in the event. Stops on unmount.
+onAction(({ action, metadata }) => {
+  if (action === 'primary' && metadata?.geometry) {
+    centerOn({ geometry: metadata.geometry, zoomTo: true })
+  }
+})
+</script>
+
+<template>
+  <GsNoticeList id="map-notices" placement="top right" />
+</template>
+```
+
+Each action also takes an `onAction` callback of its own, for code that queues a notice and handles its action in one place:
+
+```ts
+queue({
+  message: 'Track deleted',
+  primary: { label: 'Undo', onAction: () => restore(track) },
+  closeOnAction: true,
+})
+```
+
+### Removing Notices
+
+```ts
+const { dequeue, clear } = useNotices()
+
+// Remove by notice ID
+dequeue({ id: 'b097015f-f8e1-4718-9910-7e16aa6f79d1' })
+dequeue('b097015f-f8e1-4718-9910-7e16aa6f79d1') // shorthand
+
+// Remove by color (all notices of that color)
+dequeue({ color: 'critical' })
+
+// Remove by metadata (notices matching metadata criteria)
+dequeue({ metadata: { category: 'upload' } })
+
+// Clear entire list
+dequeue({ target: 'ad709536-8aa6-4c53-96fd-9bf92380b97f' })
+clear('ad709536-8aa6-4c53-96fd-9bf92380b97f') // same
+
+// Clear every list
+clear()
+```
+
+A notice is removed only when it matches every criterion given. Without a `target`, notices in every list match. `color` matches the color a notice is shown in, so a notice queued without one matches its list's `defaultColor`. Each `metadata` key must be present on the notice and deeply equal to the given value; other keys on the notice are ignored.
+
+### Advanced Queue Examples
+
+#### Dequeue by ID
+
+Remove specific notices by their unique identifier:
+
+```ts
+// Each notice gets a unique ID when queued; pass your own to refer to it later
+const noticeId = queue({ message: 'Action completed' })
+
+// Later, remove this specific notice
+dequeue({ id: noticeId })
+```
+
+<Canvas of={ListStories.DequeueSingle} />
+
+#### Dequeue a list
+
+Remove every notice targeting one list:
+
+```ts
+dequeue({ target: listId })
+```
+
+<Canvas of={ListStories.DequeueList} />
+
+#### Dequeue by Color
+
+Remove all notices of a specific type across lists (see the DequeueColor story):
+
+```ts
+// Queue multiple error notices
+queue({ message: 'Error 1', color: 'critical' })
+queue({ message: 'Error 2', color: 'critical' })
+
+// Clear all critical notices at once
+dequeue({ color: 'critical' })
+```
+
+#### Dequeue by Metadata
+
+Remove notices based on custom metadata for complex filtering:
+
+```ts
+// Queue notices with metadata
+queue({
+  message: 'Upload started',
+  metadata: { operation: 'upload', fileId: 'file-123' },
+})
+
+queue({
+  message: 'Processing file',
+  metadata: { operation: 'process', fileId: 'file-123' },
+})
+
+// Remove all notices related to a specific file
+dequeue({ metadata: { fileId: 'file-123' } })
+```
+
+<Canvas of={ListStories.DequeueMetadata} />
+
+#### Combining criteria
+
+```ts
+// Only the serious notices about squares in list A
+dequeue({ target: listA, color: 'serious', metadata: { shape: 'square' } })
+```
+
+<Canvas of={ListStories.DequeueCombination} />
+
+## Accessibility
+
+- Notices are announced politely to screen readers through a live region
+- F8 moves focus to the notices, and Tab moves between them and their buttons
+- Escape dismisses the focused notice; swiping right dismisses it on touch screens
+- Timeouts pause while the pointer is over the list or a notice has focus
+- The "Clear all" button appears when more than one notice is visible, unless `hide-clear-all` is set; it removes every notice of the list, including those waiting
+
+## Related
+
+- [Notice](?path=/docs/components-notice--docs)
+- [Reka UI Toast](https://reka-ui.com/docs/components/toast)

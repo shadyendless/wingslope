@@ -1,0 +1,56 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as LinesStories from './lines.stories'
+
+<Meta of={LinesStories} />
+
+# Lines
+
+Decorative connector lines used for tree structures and visual grouping. Renders dotted vertical and horizontal lines for branch connectors.
+
+Used internally by [Tree](?path=/docs/components-tree--docs).
+
+## Example usage
+
+```vue
+<GsLines variant="branch" />
+<GsLines variant="vert" />
+<GsLines variant="last" />
+```
+
+<Canvas of={LinesStories.Default} />
+
+Combined, the variants draw the connectors of a tree:
+
+<Canvas of={LinesStories.Tree} />
+
+## Variants
+
+| Variant  | Description                                                         |
+| -------- | ------------------------------------------------------------------- |
+| `branch` | Vertical line with horizontal connector to the right                |
+| `vert`   | Vertical line only (for continuing branches)                        |
+| `last`   | Vertical line (top half) with horizontal connector (for last items) |
+
+## Sizes
+
+| Size     | Description                      |
+| -------- | -------------------------------- |
+| `large`  | Larger height for expanded items |
+| `medium` | Standard height (default)        |
+| `small`  | Compact height                   |
+
+## Props
+
+<ArgTypes of={LinesStories} />
+
+## Implementation notes
+
+- Renders a `<div>` element with CSS background gradients
+- Uses dotted line patterns via `repeating-linear-gradient`
+- `:visible="false"` keeps the connector's space but hides it, through a data attribute
+- Purely decorative, so it is hidden from assistive technology (`aria-hidden`)
+
+**Related:**
+
+- [Tree component](?path=/docs/components-tree--docs)

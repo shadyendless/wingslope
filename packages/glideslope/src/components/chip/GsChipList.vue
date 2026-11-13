@@ -24,6 +24,7 @@ import type { GsChipListProps } from './types'
 
 const {
   selectionMode = 'none',
+  disallowEmptySelection = false,
   disabled = false,
   color,
   size = 'small',
@@ -59,6 +60,7 @@ provideChipDefaults(() => ({ color, size }))
     v-model="model"
     v-bind="removeListener"
     :selection-mode="selectionMode"
+    :disallow-empty-selection="disallowEmptySelection"
     :disabled="disabled"
     :class="['group/chip-list', styles.list]"
   >

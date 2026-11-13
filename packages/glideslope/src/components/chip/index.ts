@@ -10,4 +10,5 @@ export type {
   GsChipProps,
   GsChipSize,
   GsChipStyleProps,
+  GsDeletableChipProps,
 } from './types'

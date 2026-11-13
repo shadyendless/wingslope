@@ -1,0 +1,147 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import GsPopoverClose from './GsPopoverClose.vue'
+import GsPopoverContent from './GsPopoverContent.vue'
+import GsPopoverFooter from './GsPopoverFooter.vue'
+import GsPopoverTitle from './GsPopoverTitle.vue'
+import * as PopoverStories from './popover.stories'
+
+<Meta of={PopoverStories} />
+
+# Popover
+
+A floating content container positioned relative to a trigger element. Built on Reka UI's Popover, it provides accessible contextual overlays for information, actions, or forms.
+
+## Basic
+
+```vue
+<GsPopover>
+  <template #trigger><GsButton>Show Info</GsButton></template>
+  <GsPopoverTitle>Information</GsPopoverTitle>
+  <GsPopoverContent>This is helpful information.</GsPopoverContent>
+</GsPopover>
+```
+
+<Canvas of={PopoverStories.Simple} />
+
+## With Actions
+
+The default slot receives `close`. `GsPopoverClose` closes the popover when the element inside it is clicked.
+
+```vue
+<GsPopover>
+  <template #trigger>
+    <GsButton variant="icon" aria-label="Delete item">
+      <GsIcon><DeleteIcon /></GsIcon>
+    </GsButton>
+  </template>
+  <template #default="{ close }">
+    <GsPopoverTitle>Delete Item</GsPopoverTitle>
+    <GsPopoverContent>Are you sure you want to delete this?</GsPopoverContent>
+    <GsPopoverFooter>
+      <GsPopoverClose><GsButton variant="flat">Cancel</GsButton></GsPopoverClose>
+      <GsButton variant="filled" @click="remove().then(close)">Delete</GsButton>
+    </GsPopoverFooter>
+  </template>
+</GsPopover>
+```
+
+<Canvas of={PopoverStories.WithActions} />
+
+Buttons in `GsPopoverFooter` default to the small size.
+
+## Custom Composition
+
+`classes.popover` styles the panel, here to make it wider.
+
+```vue
+<GsPopover :classes="{ popover: 'min-w-sm' }">
+  <template #trigger><GsButton variant="flat">Settings</GsButton></template>
+  <GsPopoverTitle>Notification Settings</GsPopoverTitle>
+  <GsPopoverContent class="flex flex-col gap-s">
+    <GsCheckbox>Email Notifications</GsCheckbox>
+    <GsCheckbox>Push Notifications</GsCheckbox>
+  </GsPopoverContent>
+</GsPopover>
+```
+
+<Canvas of={PopoverStories.CustomComposition} />
+
+## Accessible name
+
+The panel is a dialog, named by its `GsPopoverTitle`. Without a title, give it a `label`; otherwise it is named after its trigger.
+
+```vue
+<GsPopover label="Layer legend">
+  <template #trigger>
+    <GsButton variant="icon" aria-label="Legend"><GsIcon><InformationIcon /></GsIcon></GsButton>
+  </template>
+  <GsPopoverContent>…</GsPopoverContent>
+</GsPopover>
+```
+
+## Placement
+
+```vue
+<!-- Above trigger -->
+<GsPopover side="top">...</GsPopover>
+<!-- To the right -->
+<GsPopover side="right">...</GsPopover>
+<!-- To the left -->
+<GsPopover side="left">...</GsPopover>
+<!-- Below trigger (default) -->
+<GsPopover side="bottom">...</GsPopover>
+```
+
+`align` (`start`, `center`, `end`) positions the popover along that side, and `offset` sets the gap to the trigger. The popover flips to the opposite side when there is no room.
+
+## Controlled
+
+Bind `v-model:open` to open or close the popover from code.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const open = ref(false)
+</script>
+
+<template>
+  <GsPopover v-model:open="open">...</GsPopover>
+</template>
+```
+
+## Props
+
+### GsPopover
+
+Classes on `GsPopover` itself go to its trigger; use `classes.popover` for the panel.
+
+<ArgTypes of={PopoverStories} />
+
+### GsPopoverTitle
+
+<ArgTypes of={GsPopoverTitle} />
+
+### GsPopoverContent
+
+<ArgTypes of={GsPopoverContent} />
+
+### GsPopoverFooter
+
+<ArgTypes of={GsPopoverFooter} />
+
+### GsPopoverClose
+
+<ArgTypes of={GsPopoverClose} />
+
+## Accessibility
+
+- Focus moves into the popover when it opens and returns to the trigger when it closes
+- Escape key closes the popover
+- Click outside closes the popover
+- The trigger exposes the popover's expanded state; `GsPopoverTitle` names the panel, otherwise `label` does, otherwise the trigger
+
+## Related
+
+- [Reka UI Popover](https://reka-ui.com/docs/components/popover)

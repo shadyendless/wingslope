@@ -1,0 +1,108 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .list {
+    @apply flex h-full w-full flex-col gap-xxs overflow-y-auto select-none;
+  }
+
+  .item {
+    @apply relative flex cursor-pointer items-center gap-s rounded-medium bg-surface-default pt-xs pr-s pb-xs pl-s text-body-s fg-primary-bold outline outline-transparent;
+
+    @variant hover {
+      @apply bg-interactive-muted-hover fg-a11y-on-accent;
+    }
+
+    @variant focus-visible {
+      @apply bg-interactive-muted-hover fg-a11y-on-accent;
+    }
+
+    @variant active {
+      @apply bg-interactive-muted-pressed;
+    }
+
+    @variant selected {
+      @apply bg-accent-primary-muted outline-accent-primary-bold;
+
+      @variant hover {
+        @apply outline-2 -outline-offset-2;
+      }
+
+      @variant focus-visible {
+        @apply outline-2 -outline-offset-2;
+      }
+
+      @variant active {
+        @apply outline-accent-primary-pressed;
+      }
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed bg-transparent;
+
+      @variant selected {
+        @apply bg-interactive-disabled outline-none;
+      }
+    }
+  }
+
+  .content {
+    @apply flex min-w-0 flex-auto flex-col gap-xxs;
+  }
+
+  .title {
+    @apply truncate fg-primary-bold;
+
+    &.compact {
+      @apply text-header-s;
+    }
+
+    &.cozy {
+      @apply text-header-m;
+    }
+
+    @variant group-disabled/list-item {
+      @apply fg-disabled;
+    }
+  }
+
+  .description {
+    @apply truncate fg-primary-muted;
+
+    &.compact {
+      @apply text-body-xs;
+    }
+
+    &.cozy {
+      @apply text-body-s;
+    }
+
+    @variant group-disabled/list-item {
+      @apply fg-disabled;
+    }
+  }
+}
+
+@layer components.l1 {
+  /* The row's text part spans the row so icons and content lay out as before. */
+  .row {
+    @apply flex min-w-0 flex-1 items-center gap-s;
+  }
+
+  /* A link row's text part is an <a>: it looks like the row, and its overlay takes clicks on the
+     whole row. The actions are positioned after it, so they stay above the overlay. */
+  .link {
+    color: inherit;
+    text-decoration: none;
+
+    &::after {
+      @apply absolute inset-0 rounded-medium;
+      content: '';
+    }
+  }
+}
+
+@layer components.l1 {
+  .actions {
+    @apply relative flex shrink-0 items-center gap-xs;
+  }
+}

@@ -13,7 +13,7 @@ import { injectOptionsContext } from './context'
 import styles from './styles.module.css'
 import type { GsOptionSectionProps } from './types'
 
-const { header } = defineProps<GsOptionSectionProps>()
+const { header, classes } = defineProps<GsOptionSectionProps>()
 
 defineSlots<{
   /** `GsOption` items. */
@@ -35,7 +35,7 @@ const parts = computed(() =>
 <template>
   <slot v-if="!parts" />
   <component :is="parts[0]" v-else :class="styles.section">
-    <component :is="parts[1]" :class="styles.header">{{ header }}</component>
+    <component :is="parts[1]" :class="[styles.header, classes?.header]">{{ header }}</component>
     <slot />
   </component>
 </template>

@@ -1,0 +1,113 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as SliderStories from './slider.stories'
+
+<Meta of={SliderStories} />
+
+# Slider
+
+`GsSlider` selects a single value, or a range of values, within a specified range. Bind `v-model` to a number for one thumb, or to `[start, end]` for a range.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const opacity = ref(30)
+const volume = ref(50)
+const priceRange = ref([20, 80])
+const quality = ref(50)
+</script>
+
+<template>
+  <GsSlider v-model="opacity" label="Opacity" />
+
+  <GsSlider v-model="volume" label="Volume" show-input />
+
+  <GsSlider v-model="priceRange" label="Price Range" show-input />
+
+  <GsSlider
+    v-model="quality"
+    label="Quality"
+    :markers="[
+      { value: 0, label: 'Low' },
+      { value: 50, label: 'Medium' },
+      { value: 100, label: 'High' },
+    ]"
+    show-marker-labels
+    snap-to-markers
+  />
+</template>
+```
+
+<Canvas of={SliderStories.Default} />
+
+## Input fields
+
+Enable number inputs for typing exact values with `show-input`. A typed value is clamped into range when the input loses focus or Enter is pressed.
+
+<Canvas of={SliderStories.WithInput} />
+
+<Canvas of={SliderStories.RangeWithInput} />
+
+## Markers
+
+Markers provide visual reference points along the slider track.
+
+<Canvas of={SliderStories.WithLabeledMarkers} />
+
+<Canvas of={SliderStories.RangeWithMarkers} />
+
+## Snap to markers
+
+Use `snap-to-markers` for discrete selection where users can only choose from predefined values.
+
+<Canvas of={SliderStories.SnapToLabeledMarkers} />
+
+<Canvas of={SliderStories.SnapToUnevenMarkers} />
+
+## Props
+
+`v-model` updates continuously while the user drags. The `value-commit` event fires once the user finishes changing the value (pointer released or key handled).
+
+<ArgTypes of={SliderStories} />
+
+### Markers configuration
+
+The `markers` prop accepts:
+
+- `number`: creates evenly spaced markers (e.g. `5` creates markers at 0%, 25%, 50%, 75% and 100%)
+- `number[]`: an array of specific values (e.g. `[0, 32, 72, 100]`)
+- `GsSliderMarker[]`: an array of objects with a `value` and an optional `label`
+
+When `show-marker-labels` is enabled, the min and max value labels are hidden automatically if a labeled marker sits at that position.
+
+### `classes`
+
+Classes on `GsSlider` itself go on the main slider container.
+
+| Key               | Description                 |
+| ----------------- | --------------------------- |
+| `label`           | Label element               |
+| `inputs`          | Input fields wrapper        |
+| `input`           | Individual input field      |
+| `track`           | Slider track                |
+| `trackBackground` | Track background            |
+| `trackValue`      | Filled portion of the track |
+| `thumb`           | Slider thumb                |
+| `minValue`        | Min value label             |
+| `maxValue`        | Max value label             |
+| `markers`         | Markers container           |
+| `marker`          | Individual marker           |
+| `markerDot`       | Marker dot                  |
+| `markerLabel`     | Marker label                |
+
+## Accessibility
+
+- Full keyboard navigation (arrow keys, Page Up/Down, Home/End).
+- The slider is a `role="group"` named by its label; each thumb is a `role="slider"`, and range thumbs are named "minimum" and "maximum".
+- Tooltips show the current value on hover and focus (hidden when the number inputs are shown).
+- Markers are rendered with `aria-hidden` as visual indicators.
+
+## Related
+
+- [Reka UI Slider](https://reka-ui.com/docs/components/slider)

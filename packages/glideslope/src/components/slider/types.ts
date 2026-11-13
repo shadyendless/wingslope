@@ -34,4 +34,25 @@ export interface GsSliderProps {
   showMarkerLabels?: boolean
   /** Show the min and max values at the ends. @default true */
   showValueLabels?: boolean
+  /**
+   * Extra classes for inner parts: `label`, `inputs` (the number inputs' wrapper) and `input` (each
+   * number input), `track`, `trackBackground` (the unfilled track), `trackValue` (the filled range),
+   * `thumb`, `minValue` and `maxValue` (the end labels), `markers` (the markers' wrapper), `marker`
+   * (each marker), `markerDot` and `markerLabel`. Classes on the component itself go on the root.
+   */
+  classes?: {
+    label?: string
+    inputs?: string
+    input?: string
+    track?: string
+    trackBackground?: string
+    trackValue?: string
+    thumb?: string
+    minValue?: string
+    maxValue?: string
+    markers?: string
+    marker?: string
+    markerDot?: string
+    markerLabel?: string
+  }
 }

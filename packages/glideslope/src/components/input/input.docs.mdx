@@ -1,0 +1,83 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as InputStories from './input.stories'
+
+<Meta of={InputStories} />
+
+# Input
+
+`GsInput` is a text input with auto-sizing, a clear button, prefix and suffix content, and validation states. Bind its value with `v-model`. For a labeled input with a description and an error message, use [TextField](?path=/docs/components-textfield--docs).
+
+## Example usage
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const name = ref('')
+const query = ref('')
+const notes = ref('Initial value')
+</script>
+
+<template>
+  <GsInput v-model="name" placeholder="Enter your name" aria-label="Name" />
+
+  <GsInput v-model="query" placeholder="Search..." size="small" aria-label="Search" />
+
+  <GsInput v-model="notes" placeholder="Type here..." auto-size aria-label="Notes" />
+</template>
+```
+
+<Canvas of={InputStories.Default} />
+
+### Prefix and suffix
+
+Content before and after the input, such as a unit or an icon, goes in the `#prefix` and `#suffix` slots.
+
+```vue
+<GsInput v-model="temperature" type="number" placeholder="0" aria-label="Temperature">
+  <template #prefix>~</template>
+  <template #suffix>°C</template>
+</GsInput>
+```
+
+<Canvas of={InputStories.WithPrefixAndSuffix} />
+
+## Sizes
+
+| Size     | Description                    |
+| -------- | ------------------------------ |
+| `medium` | Standard size (default)        |
+| `small`  | Compact size for dense layouts |
+
+## Props
+
+`class` and `style` go on the outer container. Every other attribute (`id`, `name`, `autocomplete`, `pattern`, `aria-*`, listeners) goes on the `<input>`.
+
+<ArgTypes of={InputStories} />
+
+**`classes`:**
+
+| Key      | Description                   |
+| -------- | ----------------------------- |
+| `sizer`  | Sizer element for auto-sizing |
+| `input`  | The input element             |
+| `clear`  | Clear button                  |
+| `prefix` | Prefix content wrapper        |
+| `suffix` | Suffix content wrapper        |
+
+## Accessibility
+
+- Escape clears the input when it is clearable.
+- Give a standalone input an accessible name with `aria-label` or a `<label>` pointing at its `id`. Inside a field, the field's label names it.
+- The input is marked `aria-invalid` while `invalid` is set.
+
+## Implementation notes
+
+- Inside a Glideslope field (or a Reka UI `FieldRoot`), `GsInput` registers as the field's control through Reka UI's `FieldControl`, so labels, descriptions, errors and validation are wired up automatically.
+- The clear button is kept out of the tab order; keyboard users clear the input with Escape.
+- Auto-size sets the input's width from the length of its value (or placeholder) through a CSS custom property.
+
+**Related:**
+
+- [Reka UI Field](https://reka-ui.com/docs/components/field)

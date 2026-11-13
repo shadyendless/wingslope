@@ -1,0 +1,80 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as BreadcrumbsStories from './breadcrumbs.stories'
+import GsBreadcrumbItem from './GsBreadcrumbItem.vue'
+
+<Meta of={BreadcrumbsStories} />
+
+# Breadcrumbs
+
+Accessible breadcrumb navigation. Displays the user's location within an application hierarchy, with links back to parent pages. The final item represents the current page.
+
+Components:
+
+- **GsBreadcrumbs** - Container that renders the list of breadcrumb items inside a `<nav>` landmark
+- **GsBreadcrumbItem** - Individual item; renders a link when `href` is set, and plain text marked as the current page when `current` is set
+
+## Example usage
+
+```vue
+<GsBreadcrumbs>
+  <GsBreadcrumbItem href="/">Home</GsBreadcrumbItem>
+  <GsBreadcrumbItem href="/projects">Projects</GsBreadcrumbItem>
+  <GsBreadcrumbItem current>Project Phoenix</GsBreadcrumbItem>
+</GsBreadcrumbs>
+```
+
+<Canvas of={BreadcrumbsStories.Default} />
+
+### Router links
+
+With `as-child`, an item renders its single child as the link, so you can use a `RouterLink` or another link component. The item still adds the link styles and the separator.
+
+```vue
+<GsBreadcrumbs>
+  <GsBreadcrumbItem as-child>
+    <RouterLink to="/">Home</RouterLink>
+  </GsBreadcrumbItem>
+  <GsBreadcrumbItem current>Settings</GsBreadcrumbItem>
+</GsBreadcrumbs>
+```
+
+<Canvas of={BreadcrumbsStories.CustomLinks} />
+
+## Props
+
+### GsBreadcrumbs
+
+<ArgTypes of={BreadcrumbsStories} />
+
+### GsBreadcrumbItem
+
+<ArgTypes of={GsBreadcrumbItem} />
+
+`class` goes on the item's `<li>`. `classes` styles its inner parts:
+
+| Key         | Applied to                                     |
+| ----------- | ---------------------------------------------- |
+| `link`      | The link (when `href` or `as-child` is set)    |
+| `separator` | The separator icon (not rendered on `current`) |
+
+```vue
+<GsBreadcrumbItem
+  href="/"
+  :classes="{ link: 'fg-accent-primary-bold', separator: 'fg-primary-muted' }"
+>
+  Home
+</GsBreadcrumbItem>
+```
+
+## Accessibility
+
+- Keyboard navigation: Tab to focus, Enter to activate links
+- ARIA landmark: renders a `<nav>` labeled by `label` (`"Breadcrumb"` by default), around an ordered list
+- Current page: the item with `current` is marked `aria-current="page"`
+
+## Implementation notes
+
+- The separator is a `ChevronRightIcon`, hidden from assistive technology and not rendered on the `current` item
+- Items with neither `href` nor `as-child` render as plain text
+- Attributes and classes you add to `GsBreadcrumbItem` go on its `<li>`

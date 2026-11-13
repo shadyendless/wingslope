@@ -1,0 +1,77 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as RadioGroupStories from './group.stories'
+
+<Meta of={RadioGroupStories} />
+
+# Radio Group
+
+`GsRadioGroup` groups radio buttons with shared state and configuration. It supports vertical and horizontal layouts with automatic spacing.
+
+## Example usage
+
+```vue
+<GsRadioGroup label="Select an option">
+  <GsRadio value="1">Option 1</GsRadio>
+  <GsRadio value="2">Option 2</GsRadio>
+  <GsRadio value="3">Option 3</GsRadio>
+</GsRadioGroup>
+```
+
+<Canvas of={RadioGroupStories.Default} />
+
+### Horizontal layout
+
+```vue
+<GsRadioGroup label="Size" orientation="horizontal">
+  <GsRadio value="small">Small</GsRadio>
+  <GsRadio value="medium">Medium</GsRadio>
+  <GsRadio value="large">Large</GsRadio>
+</GsRadioGroup>
+```
+
+### Controlled
+
+`v-model` holds the selected value.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const size = ref('medium')
+</script>
+
+<template>
+  <GsRadioGroup v-model="size" label="Size">
+    <GsRadio value="small">Small</GsRadio>
+    <GsRadio value="medium">Medium</GsRadio>
+    <GsRadio value="large">Large</GsRadio>
+  </GsRadioGroup>
+</template>
+```
+
+## Props
+
+`label-position` sets the label position of every radio in the group; a radio's own `label-position` overrides it.
+
+<ArgTypes of={RadioGroupStories} />
+
+**`classes`:**
+
+| Key     | Description     |
+| ------- | --------------- |
+| `label` | The group label |
+
+Classes on `GsRadioGroup` itself go on the group container.
+
+## Implementation notes
+
+- Wraps Reka UI's `RadioGroupRoot`, named by its label. Without a `label`, give the group an `aria-label`.
+- `orientation` also sets which arrow keys move between radios.
+- Horizontal orientation wraps when space is constrained.
+- The label shows "(optional)" unless `required` is set.
+
+**Related:**
+
+- [Reka UI Radio Group](https://reka-ui.com/docs/components/radio-group)
+- [Radio](?path=/docs/components-radio--docs)

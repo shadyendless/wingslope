@@ -20,6 +20,7 @@
 import { Primitive } from 'reka-ui'
 import { computed } from 'vue'
 import { provideIconDefaults } from '../icon/defaults'
+import GsIcon from '../icon/GsIcon.vue'
 import { injectButtonDefaults } from './defaults'
 import styles from './styles.module.css'
 import type { GsButtonProps } from './types'
@@ -28,7 +29,7 @@ const {
   as = 'button',
   asChild = false,
   type = 'button',
-  disabled = false,
+  disabled = undefined,
   size,
   color,
   variant,
@@ -43,6 +44,7 @@ const defaults = injectButtonDefaults()
 const resolvedSize = computed(() => size ?? defaults.value.size ?? 'medium')
 const resolvedColor = computed(() => color ?? defaults.value.color ?? 'mono-muted')
 const resolvedVariant = computed(() => variant ?? defaults.value.variant ?? 'filled')
+const resolvedDisabled = computed(() => disabled ?? defaults.value.disabled ?? false)
 
 /** Only a real `<button>` understands `type` and `disabled`; anything else gets ARIA instead. */
 const isNativeButton = computed(() => !asChild && as === 'button')
@@ -55,13 +57,15 @@ provideIconDefaults(() => ({ size: resolvedSize.value }))
     :as="as"
     :as-child="asChild"
     :type="isNativeButton ? type : undefined"
-    :disabled="isNativeButton ? disabled : undefined"
-    :aria-disabled="!isNativeButton && disabled ? 'true' : undefined"
-    :data-disabled="disabled ? '' : undefined"
-    :class="['group/button', styles.button, styles[resolvedVariant]]"
+    :disabled="isNativeButton ? resolvedDisabled : undefined"
+    :aria-disabled="!isNativeButton && resolvedDisabled ? 'true' : undefined"
+    :data-disabled="resolvedDisabled ? '' : undefined"
+    :class="['group/button', styles.button, styles[resolvedVariant], defaults.class]"
     :data-color="resolvedColor"
     :data-size="resolvedSize"
   >
-    <slot />
+    <slot>
+      <GsIcon v-if="defaults.icon"><component :is="defaults.icon" /></GsIcon>
+    </slot>
   </Primitive>
 </template>

@@ -1,0 +1,77 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as ActionBarStories from './action-bar.stories'
+
+<Meta of={ActionBarStories} />
+
+# ActionBar
+
+`GsActionBar` is a container that displays a collection of actions, typically buttons with icons. It gives the actions consistent spacing and alignment, and is commonly used in toolbars, editors and command interfaces. Give the bar an `aria-label`, and each icon-only action one too.
+
+## Example usage
+
+```vue
+<GsActionBar aria-label="Edit actions">
+  <GsButton aria-label="Copy" @click="copy">
+    <GsIcon><CopyToClipboardIcon /></GsIcon>
+  </GsButton>
+  <GsButton aria-label="Delete" @click="remove">
+    <GsIcon><DeleteIcon /></GsIcon>
+  </GsButton>
+</GsActionBar>
+```
+
+<Canvas of={ActionBarStories.Default} />
+
+### With GsToggleButton
+
+`GsActionBar` also supports [GsToggleButton](?path=/story/components-button--toggle) for stateful actions. Bind each one's pressed state with `v-model`.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const filter = ref(false)
+const layers = ref(true)
+</script>
+
+<template>
+  <GsActionBar aria-label="Map tools">
+    <GsToggleButton v-model="filter" aria-label="Filter">
+      <GsIcon><FilterIcon /></GsIcon>
+    </GsToggleButton>
+    <GsToggleButton v-model="layers" aria-label="Layers">
+      <GsIcon><LayersIcon /></GsIcon>
+    </GsToggleButton>
+  </GsActionBar>
+</template>
+```
+
+<Canvas of={ActionBarStories.Toggle} />
+
+## Props
+
+<ArgTypes of={ActionBarStories} />
+
+## Elevation
+
+Controls the visual prominence of the action bar.
+
+| Value     | Use case                                           |
+| --------- | -------------------------------------------------- |
+| `flat`    | Embedded in panels with existing visual boundaries |
+| `overlay` | Floating over content (default)                    |
+| `raised`  | Higher prominence, stronger shadow                 |
+
+```vue
+<GsActionBar elevation="flat" aria-label="Edit actions">
+  <GsButton aria-label="Copy">
+    <GsIcon><CopyToClipboardIcon /></GsIcon>
+  </GsButton>
+</GsActionBar>
+```
+
+## Implementation notes
+
+- Renders a `<nav>` element. Attributes and classes you add go on it.
+- Provides `variant="icon"` and its `size` to every `GsButton` and `GsToggleButton` inside it, through `provideButtonDefaults` and `provideToggleButtonDefaults`. A prop set on a button still wins.

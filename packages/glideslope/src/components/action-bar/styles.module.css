@@ -1,0 +1,23 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .bar {
+    @apply flex w-fit rounded-medium bg-surface-default;
+
+    @variant elevation-overlay {
+      @apply shadow-elevation-overlay;
+    }
+
+    @variant elevation-raised {
+      @apply shadow-elevation-raised;
+    }
+
+    @variant size-medium {
+      @apply gap-s px-m py-s;
+    }
+
+    @variant size-small {
+      @apply gap-xs px-s py-xs;
+    }
+  }
+}

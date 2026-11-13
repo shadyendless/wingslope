@@ -1,0 +1,30 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .list {
+    @apply flex items-center gap-s fg-primary-muted;
+  }
+
+  .item {
+    @apply flex items-center gap-s;
+
+    @variant current {
+      @apply fg-accent-primary-bold;
+    }
+  }
+}
+
+@layer components.l2 {
+  .link {
+    @apply select-none;
+    @variant hover {
+      @apply fg-primary-bold;
+    }
+  }
+
+  .separator {
+    @variant group-current/breadcrumb {
+      @apply hidden;
+    }
+  }
+}

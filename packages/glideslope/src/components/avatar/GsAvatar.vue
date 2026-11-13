@@ -13,15 +13,23 @@
  */
 import { designTokens } from '@wingbrace/glideslope-foundation/tokens'
 import PersonIcon from '@wingbrace/glideslope-icons/person'
-import { AvatarFallback, AvatarImage, AvatarRoot } from 'reka-ui'
+import { AvatarFallback, AvatarImage, AvatarRoot, type AvatarImageEmits } from 'reka-ui'
 import { computed } from 'vue'
 import { provideBadgeDefaults } from '../badge/defaults'
 import GsIcon from '../icon/GsIcon.vue'
 import { provideIconDefaults } from '../icon/defaults'
+import { injectAvatarDefaults } from './defaults'
 import styles from './styles.module.css'
 import type { GsAvatarProps } from './types'
 
-const { src, alt, size = 'medium', fallbackDelay, classes } = defineProps<GsAvatarProps>()
+const { src, alt, size, fallbackDelay, classes } = defineProps<GsAvatarProps>()
+
+const emit = defineEmits<{
+  /** The image loaded and is shown. Emitted again after `src` changes. */
+  load: []
+  /** The image failed to load, so the fallback stays. Not emitted when there is no `src`. */
+  error: []
+}>()
 
 defineSlots<{
   /** Overlay content, such as a `GsBadge`. */
@@ -30,18 +38,37 @@ defineSlots<{
   fallback?: () => unknown
 }>()
 
-provideIconDefaults(computed(() => ({ size: size === 'medium' ? 'large' : 'medium' })))
+const defaults = injectAvatarDefaults()
+const resolvedSize = computed(() => size ?? defaults.value.size ?? 'medium')
+
+provideIconDefaults(
+  computed(() => ({ size: resolvedSize.value === 'medium' ? 'large' : 'medium' })),
+)
 provideBadgeDefaults({ offset: designTokens.spacing.xs, placement: 'top right' })
+
+function onLoadingStatusChange(status: AvatarImageEmits['loadingStatusChange'][0]) {
+  if (status === 'loaded') emit('load')
+  else if (status === 'error') emit('error')
+}
 </script>
 
 <template>
   <AvatarRoot
-    :class="['group/avatar', styles.avatar]"
+    :class="['group/avatar', styles.avatar, defaults.class]"
     :role="alt ? 'img' : undefined"
     :aria-label="alt"
-    :data-size="size"
+    :data-size="resolvedSize"
   >
-    <AvatarImage v-if="src" :src="src" alt="" :class="[styles.image, classes?.image]" />
+    <!-- The root carries the name, so the image is decorative. Reka gives it role="img", which
+         conflicts with alt="". -->
+    <AvatarImage
+      v-if="src"
+      :src="src"
+      alt=""
+      role="presentation"
+      :class="[styles.image, classes?.image]"
+      @loading-status-change="onLoadingStatusChange"
+    />
     <AvatarFallback :delay-ms="fallbackDelay" :class="[styles.fallback, classes?.fallback]">
       <slot name="fallback">
         <GsIcon><PersonIcon /></GsIcon>

@@ -1,2 +1,3 @@
 export { default as GsSwitch } from './GsSwitch.vue'
-export type { GsSwitchProps } from './types'
+export { provideSwitchDefaults } from './defaults'
+export type { GsSwitchDefaults, GsSwitchProps } from './types'

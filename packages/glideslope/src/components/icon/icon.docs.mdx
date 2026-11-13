@@ -1,0 +1,73 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as IconStories from './icon.stories'
+
+<Meta of={IconStories} />
+
+# Icon
+
+A wrapper component for displaying SVG icons with consistent sizing. Renders a `<span>` containing the icon SVG, such as a component from `@wingbrace/glideslope-icons`.
+
+## Example usage
+
+```vue
+<GsIcon>
+  <AddIcon />
+</GsIcon>
+
+<GsIcon size="large">
+  <SettingsIcon />
+</GsIcon>
+```
+
+<Canvas of={IconStories.Default} />
+
+## Sizes
+
+| Size     | Pixels | Description                            |
+| -------- | ------ | -------------------------------------- |
+| `xsmall` | 12px   | Dense interfaces and small UI elements |
+| `small`  | 16px   | Secondary actions and compact layouts  |
+| `medium` | 20px   | Standard size (default)                |
+| `large`  | 24px   | Prominent actions and main navigation  |
+
+## Props
+
+### GsIcon
+
+<ArgTypes of={IconStories} />
+
+### provideIconDefaults
+
+`provideIconDefaults()` sets the default size of every icon rendered below the calling component. A `size` set on an icon still wins. Components such as `GsButton` use it to size the icons inside them.
+
+```vue
+<script setup lang="ts">
+import { provideIconDefaults } from '@wingbrace/glideslope'
+
+provideIconDefaults({ size: 'small' })
+</script>
+
+<template>
+  <GsIcon><HomeIcon /></GsIcon>
+  <GsIcon><SearchIcon /></GsIcon>
+</template>
+```
+
+<Canvas of={IconStories.Provider} />
+
+## Accessibility
+
+- Icons inherit their color from the `fg-*` (text and icon) or `icon-*` (icon only) utilities of an ancestor or of the icon itself
+- Use `aria-label` and `role="img"` for standalone icons that convey meaning
+
+```vue
+<GsIcon role="img" aria-label="Add item">
+  <AddIcon />
+</GsIcon>
+```
+
+## Implementation notes
+
+- Uses CSS custom properties for sizing (`--icon-size-xs`, `--icon-size-s`, …)
+- Inherits its size from the nearest `provideIconDefaults()` or parent component, falling back to `medium`

@@ -7,7 +7,7 @@
 import { FieldDescription, FieldError, FieldRoot } from 'reka-ui'
 import GsLabel from '../label/GsLabel.vue'
 import styles from './styles.module.css'
-import type { GsFieldProps } from './types'
+import type { GsFieldLayoutProps } from './types'
 
 const {
   label,
@@ -21,12 +21,8 @@ const {
   validate,
   validationMode,
   nativeLabel = true,
-} = defineProps<
-  GsFieldProps & {
-    /** Render the label as a native `<label>`. `false` for button-like controls. */
-    nativeLabel?: boolean
-  }
->()
+  classes,
+} = defineProps<GsFieldLayoutProps>()
 
 defineSlots<{
   /** The control. `ariaLabel` is set when the visible label is hidden (small size). */
@@ -46,15 +42,17 @@ defineSlots<{
     :class="['group/field', styles.field]"
     :data-size="size"
   >
-    <GsLabel v-if="label && size !== 'small'" :native-label="nativeLabel">{{ label }}</GsLabel>
+    <GsLabel v-if="label && size !== 'small'" :class="classes?.label" :native-label="nativeLabel">
+      {{ label }}
+    </GsLabel>
     <slot :invalid="isInvalid" :aria-label="size === 'small' ? label : undefined" />
     <FieldDescription
       v-if="description && size !== 'small' && !isInvalid"
-      :class="styles.description"
+      :class="[styles.description, classes?.description]"
     >
       {{ description }}
     </FieldDescription>
-    <FieldError v-slot="{ errors }" :class="styles.error">
+    <FieldError v-slot="{ errors }" :class="[styles.error, classes?.error]">
       {{ errorMessage || errors.join(' ') }}
     </FieldError>
   </FieldRoot>

@@ -1,0 +1,38 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as SkeletonStories from './skeleton.stories'
+
+<Meta of={SkeletonStories} />
+
+# Skeleton
+
+Placeholder content for loading states with a pulsing animation.
+
+```vue
+<GsSkeleton />
+
+<GsSkeleton variant="circle" />
+```
+
+<Canvas of={SkeletonStories.Default} />
+
+A skeleton is one line tall (`1lh`), so it matches the size of the surrounding text. Set a height class for taller placeholders.
+
+```vue
+<GsSkeleton class="h-oversized" />
+
+<div class="text-header-m"><GsSkeleton /></div>
+```
+
+<Canvas of={SkeletonStories.Multiple} />
+
+## Props
+
+Classes and attributes go on the rendered `<div>`.
+
+<ArgTypes of={SkeletonStories} />
+
+## Accessibility
+
+- Respects `prefers-reduced-motion` for animations
+- Hidden from assistive technology (`aria-hidden`); announce the loading state elsewhere, for example with `aria-busy` on the region that is loading

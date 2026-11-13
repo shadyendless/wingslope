@@ -1,0 +1,6 @@
+export { default as GsPopover } from './GsPopover.vue'
+export { default as GsPopoverClose } from './GsPopoverClose.vue'
+export { default as GsPopoverContent } from './GsPopoverContent.vue'
+export { default as GsPopoverFooter } from './GsPopoverFooter.vue'
+export { default as GsPopoverTitle } from './GsPopoverTitle.vue'
+export type { GsPopoverProps } from './types'

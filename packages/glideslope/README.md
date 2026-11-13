@@ -75,11 +75,44 @@ Labeled fields share one layout and use Reka UI's `FieldRoot`, so labels, descri
 | Combo box     | `GsComboBoxField`                                                                                     | Reka `Combobox`                                                    |
 | Date and time | `GsDateField`, `GsTimeField`                                                                          | Reka `DateField`, `TimeField`                                      |
 | Chips         | `GsChip`, `GsChipList`, `GsSelectableChip`, `GsDeletableChip`                                         | Reka `TagGroup`                                                    |
-| Color picker  | `GsColorPicker`                                                                                       | Reka `ColorSwatchPicker`, `ColorArea`, `ColorSlider`, `ColorField` |
+| Color picker  | `GsColorPicker`, `GsCustomColorPicker`, `GsNoColorButton`                                             | Reka `ColorSwatchPicker`, `ColorArea`, `ColorSlider`, `ColorField` |
 
 Field components send `class` and `style` to the field wrapper and every other attribute (`id`, `autocomplete`, `aria-*`, listeners) to the actual control. Date and time values are `@internationalized/date` objects.
 
-Composables: `provideTheme` / `useTheme`, plus `provide*Defaults` for families whose defaults a parent can set (e.g. `provideButtonDefaults({ size: 'small' })`).
+### Overlays
+
+Overlays take their trigger in a `#trigger` slot and their content in the default slot, which receives `close`. Bind `v-model:open` to control them. Attributes set on an overlay go to its trigger, so overlays can wrap each other: a `GsMenu` inside a `GsTooltip`'s `#trigger` gives one button both.
+
+| Family  | Components                                                                                                                                                                                            | Built on                           |
+| ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| Tooltip | `GsTooltip`, `GsTooltipProvider`                                                                                                                                                                      | Reka `Tooltip`                     |
+| Popover | `GsPopover`, `GsPopoverTitle`, `GsPopoverContent`, `GsPopoverFooter`, `GsPopoverClose`                                                                                                                | Reka `Popover`                     |
+| Dialog  | `GsDialog`, `GsDialogTitle`, `GsDialogContent`, `GsDialogFooter`, `GsDialogClose`                                                                                                                     | Reka `Dialog`                      |
+| Menu    | `GsMenu`, `GsContextMenu`, `GsMenuItem`, `GsMenuItemLabel`, `GsMenuItemDescription`, `GsMenuCheckboxItem`, `GsMenuRadioGroup`, `GsMenuRadioItem`, `GsMenuSection`, `GsMenuSeparator`, `GsMenuSubmenu` | Reka `DropdownMenu`, `ContextMenu` |
+| Notice  | `GsNoticeList`, `GsNotice`, `GsNoticeIcon`, `useNotices()`                                                                                                                                            | Reka `Toast`                       |
+
+Queue notices from anywhere with `useNotices().queue({ message, color, timeout })`; a `GsNoticeList` shows them. Lists with an `id` only show notices queued with that `target`.
+
+### Navigation and collections
+
+| Family      | Components                                                                                                                   | Built on                        |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| Tabs        | `GsTabs`, `GsTabList`, `GsTab`, `GsTabPanel`                                                                                 | Reka `Tabs`                     |
+| Accordion   | `GsAccordionGroup`, `GsAccordion`, `GsAccordionHeader`, `GsAccordionTrigger`, `GsAccordionPanel`                             | Reka `Accordion`                |
+| Breadcrumbs | `GsBreadcrumbs`, `GsBreadcrumbItem`                                                                                          | —                               |
+| Pagination  | `GsPagination`                                                                                                               | Reka `Pagination`               |
+| Stepper     | `GsStepper`, `GsStepperList`, `GsStepperStep`, `GsStepperPanel`, `GsStepperBack`, `GsStepperNext`                            | Reka `Stepper`                  |
+| Action bar  | `GsActionBar`                                                                                                                | —                               |
+| List        | `GsList`, `GsListItem`, `GsListItemContent`, `GsListItemTitle`, `GsListItemDescription`                                      | Reka `TagGroup` (`role="grid"`) |
+| Tree        | `GsTree`, `GsTreeItem`, `GsTreeItemLabel`, `GsTreeItemDescription`, `GsTreeItemPrefixIcon`, `GsTreeItemActions`, `useTree()` | Reka `Tree`                     |
+
+`GsStepper` is unstyled, like the Design Toolkit's: steps are buttons you style with classes, using `data-current`, `data-visited` and `data-disabled` (e.g. `data-current:bg-accent-primary-bold`). Steps are identified by a `value`; `v-model` holds the current one and `v-model:completed` the visited ones.
+
+`GsTree` is data-driven: pass `items` and render each row in the default slot. `useTree()` holds selection, expansion and visibility, with actions to insert, move and remove nodes. Drag-and-drop reordering isn't ported yet.
+
+Composables: `provideTheme` / `useTheme`, `useNotices`, `useTree`, and `provide*Defaults` for the families whose defaults a parent can set, as the Design Toolkit's `*Provider` components do: Avatar, Badge, Button (and LinkButton, ToggleButton), Chip, ComboBoxField, DetailsList, Divider, Hotkey, Icon, Label, Link, SearchField, SelectField, Switch, Tab and Tabs, TextAreaField, TextField. For example, `provideButtonDefaults({ size: 'small' })`.
+
+Components with inner parts take a `classes` prop (the Design Toolkit's `classNames`), e.g. `<GsTextField :classes="{ label: 'sr-only' }" />`; `class` always goes on the root.
 
 ## Development
 

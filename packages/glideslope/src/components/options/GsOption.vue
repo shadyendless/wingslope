@@ -6,6 +6,9 @@
  * Give simple options a `label`. For richer content, use the default slot with `GsOptionLabel`
  * (the text a select shows once chosen), `GsOptionDescription` and `GsIcon`.
  *
+ * In a `GsOptions` with `selection-mode="none"`, choosing the option emits `action` instead of
+ * selecting it.
+ *
  * @example
  * ```vue
  * <GsOption value="hostile" label="Hostile" color="critical" />
@@ -27,7 +30,22 @@ import GsOptionLabel from './GsOptionLabel.vue'
 import styles from './styles.module.css'
 import type { GsOptionProps } from './types'
 
-const { value, label, textValue, disabled = false, color = 'info' } = defineProps<GsOptionProps>()
+const {
+  value,
+  label,
+  textValue,
+  disabled = false,
+  color = 'info',
+  classes,
+} = defineProps<GsOptionProps>()
+
+const emit = defineEmits<{
+  /**
+   * The option was chosen (clicked, or Enter / Space while highlighted). Only emitted in a
+   * `GsOptions` with `selection-mode="none"`.
+   */
+  action: []
+}>()
 
 defineSlots<{
   /** Option content. Defaults to `label`. */
@@ -53,18 +71,32 @@ watchEffect(() => {
 })
 onBeforeUnmount(() => unregister?.())
 
-provideIconDefaults({ size: 'small', class: styles.icon })
+/** In a non-selectable list, choosing the option emits `action` instead of selecting it. */
+function onSelect(event: Event) {
+  if (options.selectable?.value !== false) return
+  event.preventDefault()
+  if (!disabled && !options.disabled?.value) emit('action')
+}
+
+provideIconDefaults(() => ({
+  size: 'small',
+  class: [styles.icon, classes?.icon].filter(Boolean).join(' '),
+}))
 </script>
 
 <template>
+  <!-- Reka's ListboxItem (and ComboboxItem, built on it) marks disabled items with a bare
+       `disabled` attribute only, which isn't exposed to assistive technology. -->
   <component
     :is="item"
     v-if="item"
     :value="value"
     :text-value="options.kind === 'listbox' ? undefined : (textValue ?? label)"
     :disabled="disabled"
+    :aria-disabled="disabled || undefined"
     :class="['group/options-item', styles.item]"
     :data-color="color"
+    @select="onSelect"
   >
     <slot>
       <GsOptionLabel>{{ label }}</GsOptionLabel>

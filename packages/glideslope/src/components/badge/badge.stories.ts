@@ -8,7 +8,7 @@ const meta = {
   component: GsBadge,
   args: { color: 'info' },
   argTypes: {
-    color: { control: 'select', options: ['info', 'advisory', 'normal', 'serious', 'critical'] },
+    color: { control: 'select', options: ['info', 'normal', 'serious', 'critical', 'advisory'] },
     placement: {
       control: 'select',
       options: [
@@ -25,19 +25,13 @@ const meta = {
     },
     offset: { control: 'number' },
   },
-  render: (args) => ({
-    components: { GsBadge },
-    setup: () => ({ args }),
-    template: '<GsBadge v-bind="args">12</GsBadge>',
-  }),
 } satisfies Meta<typeof GsBadge>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Playground: Story = {}
-
-export const Dot: Story = {
+/** Without content, a badge is a dot. */
+export const Default: Story = {
   render: (args) => ({
     components: { GsBadge },
     setup: () => ({ args }),
@@ -45,7 +39,15 @@ export const Dot: Story = {
   }),
 }
 
-/** Placement pins the badge to the nearest positioned ancestor. */
+export const WithText: Story = {
+  render: (args) => ({
+    components: { GsBadge },
+    setup: () => ({ args }),
+    template: '<GsBadge v-bind="args">99+</GsBadge>',
+  }),
+}
+
+/** `placement` pins the badge to an edge or corner of its nearest positioned ancestor. */
 export const Placement: Story = {
   args: { placement: 'top right', color: 'critical' },
   render: (args) => ({

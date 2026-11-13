@@ -1,0 +1,86 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as TextAreaFieldStories from './text-area-field.stories'
+
+<Meta of={TextAreaFieldStories} />
+
+# TextAreaField
+
+`GsTextAreaField` is a multi-line text input with an integrated label, description and error message. Bind its value with `v-model`.
+
+```vue
+<!-- Basic text area -->
+<GsTextAreaField v-model="description" label="Description" />
+
+<!-- With validation -->
+<GsTextAreaField
+  v-model="feedback"
+  label="Feedback"
+  description="Please provide detailed feedback"
+  error-message="Feedback is required"
+  required
+/>
+
+<!-- With textarea props -->
+<GsTextAreaField
+  v-model="bio"
+  label="Bio"
+  placeholder="Tell us about yourself..."
+  :rows="4"
+  :max-length="500"
+/>
+
+<!-- Small size -->
+<GsTextAreaField v-model="notes" label="Notes" size="small" />
+
+<!-- Readonly -->
+<GsTextAreaField v-model="summary" label="Summary" readonly />
+```
+
+<Canvas of={TextAreaFieldStories.Default} />
+
+## Props
+
+`min-length` and `max-length` limit the number of characters, as in [TextField](?path=/docs/components-textfield--docs). `class` and `style` go on the field wrapper; every other attribute (`autocomplete`, `aria-*`, listeners) goes on the `<textarea>`. Validation works as in TextField.
+
+<ArgTypes of={TextAreaFieldStories} />
+
+**`classes`:**
+
+| Key           | Description      |
+| ------------- | ---------------- |
+| `label`       | Label element    |
+| `input`       | Textarea element |
+| `description` | Description text |
+| `error`       | Error message    |
+
+## provideTextAreaFieldDefaults
+
+`provideTextAreaFieldDefaults()` sets defaults for every `GsTextAreaField` rendered below the calling component: `size`, `disabled`, `required`, `readonly`, `validation-mode` and `classes`. A prop set on a field still wins.
+
+```vue
+<script setup lang="ts">
+import { provideTextAreaFieldDefaults } from '@wingbrace/glideslope'
+
+provideTextAreaFieldDefaults({ required: true })
+</script>
+
+<template>
+  <GsTextAreaField v-model="bio" label="Bio" placeholder="Tell us about yourself" />
+  <GsTextAreaField v-model="comments" label="Comments" placeholder="Additional comments" />
+</template>
+```
+
+<Canvas of={TextAreaFieldStories.Provider} />
+
+## Accessibility
+
+- The label, description and error message are linked to the textarea with `aria-labelledby` and `aria-describedby`.
+- At `size="small"` the label isn't shown; it becomes the textarea's `aria-label`.
+- Error messages are shown in place of the description while the field is invalid.
+- Optional fields are labeled "(optional)".
+
+## Related
+
+- [TextField](?path=/docs/components-textfield--docs)
+- [Reka UI Field](https://reka-ui.com/docs/components/field)

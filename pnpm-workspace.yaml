@@ -2,7 +2,6 @@ packages:
   - apps/*
   - packages/*
 
-# Shared dependency versions. Reference with `"pkg": "catalog:"` in a package.json.
 catalog:
   '@fontsource-variable/roboto-flex': ^5.3.0
   '@fontsource-variable/roboto-mono': ^5.3.0
@@ -22,10 +21,10 @@ catalog:
   jsdom: ^31.0.1
   react: ^19.3.1
   reka-ui: ^2.11.0
+  remark-gfm: ^4.0.1
   storybook: ^10.6.7
   svgo: ^4.1.0
   tailwindcss: ^4.3.5
-  # TypeScript 7 (native) has no JS API yet, which vue-tsc requires. Stay on 6.0.x.
   typescript: ~6.0.3
   vite: ^8.3.8
   vitest: ^5.1.0

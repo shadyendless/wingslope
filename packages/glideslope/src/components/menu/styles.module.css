@@ -1,0 +1,350 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .menu {
+    @apply overflow-x-clip overflow-y-auto rounded-medium bg-surface-overlay p-px shadow-elevation-overlay outline outline-static select-none;
+  }
+
+  .item {
+    @apply relative grid cursor-pointer items-center gap-x-s px-s text-body-s fg-primary-bold outline outline-transparent;
+    grid-template-columns: auto auto 1fr auto;
+    grid-template-areas: 'icon label space action' 'icon description space action';
+
+    &:before {
+      @apply pointer-events-none absolute top-0 left-0 h-full w-xs;
+      content: '';
+    }
+
+    &:after {
+      content: '';
+      @apply pointer-events-none absolute inset-0 -z-1 bg-inherit;
+    }
+
+    &.cozy {
+      @apply pt-s pb-s;
+    }
+
+    &.compact {
+      @apply pt-xs pb-xs;
+    }
+
+    /* Extend ::after to cover separator on interactive states */
+    @variant highlighted {
+      @apply z-1;
+
+      &:not(:first-child):after {
+        @apply -top-px;
+      }
+
+      &:not(:last-child):after {
+        @apply -bottom-px;
+      }
+    }
+
+    @variant open {
+      @apply z-1;
+
+      &:not(:first-child):after {
+        @apply -top-px;
+      }
+
+      &:not(:last-child):after {
+        @apply -bottom-px;
+      }
+    }
+
+    @variant active {
+      @apply z-1;
+
+      &:not(:first-child):after {
+        @apply -top-px;
+      }
+
+      &:not(:last-child):after {
+        @apply -bottom-px;
+      }
+    }
+
+    @variant color-info {
+      @variant highlighted {
+        @apply bg-accent-primary-muted;
+      }
+
+      @variant open {
+        @apply bg-accent-primary-muted;
+      }
+
+      @variant active {
+        @apply bg-accent-primary-pressed fg-accent-primary-bold;
+      }
+
+      @variant selected {
+        @apply bg-accent-primary-muted;
+
+        @variant highlighted {
+          @apply bg-accent-primary-bold fg-a11y-on-accent;
+        }
+
+        @variant active {
+          @apply bg-accent-primary-pressed fg-accent-primary-bold;
+        }
+      }
+    }
+
+    @variant color-serious {
+      @apply fg-serious-bold;
+
+      @variant highlighted {
+        @apply bg-serious-muted fg-primary-bold;
+      }
+
+      @variant open {
+        @apply bg-serious-muted;
+      }
+
+      @variant active {
+        @apply bg-serious-pressed fg-serious-bold;
+      }
+
+      @variant selected {
+        @apply bg-serious-muted fg-primary-bold;
+
+        @variant highlighted {
+          @apply bg-serious-bold fg-a11y-on-accent;
+        }
+
+        @variant active {
+          @apply bg-serious-pressed fg-serious-bold;
+        }
+      }
+    }
+
+    @variant color-critical {
+      @apply fg-critical-bold;
+
+      @variant highlighted {
+        @apply bg-critical-muted fg-primary-bold;
+      }
+
+      @variant open {
+        @apply bg-critical-muted;
+      }
+
+      @variant active {
+        @apply bg-critical-pressed fg-critical-bold;
+      }
+
+      @variant selected {
+        @apply bg-critical-muted fg-primary-bold;
+
+        @variant highlighted {
+          @apply bg-critical-bold fg-a11y-on-accent;
+        }
+
+        @variant highlighted {
+          @apply bg-critical-bold fg-a11y-on-accent;
+        }
+
+        @variant active {
+          @apply bg-critical-pressed fg-critical-bold;
+        }
+      }
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed bg-transparent fg-disabled;
+
+      @variant selected {
+        @apply bg-interactive-disabled;
+      }
+    }
+  }
+
+  .icon {
+    grid-area: icon;
+  }
+
+  .label {
+    @apply truncate;
+    grid-area: label;
+
+    @variant group-not-has-[>_[data-slot=description]]/menu-item {
+      @apply row-span-full;
+    }
+  }
+
+  .description {
+    @apply truncate text-body-xs fg-primary-muted;
+    grid-area: description;
+
+    @variant group-highlighted/menu-item {
+      @apply fg-primary-bold;
+
+      @variant group-selected/menu-item {
+        @apply fg-a11y-on-accent;
+      }
+    }
+
+    @variant group-color-info/menu-item {
+      @variant group-active/menu-item {
+        @apply fg-accent-primary-bold;
+
+        @variant group-selected/menu-item {
+          @apply fg-accent-primary-bold;
+        }
+      }
+    }
+
+    @variant group-color-serious/menu-item {
+      @variant group-highlighted/menu-item {
+        @apply fg-primary-bold;
+      }
+
+      @variant group-active/menu-item {
+        @apply fg-serious-bold;
+      }
+
+      @variant group-selected/menu-item {
+        @apply fg-primary-bold;
+
+        @variant group-highlighted/menu-item {
+          @apply fg-a11y-on-accent;
+        }
+
+        @variant group-active/menu-item {
+          @apply fg-serious-bold;
+        }
+      }
+    }
+
+    @variant group-color-critical/menu-item {
+      @variant group-highlighted/menu-item {
+        @apply fg-primary-bold;
+      }
+
+      @variant group-active/menu-item {
+        @apply fg-critical-bold;
+      }
+
+      @variant group-selected/menu-item {
+        @apply fg-primary-bold;
+
+        @variant group-highlighted/menu-item {
+          @apply fg-a11y-on-accent;
+        }
+
+        @variant group-active/menu-item {
+          @apply fg-critical-bold;
+        }
+      }
+    }
+
+    @variant group-disabled/menu-item {
+      @apply fg-disabled;
+    }
+  }
+
+  .more {
+    grid-area: action;
+  }
+
+  .header {
+    @apply px-xs py-s text-header-xs fg-primary-muted;
+  }
+
+  .separator {
+    /*
+     * Use border-top instead of background-color + height for the 1px line.
+     * Border rendering is more consistent across platforms (Linux/Windows/Mac)
+     * and display scaling settings than background-color with sub-pixel heights.
+     */
+    @apply h-0 border-t border-(--outline-static);
+  }
+
+  .hotkey {
+    grid-area: action;
+
+    @variant group-highlighted/menu-item {
+      @apply fg-primary-bold;
+    }
+
+    @variant group-color-info/menu-item {
+      @variant group-active/menu-item {
+        @apply fg-accent-primary-bold;
+      }
+
+      @variant group-selected/menu-item {
+        @variant group-highlighted/menu-item {
+          @apply fg-a11y-on-accent;
+        }
+
+        @variant group-active/menu-item {
+          @apply fg-accent-primary-bold;
+        }
+      }
+    }
+
+    @variant group-color-serious/menu-item {
+      @apply fg-serious-bold;
+
+      @variant group-highlighted/menu-item {
+        @apply fg-primary-bold;
+      }
+
+      @variant group-active/menu-item {
+        @apply fg-serious-bold;
+      }
+
+      @variant group-selected/menu-item {
+        @variant group-highlighted/menu-item {
+          @apply fg-a11y-on-accent;
+        }
+
+        @variant group-active/menu-item {
+          @apply fg-serious-bold;
+        }
+      }
+    }
+
+    @variant group-color-critical/menu-item {
+      @apply fg-critical-bold;
+
+      @variant group-highlighted/menu-item {
+        @apply fg-primary-bold;
+      }
+
+      @variant group-active/menu-item {
+        @apply fg-critical-bold;
+      }
+
+      @variant group-selected/menu-item {
+        @variant group-highlighted/menu-item {
+          @apply fg-a11y-on-accent;
+        }
+
+        @variant group-active/menu-item {
+          @apply fg-critical-bold;
+        }
+      }
+    }
+
+    @variant group-disabled/menu-item {
+      @apply fg-disabled;
+    }
+  }
+
+  .popover {
+    @apply outline-none;
+
+    @variant motion-safe {
+      @variant open {
+        animation: fade-enter var(--animation-duration-normal) var(--animation-easing-decelerate)
+          both;
+      }
+
+      @variant closed {
+        animation: fade-exit var(--animation-duration-fast) var(--animation-easing-accelerate) both;
+      }
+    }
+  }
+}

@@ -1,37 +1,48 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
-import { ref } from 'vue'
-import GsChip from '../chip/GsChip.vue'
-import GsChipList from '../chip/GsChipList.vue'
-import GsDeletableChip from '../chip/GsDeletableChip.vue'
-import GsSelectableChip from '../chip/GsSelectableChip.vue'
+import { ref, watch } from 'vue'
 import GsSlider from './GsSlider.vue'
 
 const meta = {
   title: 'Components/Slider',
   component: GsSlider,
   args: {
-    label: 'Opacity',
-    min: 0,
-    max: 100,
-    step: 1,
-    orientation: 'horizontal',
+    modelValue: 30,
     layout: 'grid',
-    disabled: false,
-    showLabel: true,
+    label: 'Opacity',
+    max: 100,
+    min: 0,
+    orientation: 'horizontal',
     showInput: false,
+    showLabel: true,
     showValueLabels: true,
-    showMarkerLabels: false,
-    snapToMarkers: false,
+    disabled: false,
+  },
+  parameters: {
+    docs: {
+      subtitle: 'Range input for numeric value selection',
+    },
   },
   argTypes: {
-    orientation: { control: 'inline-radio', options: ['horizontal', 'vertical'] },
-    layout: { control: 'inline-radio', options: ['grid', 'stack'] },
+    layout: { control: 'select', options: ['grid', 'stack'] },
+    orientation: { control: 'select', options: ['horizontal', 'vertical'] },
+    markers: { control: 'object' },
+    showMarkerLabels: { control: 'boolean' },
+    snapToMarkers: { control: 'boolean' },
+    showInput: { control: 'boolean' },
+    showValueLabels: { control: 'boolean' },
   },
   render: (args) => ({
     components: { GsSlider },
-    setup: () => ({ args, value: ref(40) }),
+    setup() {
+      const value = ref(args.modelValue)
+      watch(
+        () => args.modelValue,
+        (next) => (value.value = next),
+      )
+      return { args, value }
+    },
     template: `
-      <div :style="args.orientation === 'vertical' ? 'height: 240px' : 'width: 320px'">
+      <div :class="args.orientation === 'vertical' ? 'h-[300px] w-[200px]' : 'size-[400px]'">
         <GsSlider v-bind="args" v-model="value" />
       </div>`,
   }),
@@ -40,59 +51,158 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Playground: Story = {}
+export const Default: Story = {}
 
-export const Range: Story = {
-  args: { label: 'Altitude band', min: 0, max: 40000, step: 1000, showInput: true },
-  render: (args) => ({
-    components: { GsSlider },
-    setup: () => ({ args, value: ref([8000, 24000]) }),
-    template: '<div style="width: 360px"><GsSlider v-bind="args" v-model="value" /></div>',
-  }),
-}
-
-export const Markers: Story = {
+export const WithInput: Story = {
   args: {
-    snapToMarkers: true,
-    showMarkerLabels: true,
-    markers: [
-      { value: 0, label: 'Off' },
-      { value: 25, label: 'Low' },
-      { value: 50, label: 'Mid' },
-      { value: 75, label: 'High' },
-      { value: 100, label: 'Max' },
-    ],
+    modelValue: 50,
+    label: 'Volume',
+    showInput: true,
   },
 }
 
-export const Chips: Story = {
-  render: () => ({
-    components: { GsChip, GsChipList, GsSelectableChip, GsDeletableChip },
-    setup: () => {
-      const filters = ref(['air'])
-      const assignees = ref(['Jo Rivera', 'Sam Chen', 'Alex Kim'])
-      const remove = (values: unknown[]) =>
-        (assignees.value = assignees.value.filter((name) => !values.includes(name)))
-      return { filters, assignees, remove }
-    },
-    template: `
-      <div class="flex flex-col gap-l">
-        <div class="flex gap-s">
-          <GsChip color="info">Info</GsChip>
-          <GsChip color="advisory">Advisory</GsChip>
-          <GsChip color="normal">Normal</GsChip>
-          <GsChip color="serious">Serious</GsChip>
-          <GsChip color="critical" size="small">Critical</GsChip>
-        </div>
-        <GsChipList v-model="filters" selection-mode="multiple" aria-label="Domain filters">
-          <GsSelectableChip value="air">Air</GsSelectableChip>
-          <GsSelectableChip value="sea">Sea</GsSelectableChip>
-          <GsSelectableChip value="land">Land</GsSelectableChip>
-          <GsSelectableChip value="space" disabled>Space</GsSelectableChip>
-        </GsChipList>
-        <GsChipList aria-label="Assignees" @remove="remove">
-          <GsDeletableChip v-for="name in assignees" :key="name" :value="name">{{ name }}</GsDeletableChip>
-        </GsChipList>
-      </div>`,
-  }),
+export const Range: Story = {
+  args: {
+    modelValue: [20, 80],
+  },
+}
+
+export const RangeWithInput: Story = {
+  args: {
+    modelValue: [20, 80],
+    label: 'Price Range',
+    showInput: true,
+  },
+}
+
+export const WithEvenlySpacedMarkers: Story = {
+  args: {
+    modelValue: 50,
+    label: 'Volume',
+    markers: 5,
+  },
+}
+
+export const WithSpecificMarkerValues: Story = {
+  args: {
+    modelValue: 50,
+    label: 'Temperature (°F)',
+    markers: [0, 32, 72, 100],
+  },
+}
+
+export const WithLabeledMarkers: Story = {
+  args: {
+    modelValue: 50,
+    label: 'Quality',
+    markers: [
+      { value: 0, label: 'Low' },
+      { value: 50, label: 'Medium' },
+      { value: 100, label: 'High' },
+    ],
+    showMarkerLabels: true,
+  },
+}
+
+export const WithDetailedLabeledMarkers: Story = {
+  args: {
+    modelValue: 25,
+    label: 'Video Quality',
+    markers: [
+      { value: 0, label: '480p' },
+      { value: 25, label: '720p' },
+      { value: 50, label: '1080p' },
+      { value: 75, label: '1440p' },
+      { value: 100, label: '4K' },
+    ],
+    showMarkerLabels: true,
+  },
+}
+
+export const VerticalWithMarkers: Story = {
+  args: {
+    modelValue: 50,
+    label: 'Brightness',
+    orientation: 'vertical',
+    markers: [
+      { value: 0, label: 'Min' },
+      { value: 50, label: '50%' },
+      { value: 100, label: 'Max' },
+    ],
+    showMarkerLabels: true,
+  },
+}
+
+export const RangeWithMarkers: Story = {
+  args: {
+    modelValue: [25, 75],
+    label: 'Price Range',
+    markers: [0, 25, 50, 75, 100],
+  },
+}
+
+export const DisabledWithMarkers: Story = {
+  args: {
+    modelValue: 50,
+    label: 'Disabled Slider',
+    disabled: true,
+    markers: 5,
+  },
+}
+
+export const SnapToMarkers: Story = {
+  args: {
+    modelValue: 50,
+    label: 'Discrete Selection',
+    markers: [0, 25, 50, 75, 100],
+    snapToMarkers: true,
+  },
+}
+
+export const SnapToLabeledMarkers: Story = {
+  args: {
+    modelValue: 50,
+    label: 'Rating',
+    markers: [
+      { value: 0, label: 'Poor' },
+      { value: 25, label: 'Fair' },
+      { value: 50, label: 'Good' },
+      { value: 75, label: 'Great' },
+      { value: 100, label: 'Excellent' },
+    ],
+    snapToMarkers: true,
+    showMarkerLabels: true,
+  },
+}
+
+export const SnapToUnevenMarkers: Story = {
+  args: {
+    modelValue: 0,
+    label: 'Zoom Level',
+    markers: [
+      { value: 0, label: '1x' },
+      { value: 10, label: '2x' },
+      { value: 25, label: '4x' },
+      { value: 50, label: '8x' },
+      { value: 100, label: '16x' },
+    ],
+    snapToMarkers: true,
+    showMarkerLabels: true,
+  },
+}
+
+export const RangeWithSnap: Story = {
+  args: {
+    modelValue: [25, 75],
+    label: 'Price Range',
+    markers: [
+      { value: 0, label: '$0' },
+      { value: 25, label: '$25' },
+      { value: 50, label: '$50' },
+      { value: 75, label: '$75' },
+      { value: 100, label: '$100' },
+    ],
+    snapToMarkers: true,
+    showMarkerLabels: true,
+  },
 }

@@ -4,6 +4,7 @@
  * `clear`. Give it an accessible name with `aria-label` (or a visible label pointing at its `id`).
  *
  * `class` and `style` apply to the wrapper; other attributes go to the `<input>`.
+ * `provideSearchFieldDefaults()` sets defaults for every search field below the calling component.
  *
  * @example
  * ```vue
@@ -17,16 +18,18 @@ import { computed, useTemplateRef } from 'vue'
 import GsIcon from '../icon/GsIcon.vue'
 import { provideIconDefaults } from '../icon/defaults'
 import { useSplitAttrs } from '../../lib/use-split-attrs'
+import { injectSearchFieldDefaults } from './defaults'
 import styles from './search.module.css'
 import type { GsSearchFieldProps } from './types'
 
 defineOptions({ inheritAttrs: false })
 
 const {
-  variant = 'outline',
+  variant,
   placeholder,
-  disabled = false,
+  disabled = undefined,
   loading = false,
+  classes,
 } = defineProps<GsSearchFieldProps>()
 
 const emit = defineEmits<{
@@ -41,6 +44,11 @@ const model = defineModel<string>({ default: '' })
 
 const { rootAttrs, controlAttrs } = useSplitAttrs()
 const input = useTemplateRef<HTMLInputElement>('input')
+
+const defaults = injectSearchFieldDefaults()
+const resolvedVariant = computed(() => variant ?? defaults.value.variant ?? 'outline')
+const isDisabled = computed(() => disabled ?? defaults.value.disabled ?? false)
+const resolvedClasses = computed(() => classes ?? defaults.value.classes)
 const isEmpty = computed(() => model.value === '')
 
 function clear() {
@@ -65,22 +73,27 @@ provideIconDefaults({ size: 'small' })
 <template>
   <div
     v-bind="rootAttrs"
-    :class="['group/search-field', styles.field, styles[variant]]"
-    :data-disabled="disabled ? '' : undefined"
+    :class="['group/search-field', styles.field, styles[resolvedVariant]]"
+    :data-disabled="isDisabled ? '' : undefined"
     :data-empty="isEmpty ? '' : undefined"
   >
-    <GsIcon :class="styles.search"><SearchIcon /></GsIcon>
+    <GsIcon :class="[styles.search, resolvedClasses?.search]"><SearchIcon /></GsIcon>
     <input
       v-bind="controlAttrs"
       ref="input"
       v-model="model"
       type="search"
-      :class="styles.input"
+      :class="[styles.input, resolvedClasses?.input]"
       :placeholder="placeholder"
-      :disabled="disabled"
+      :disabled="isDisabled"
       @keydown="onKeydown"
     />
-    <GsIcon v-if="loading" :class="styles.loading" role="status" aria-label="Loading">
+    <GsIcon
+      v-if="loading"
+      :class="[styles.loading, resolvedClasses?.loading]"
+      role="status"
+      aria-label="Loading"
+    >
       <LoopIcon />
     </GsIcon>
     <button
@@ -88,8 +101,8 @@ provideIconDefaults({ size: 'small' })
       type="button"
       tabindex="-1"
       aria-label="Clear search"
-      :class="styles.clear"
-      :disabled="disabled"
+      :class="[styles.clear, resolvedClasses?.clear]"
+      :disabled="isDisabled"
       @click="clear"
     >
       <GsIcon><CancelFillIcon /></GsIcon>

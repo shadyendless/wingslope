@@ -1,0 +1,14 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .container {
+    @apply flex flex-row items-center gap-s;
+  }
+}
+
+/* Page buttons restyle GsButton (components.l1). */
+@layer components.l2 {
+  .button {
+    min-width: 32px;
+  }
+}

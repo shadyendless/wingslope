@@ -1,0 +1,94 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as DetailsListStories from './details-list.stories'
+import GsDetailsListLabel from './GsDetailsListLabel.vue'
+import GsDetailsListValue from './GsDetailsListValue.vue'
+
+<Meta of={DetailsListStories} />
+
+# DetailsList
+
+Semantic details list for displaying metadata in key-value pairs. Uses a CSS grid with labels in the first column and values in the second.
+
+Components:
+
+- **GsDetailsList** - Container with grid layout and alignment options
+- **GsDetailsListLabel** - Key/term label (renders as `<dt>`)
+- **GsDetailsListValue** - Value/definition (renders as `<dd>`)
+
+## Example usage
+
+```vue
+<GsDetailsList align="justify">
+  <GsDetailsListLabel>Key</GsDetailsListLabel>
+  <GsDetailsListValue>Value</GsDetailsListValue>
+
+  <GsDetailsListLabel>Ships</GsDetailsListLabel>
+  <GsDetailsListValue>Millennium Falcon</GsDetailsListValue>
+  <GsDetailsListValue>USS Enterprise NCC-1701</GsDetailsListValue>
+  <GsDetailsListValue>Serenity</GsDetailsListValue>
+
+  <GsDetailsListLabel>Coordinates</GsDetailsListLabel>
+  <GsDetailsListValue>
+    <div>Great Pyramid of Giza: 29°58'44" N 31°08'02" E</div>
+    <div>Machu Picchu: 13°09'47" S 72°32'41" W</div>
+  </GsDetailsListValue>
+</GsDetailsList>
+```
+
+<Canvas of={DetailsListStories.Default} />
+
+## Alignments
+
+| Align     | Description                                         |
+| --------- | --------------------------------------------------- |
+| `left`    | Both labels and values left-aligned                 |
+| `center`  | Labels right-aligned, values left-aligned           |
+| `justify` | Labels left-aligned, values right-aligned (default) |
+
+## Props
+
+### GsDetailsList
+
+`classes` adds classes to every label and value; classes on the component go on the `<dl>`.
+
+<ArgTypes of={DetailsListStories} />
+
+### GsDetailsListLabel
+
+<ArgTypes of={GsDetailsListLabel} />
+
+### GsDetailsListValue
+
+<ArgTypes of={GsDetailsListValue} />
+
+### provideDetailsListDefaults
+
+`provideDetailsListDefaults()` sets the default `align` and `classes` (and an extra `class` for the `<dl>`) of every details list rendered below the calling component. An `align` set on a list still wins; a list's own `classes` add to the provided ones.
+
+```vue
+<script setup lang="ts">
+import { provideDetailsListDefaults } from '@wingbrace/glideslope'
+
+provideDetailsListDefaults({ align: 'left' })
+</script>
+
+<template>
+  <GsDetailsList>...</GsDetailsList>
+  <GsDetailsList>...</GsDetailsList>
+</template>
+```
+
+<Canvas of={DetailsListStories.Provider} />
+
+## Accessibility
+
+- Uses semantic HTML: `<dl>`, `<dt>`, `<dd>` elements
+- Proper structure for screen readers and assistive technologies
+
+## Implementation notes
+
+- Renders a `<dl>` element with CSS grid layout
+- `GsDetailsListLabel` renders as `<dt>`
+- `GsDetailsListValue` renders as `<dd>`
+- Supports multiple values per label

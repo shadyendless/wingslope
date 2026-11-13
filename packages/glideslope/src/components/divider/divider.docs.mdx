@@ -1,0 +1,80 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as DividerStories from './divider.stories'
+
+<Meta of={DividerStories} />
+
+# Divider
+
+A simple visual separator between content sections. Supports both horizontal and vertical orientations. Built on Reka UI's `Separator`, so it is announced as a separator.
+
+## Example usage
+
+```vue
+<GsDivider />
+```
+
+<Canvas of={DividerStories.Default} />
+
+### Horizontal
+
+```vue
+<div>
+  <p>Content above</p>
+  <GsDivider />
+  <p>Content below</p>
+</div>
+```
+
+<Canvas of={DividerStories.Horizontal} />
+
+### Vertical
+
+```vue
+<div class="flex gap-s">
+  <span>Left</span>
+  <GsDivider orientation="vertical" />
+  <span>Right</span>
+</div>
+```
+
+<Canvas of={DividerStories.Vertical} />
+
+## Props
+
+### GsDivider
+
+<ArgTypes of={DividerStories} />
+
+### provideDividerDefaults
+
+`provideDividerDefaults()` sets the default `orientation` (and an extra `class`) of every divider rendered below the calling component. An `orientation` set on a divider still wins.
+
+```vue
+<script setup lang="ts">
+import { provideDividerDefaults } from '@wingbrace/glideslope'
+
+provideDividerDefaults({ orientation: 'vertical' })
+</script>
+
+<template>
+  <GsDivider />
+  <GsDivider />
+</template>
+```
+
+<Canvas of={DividerStories.Provider} />
+
+## Accessibility
+
+- Renders `role="separator"` (with `aria-orientation="vertical"` when vertical), which assistive technologies recognize
+- Set `decorative` when the divider is purely visual, to hide it from assistive technology
+
+## Implementation notes
+
+- Stretches to fill its container in both block and flex/grid layouts, without measuring the DOM
+- Horizontal dividers span the full width; vertical dividers span the full height
+
+**Related:**
+
+- [Reka UI Separator docs](https://reka-ui.com/docs/components/separator)

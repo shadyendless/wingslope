@@ -1,2 +1,3 @@
 export { default as GsLink } from './GsLink.vue'
-export type { GsLinkProps } from './types'
+export { provideLinkDefaults } from './defaults'
+export type { GsLinkDefaults, GsLinkProps } from './types'

@@ -1,0 +1,530 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as TreeStories from './tree.stories'
+import GsTreeItem from './GsTreeItem.vue'
+import GsTreeItemActions from './GsTreeItemActions.vue'
+import GsTreeItemDescription from './GsTreeItemDescription.vue'
+import GsTreeItemLabel from './GsTreeItemLabel.vue'
+import GsTreeItemPrefixIcon from './GsTreeItemPrefixIcon.vue'
+
+<Meta of={TreeStories} />
+
+# Tree
+
+Tree view allows users to navigate lists of data with nested levels that can be expanded or collapsed. `GsTree` provides a hierarchical structure with selection (optionally cascading through descendants), expansion and collapse, and visibility control.
+
+It is composed of the following components:
+
+- **GsTree** - parent that takes the tree data as `items`, renders one row per visible node and drives global tree behavior like selection
+- **GsTreeItem** - defines an individual tree node in markup, for a tree written without `items`
+- **GsTreeItemLabel** - places and styles the tree node label
+- **GsTreeItemDescription** - places and styles the tree node description
+- **GsTreeItemPrefixIcon** - places and styles the icon that optionally shows before a tree node label
+- **GsTreeItemActions** - container for application-specific icons and buttons at the end of a row
+
+`GsTree` renders each row itself (visibility toggle, rule lines, expand chevron and selection checkbox); the row's content is composed from the parts above, in `GsTree`'s default slot (with `items`) or in each `GsTreeItem`'s `#content` slot.
+
+## Dynamic data example
+
+`GsTree` is data-driven: it takes an `items` array of `GsTreeNode`s and renders each row's content with its default slot, which receives the `node` and its state. The data can come from an external source such as a database or an API.
+
+The tree's state lives in arrays of keys: selected keys with `v-model`, expanded keys with `v-model:expanded` and visible keys with `v-model:visible`. Without a binding, the tree keeps that state itself, starting from the nodes flagged `selected`, `expanded` and `visible`. Bind the props one way (`:expanded` with `@update:expanded`) to have external data drive the tree.
+
+```vue
+<script setup lang="ts">
+import type { GsTreeNode } from '@wingbrace/glideslope'
+
+interface ItemValues {
+  customProperty: string
+}
+
+const items: GsTreeNode<ItemValues>[] = [
+  {
+    key: 'one',
+    label: 'One',
+    expanded: true,
+    children: [{ key: 'two', label: 'Two' }],
+  },
+]
+</script>
+
+<template>
+  <GsTree :items="items" aria-label="Example">
+    <template #default="{ node }">
+      <GsTreeItemLabel>{{ node.label }}</GsTreeItemLabel>
+    </template>
+  </GsTree>
+</template>
+```
+
+<Canvas of={TreeStories.Stateless} />
+
+## Static data example
+
+The `GsTree` can be rendered with either hard-coded static data or with dynamic data from an external source like a database or an API. For static data, leave out `items` and nest `GsTreeItem`s in the default slot. Each item takes its node's `value` (its key) and `label`, and optionally `disabled`. Without a `#content` slot, its row shows the `label`.
+
+```vue
+<GsTree aria-label="Example">
+  <GsTreeItem value="one" label="One">
+    <GsTreeItem value="two" label="Two" />
+  </GsTreeItem>
+</GsTree>
+```
+
+<Canvas of={TreeStories.StaticCollection} />
+
+Compose a row's content in the item's `#content` slot, which receives the same row state as the dynamic tree's row slot:
+
+```vue
+<GsTree v-model:visible="visible" show-visibility aria-label="Layers">
+  <GsTreeItem value="airspace" label="Airspace">
+    <template #content="{ viewable }">
+      <GsTreeItemPrefixIcon><PlaceholderIcon /></GsTreeItemPrefixIcon>
+      <GsTreeItemLabel>Airspace</GsTreeItemLabel>
+      <GsTreeItemDescription>{{ viewable ? 'Shown' : 'Hidden' }}</GsTreeItemDescription>
+    </template>
+    <GsTreeItem value="restricted" label="Restricted areas" />
+  </GsTreeItem>
+</GsTree>
+```
+
+### Why use a static vs a dynamic collection?
+
+1. **Dynamic collection**: data-driven tree structure using the `items` prop and the row slot. Can use `useTree` or the tree data helpers for tree operations.
+2. **Static collection**: hard-coded tree structure using nested `GsTreeItem` components. This works best if the tree will not contain data that is regularly updated.
+
+Use one approach or the other. With `items`, the default slot is the row content; without it, the default slot holds the `GsTreeItem`s. Bind the state of a static tree with `v-model`, `v-model:expanded` and `v-model:visible`; `GsTreeItem` has no state flags.
+
+Reka UI's tree is driven by an items array, so `GsTree` turns the markup into one: it renders the `GsTreeItem`s once in a hidden element, where each one registers its node, and renders the rows from those nodes. Two consequences:
+
+- The rows appear once the tree has mounted, so a static tree renders no rows during server-side rendering.
+- A `#content` slot renders in the tree's row, not where its `GsTreeItem` is written, so components in it don't see what your components around the `GsTreeItem` provide.
+
+`GsTreeItem`s can come from `v-for`, `v-if` or your own components, as long as they render inside the `GsTree`.
+
+## Customizing tree item appearance
+
+`GsTree` supports rich customization through the generic `GsTreeNode<T>` type. You can extend tree nodes with application-specific data that controls how each item is rendered.
+
+### Defining custom values
+
+The `GsTreeNode` type accepts a generic parameter for custom values:
+
+```ts
+interface ItemValues {
+  description?: string
+  hasWarning?: boolean
+}
+```
+
+These custom values are then available in your tree data:
+
+```ts
+const items: GsTreeNode<ItemValues>[] = [
+  {
+    key: 'blue-jay',
+    label: 'Blue jay',
+    values: {
+      description: 'cyanocitta cristata',
+      hasWarning: true,
+    },
+  },
+]
+```
+
+### Using custom values in the row slot
+
+Read the values from `node.values` in the default slot to render additional UI elements:
+
+```vue
+<GsTree v-model:visible="visible" :items="items" show-visibility aria-label="Birds">
+  <template #default="{ node, disabled, viewable, visible }">
+    <!-- Prefix icon -->
+    <GsTreeItemPrefixIcon><PlaceholderIcon /></GsTreeItemPrefixIcon>
+
+    <!-- Main label -->
+    <GsTreeItemLabel>{{ node.label }}</GsTreeItemLabel>
+
+    <!-- Optional description -->
+    <GsTreeItemDescription v-if="node.values?.description">
+      {{ node.values.description }}
+    </GsTreeItemDescription>
+
+    <!-- Custom actions based on node state and values -->
+    <GsTreeItemActions>
+      <GsIcon v-if="disabled"><LockFillIcon /></GsIcon>
+      <GsIcon v-if="node.values?.hasWarning" class="fg-serious-bold"><WarningIcon /></GsIcon>
+      <GsButton
+        variant="icon"
+        :aria-label="`Center on ${node.label}`"
+        :disabled="!(viewable && visible)"
+      >
+        <GsIcon><CenterOnIcon /></GsIcon>
+      </GsButton>
+    </GsTreeItemActions>
+  </template>
+</GsTree>
+```
+
+Buttons and icons in a row are sized to the tree's `variant`. Clicking a control in `GsTreeItemActions` doesn't select or expand the row, and Tab reaches the controls only in the focused row.
+
+### Row slot props
+
+The default slot receives the row's node and state:
+
+- **node**: The `GsTreeNode` this row renders
+- **level**: Depth, starting at 1 for root nodes
+- **hasChildren**: Whether the node has children
+- **expanded**: Whether the node is expanded
+- **selected**: Whether the node is selected
+- **indeterminate**: Whether some, but not all, of its enabled descendants are selected (`selection-cascade` only)
+- **disabled**: Whether the node is disabled
+- **visible**: Whether the node's own visibility flag is on
+- **viewable**: Whether the node and all its ancestors are visible
+- **variant**: Current size variant (`'cozy'`, `'compact'` or `'crammed'`)
+
+Use these values to conditionally render or style your tree items based on their state.
+
+## Variants and common props
+
+- **variant** - changes display size, accepts `cozy`, `compact` or `crammed` (`crammed` hides descriptions)
+- **show-visibility** - shows the visibility toggle on each row
+- **show-rule-lines** - controls whether dotted rule lines are shown to indicate hierarchy
+- **selection-mode** - manages selection controls: `multiple` and `single` enable selection, `none` disables it
+- **selection-cascade** - with `multiple`, selecting a parent selects its descendants
+- **disabled-keys** - keys of disabled tree nodes, in addition to nodes with `disabled: true`
+- **disabled** - disables the whole tree
+- **v-model:expanded** - keys of expanded tree nodes
+- **v-model** - keys of selected tree nodes
+- **v-model:visible** - keys of visible tree nodes
+
+## Selection
+
+`GsTree` supports different selection modes through the `selection-mode` prop (`multiple` by default). Selectable rows show a checkbox, and clicking a row or pressing Enter or Space toggles its selection. The chevron and the arrow keys expand and collapse.
+
+```vue
+<GsTree :items="items" selection-mode="single" aria-label="Example" />
+```
+
+Bind the selected keys with `v-model` to set them and follow changes. In `single` mode the array holds at most one key.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const selected = ref(['one'])
+</script>
+
+<template>
+  <GsTree v-model="selected" :items="items" selection-mode="multiple" aria-label="Example" />
+</template>
+```
+
+### Cascade selection
+
+Set `selection-cascade` (with `selection-mode="multiple"`) to enable cascade selection. In this mode:
+
+- Selecting a parent automatically selects all its enabled descendants
+- Parent nodes show an indeterminate state when only some children are selected
+- Deselecting a parent deselects all its descendants
+
+When you change the tree's structure with `useTree`, pass `selectionCascade: true` to it as well, so the selection stays consistent as nodes move, are inserted or are removed.
+
+```vue
+<script setup lang="ts">
+import { useTree } from '@wingbrace/glideslope'
+
+const { nodes, selected, expanded } = useTree({
+  items: initialTreeData,
+  selectionCascade: true,
+})
+</script>
+
+<template>
+  <GsTree
+    v-model="selected"
+    v-model:expanded="expanded"
+    :items="nodes"
+    selection-cascade
+    aria-label="Files"
+  />
+</template>
+```
+
+<Canvas of={TreeStories.CascadeBasic} />
+
+## Visibility control
+
+With `show-visibility`, each row has an eye toggle. Bind the keys of visible nodes with `v-model:visible`. Nodes that are hidden, or sit under a hidden node, are muted; children keep their own flags, so revealing a parent restores them.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const visible = ref(['one', 'two'])
+</script>
+
+<template>
+  <GsTree v-model:visible="visible" :items="items" show-visibility aria-label="Layers" />
+</template>
+```
+
+<Canvas of={TreeStories.Visibility} />
+
+## GsTreeNode structure
+
+Each node in `items` follows this structure. Only the `key` and `label` properties are required.
+
+```ts
+interface GsTreeNode<T> {
+  // A unique key for the tree node
+  key: string
+
+  // The row's accessible name, and its text when no slot content is given
+  label: string
+
+  // Optional application-specific values
+  values?: T
+
+  // Prevents focusing, selecting, expanding and toggling the visibility of this node
+  disabled?: boolean
+
+  // Initial state: whether the node starts expanded, selected or visible
+  expanded?: boolean
+  selected?: boolean
+  visible?: boolean
+
+  // Child nodes
+  children?: GsTreeNode<T>[]
+}
+```
+
+The `expanded`, `selected` and `visible` flags only set the initial state. `useTree` and a `GsTree` without a binding read them once; after that, the state is the key arrays bound with `v-model:expanded`, `v-model` and `v-model:visible`, and the flags are not updated. In `single` selection mode, only the first flagged node starts selected. `getTreeFlaggedKeys(items, 'expanded')` lists the flagged keys, for example to seed state kept elsewhere.
+
+## Props
+
+### GsTree
+
+<ArgTypes of={TreeStories} />
+
+### GsTreeItem
+
+<ArgTypes of={GsTreeItem} />
+
+### GsTreeItemLabel
+
+<ArgTypes of={GsTreeItemLabel} />
+
+### GsTreeItemDescription
+
+<ArgTypes of={GsTreeItemDescription} />
+
+### GsTreeItemPrefixIcon
+
+<ArgTypes of={GsTreeItemPrefixIcon} />
+
+### GsTreeItemActions
+
+<ArgTypes of={GsTreeItemActions} />
+
+## Tree data helpers
+
+The package exports **stateless, pure functions** for reading and changing tree data and tree state. They work with any state management solution: local refs, a Pinia store, TanStack Query, or direct API calls. Each function takes the current tree (or keys) as input and returns a new result with the changes applied, sharing untouched subtrees. **No state is stored internally**, so your application keeps full control over the data source.
+
+This makes them the building blocks for custom tree state composables tailored to your application.
+
+### Basic usage
+
+```vue
+<script setup lang="ts">
+import { getTreeParentKeys, type GsTreeKey } from '@wingbrace/glideslope'
+import { ref } from 'vue'
+
+// Your state can come from anywhere
+const db = ref({ expanded: [] as GsTreeKey[] })
+
+const handleExpansion = (keys: GsTreeKey[]) => {
+  db.value.expanded = keys
+}
+const expandAll = () => {
+  db.value.expanded = getTreeParentKeys(items)
+}
+</script>
+
+<template>
+  <GsTree
+    :items="items"
+    :expanded="db.expanded"
+    aria-label="Stateless Example"
+    @update:expanded="handleExpansion"
+  />
+</template>
+```
+
+### Available functions
+
+Data:
+
+- **insertTreeNodes**: Insert nodes `before` or `after` a target node, or `into` it as its first children
+- **moveTreeNodes**: Move nodes (with their descendants) `before`, `after` or `into` a target node
+- **removeTreeNodes**: Remove nodes and their descendants
+- **updateTreeNode**: Replace a node with the result of an update function
+- **findTreeNode**: Find a node by key
+- **walkTree**: Visit every node depth-first, with its ancestors
+
+Keys and state:
+
+- **getTreeKeys**: Keys of every node, or those matching a filter (select all, reveal all)
+- **getTreeFlaggedKeys**: Keys of nodes flagged `expanded`, `selected` or `visible` (the initial state)
+- **getTreeParentKeys**: Keys of every node with children (expand all)
+- **getTreeAncestorKeys**: Keys of a node's ancestors
+- **toggleTreeSelection**: Toggle one node's selection, optionally cascading
+- **normalizeTreeSelection**: Make a cascading selection consistent after the data changes
+- **getTreeIndeterminateKeys**: Keys of parents that are partly selected
+- **toggleTreeVisibility**: Toggle one node's visibility flag
+- **getTreeViewableKeys**: Keys of nodes that are visible along with all their ancestors
+
+### Using individual operations
+
+```ts
+import {
+  insertTreeNodes,
+  moveTreeNodes,
+  removeTreeNodes,
+  updateTreeNode,
+} from '@wingbrace/glideslope'
+
+// Add a new node as a child
+const handleAddChild = (parentKey: string) => {
+  const newNode = { key: generateId(), label: 'New Item' }
+  tree.value = insertTreeNodes(tree.value, parentKey, [newNode], 'into')
+}
+
+// Remove selected nodes
+const handleDelete = (keysToRemove: string[]) => {
+  tree.value = removeTreeNodes(tree.value, keysToRemove)
+}
+
+// Update a node's label
+const handleRename = (key: string, newLabel: string) => {
+  tree.value = updateTreeNode(tree.value, key, (node) => ({ ...node, label: newLabel }))
+}
+
+// Move nodes to a new parent
+const handleMove = (movedKeys: string[], targetKey: string) => {
+  tree.value = moveTreeNodes(tree.value, movedKeys, targetKey, 'into')
+}
+```
+
+### Building custom state composables
+
+The real power of the helpers is building composables that integrate with your application's state management. For example, a composable that applies changes optimistically, persists them to a server and rolls back on error:
+
+```ts
+import { removeTreeNodes, type GsTreeKey, type GsTreeNode } from '@wingbrace/glideslope'
+import { shallowRef } from 'vue'
+
+export function useProjectTree(projectId: string) {
+  const tree = shallowRef<GsTreeNode[]>([])
+  const expanded = shallowRef<GsTreeKey[]>([])
+
+  fetchProjectTree(projectId).then((data) => (tree.value = data))
+
+  async function applyChange(next: GsTreeNode[]) {
+    const previous = tree.value
+    // Optimistic update
+    tree.value = next
+    try {
+      await saveProjectTree(projectId, next)
+    } catch (error) {
+      // Rollback on error
+      tree.value = previous
+      throw error
+    }
+  }
+
+  return {
+    tree,
+    expanded,
+    remove: (keys: GsTreeKey[]) => applyChange(removeTreeNodes(tree.value, keys)),
+    // ... wrap other helpers as needed
+  }
+}
+```
+
+### Key principles
+
+- **Stateless**: the helpers don't manage state; they transform data
+- **Pure functions**: the same input always produces the same output
+- **Composable**: build your own abstractions on top of these primitives
+- **Framework agnostic**: they work with any state management solution
+- **No side effects**: you control when and how changes are persisted
+
+## useTree
+
+The `useTree` composable is an optional, complete state management solution for tree data. It holds the data and the expanded, selected and visible keys, and provides actions for changing them. Under the hood, it is a thin wrapper around the tree data helpers. It is appropriate for less complex tree state management.
+
+```vue
+<script setup lang="ts">
+import { useTree } from '@wingbrace/glideslope'
+
+const { nodes, selected, expanded, visible, expandAll, collapseAll } = useTree({
+  items: initialTreeData, // Nodes flagged `expanded`, `selected` or `visible` set the initial state
+  expanded: ['documents'], // Optional: initial keys instead of the flags
+  selectionCascade: true, // Optional: keep a cascading selection consistent
+})
+</script>
+
+<template>
+  <GsTree
+    v-model="selected"
+    v-model:expanded="expanded"
+    v-model:visible="visible"
+    :items="nodes"
+    selection-cascade
+    aria-label="Files"
+  />
+</template>
+```
+
+The composable accepts:
+
+- **items**: Initial tree data
+- **expanded**, **selected**, **visible** (optional): Initially expanded, selected and visible keys. Each defaults to the keys of the nodes with that flag
+- **selectionCascade** (optional): Keep a cascading selection consistent when nodes move, are inserted or are removed
+
+It returns:
+
+- **nodes**: The current tree data, for `items`. Replaced, never mutated, by every structural action
+- **expanded**, **selected**, **visible**: Refs of keys, for `v-model:expanded`, `v-model` and `v-model:visible`
+- **getNode**: Find a node by key
+- **expandAll**, **collapseAll**, **selectAll**, **unselectAll**, **revealAll**, **hideAll**: State actions
+- **insertBefore**, **insertAfter**, **insertInto**, **moveBefore**, **moveAfter**, **moveInto**, **remove**, **updateNode**: Structural actions. They drop the keys of removed nodes from the state
+
+## Accessibility
+
+`GsTree` is built on [Reka UI's Tree](https://reka-ui.com/docs/components/tree), which provides keyboard navigation, focus management and screen reader support. Give the tree an accessible name with `aria-label` or `aria-labelledby`.
+
+### Keyboard navigation
+
+- **Up and Down arrows**: Navigate between tree items
+- **Enter/Space**: Toggle the focused item's selection (expand or collapse it without selection)
+- **Home/End**: Move to the first/last item in the tree
+- **Right arrow**: Expand a collapsed node or move to the first child
+- **Left arrow**: Collapse an expanded node or move to the parent
+- **Typing**: Jump to the next item whose label starts with the typed text
+
+### ARIA attributes
+
+The tree applies the appropriate ARIA attributes so screen readers can interpret the tree structure:
+
+- `role="tree"` on the tree container, with `aria-multiselectable` in `multiple` selection mode
+- `role="treeitem"` on each tree item, named by its node's `label`
+- `aria-expanded` to indicate expansion state
+- `aria-selected` to indicate selection state
+- `aria-disabled` for disabled items
+- `aria-level` to indicate the nesting level
+
+## Related
+
+- [Reka UI Tree](https://reka-ui.com/docs/components/tree)

@@ -1,8 +1,12 @@
 import type { AcceptableValue } from 'reka-ui'
 
 export interface GsOptionsProps {
-  /** Allow selecting several options; the model becomes an array. */
-  multiple?: boolean
+  /**
+   * `single` / `multiple` make options selectable, bound with `v-model` (an array with
+   * `multiple`). With `none`, options are only highlighted and emit `action` when chosen.
+   * @default 'single'
+   */
+  selectionMode?: 'none' | 'single' | 'multiple'
   disabled?: boolean
   /** Row density. */
   size?: 'small' | 'large'
@@ -18,9 +22,23 @@ export interface GsOptionProps {
   disabled?: boolean
   /** Semantic color of the highlight and selection. @default 'info' */
   color?: 'info' | 'serious' | 'critical'
+  /**
+   * Extra classes for inner parts. Classes on the option itself go on the option element.
+   */
+  classes?: {
+    /** Every `GsIcon` in the option. */
+    icon?: string
+  }
 }
 
 export interface GsOptionSectionProps {
   /** Heading shown above the section's options. */
   header: string
+  /**
+   * Extra classes for inner parts. Classes on the section itself go on the group element.
+   */
+  classes?: {
+    /** The heading. */
+    header?: string
+  }
 }

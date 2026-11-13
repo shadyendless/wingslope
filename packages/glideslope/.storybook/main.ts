@@ -1,8 +1,17 @@
 import type { StorybookConfig } from '@storybook/vue3-vite'
+import remarkGfm from 'remark-gfm'
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.ts'],
-  addons: ['@storybook/addon-docs', '@storybook/addon-themes', '@storybook/addon-a11y'],
+  addons: [
+    {
+      name: '@storybook/addon-docs',
+      // GitHub-flavored Markdown (tables, task lists) in the *.docs.mdx pages, as in the Design Toolkit.
+      options: { mdxPluginOptions: { mdxCompileOptions: { remarkPlugins: [remarkGfm] } } },
+    },
+    '@storybook/addon-themes',
+    '@storybook/addon-a11y',
+  ],
   framework: {
     name: '@storybook/vue3-vite',
     options: {

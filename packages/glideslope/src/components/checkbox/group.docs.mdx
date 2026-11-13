@@ -1,0 +1,75 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as CheckboxGroupStories from './group.stories'
+
+<Meta of={CheckboxGroupStories} />
+
+# Checkbox Group
+
+`GsCheckboxGroup` groups several checkboxes with shared state and configuration. It supports vertical and horizontal layouts with automatic spacing.
+
+## Example usage
+
+```vue
+<GsCheckboxGroup label="Notification preferences">
+  <GsCheckbox value="email">Email notifications</GsCheckbox>
+  <GsCheckbox value="sms">SMS notifications</GsCheckbox>
+  <GsCheckbox value="push">Push notifications</GsCheckbox>
+</GsCheckboxGroup>
+```
+
+<Canvas of={CheckboxGroupStories.Default} />
+
+### Horizontal layout
+
+```vue
+<GsCheckboxGroup label="Features" orientation="horizontal">
+  <GsCheckbox value="feature1">Feature 1</GsCheckbox>
+  <GsCheckbox value="feature2">Feature 2</GsCheckbox>
+  <GsCheckbox value="feature3">Feature 3</GsCheckbox>
+</GsCheckboxGroup>
+```
+
+### Controlled
+
+`v-model` holds the values of the checked checkboxes.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const values = ref(['email'])
+</script>
+
+<template>
+  <GsCheckboxGroup v-model="values" label="Preferences">
+    <GsCheckbox value="email">Email</GsCheckbox>
+    <GsCheckbox value="sms">SMS</GsCheckbox>
+  </GsCheckboxGroup>
+</template>
+```
+
+## Props
+
+`label-position` sets the label position of every checkbox in the group; a checkbox's own `label-position` overrides it.
+
+<ArgTypes of={CheckboxGroupStories} />
+
+**`classes`:**
+
+| Key     | Description     |
+| ------- | --------------- |
+| `label` | The group label |
+
+Classes on `GsCheckboxGroup` itself go on the group container.
+
+## Implementation notes
+
+- Wraps Reka UI's `CheckboxGroupRoot`, with `role="group"` named by its label. Without a `label`, give the group an `aria-label`.
+- Horizontal orientation wraps when space is constrained.
+- The label shows "(optional)" unless `required` is set.
+
+**Related:**
+
+- [Reka UI Checkbox](https://reka-ui.com/docs/components/checkbox)
+- [Checkbox](?path=/docs/components-checkbox--docs)

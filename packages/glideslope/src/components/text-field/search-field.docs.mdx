@@ -1,0 +1,73 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as SearchFieldStories from './search-field.stories'
+
+<Meta of={SearchFieldStories} />
+
+# SearchField
+
+`GsSearchField` is a search input with an integrated search icon, loading state and clear button. Bind the text with `v-model`.
+
+## Basic
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const query = ref('')
+const search = (value: string) => console.log('Search:', value)
+</script>
+
+<template>
+  <GsSearchField v-model="query" placeholder="Search..." aria-label="Search" @submit="search" />
+</template>
+```
+
+<Canvas of={SearchFieldStories.Default} />
+
+## With provideSearchFieldDefaults
+
+`provideSearchFieldDefaults()` sets defaults for every `GsSearchField` rendered below the calling component: `variant`, `disabled` and `classes`. A prop set on a field still wins.
+
+```vue
+<script setup lang="ts">
+import { provideSearchFieldDefaults } from '@wingbrace/glideslope'
+
+provideSearchFieldDefaults({ variant: 'filled' })
+</script>
+
+<template>
+  <GsSearchField v-model="first" placeholder="Search 1" aria-label="Search 1" />
+  <GsSearchField v-model="second" placeholder="Search 2" aria-label="Search 2" />
+</template>
+```
+
+<Canvas of={SearchFieldStories.Provider} />
+
+## Events
+
+Enter emits `submit` with the current text. Escape or the clear button empties the field and emits `clear`.
+
+<Canvas of={SearchFieldStories.SubmitAndClear} />
+
+## Props
+
+`class` and `style` go on the wrapper; every other attribute (`id`, `name`, `aria-*`, listeners) goes on the `<input>`.
+
+<ArgTypes of={SearchFieldStories} />
+
+**`classes`:**
+
+| Key       | Description                       |
+| --------- | --------------------------------- |
+| `input`   | Input element                     |
+| `search`  | Search icon                       |
+| `loading` | Loading spinner (while `loading`) |
+| `clear`   | Clear button                      |
+
+## Accessibility
+
+- Enter submits the search, Escape clears the input.
+- Give the field an accessible name with `aria-label`, or a visible `<label>` pointing at its `id`.
+- While `loading` is set, a spinner with `role="status"` replaces the clear button.
+- The clear button is kept out of the tab order; keyboard users clear the field with Escape.

@@ -16,6 +16,7 @@ import {
   GsLabel,
   GsLink,
   GsLinkButton,
+  GsNoticeList,
   GsSkeleton,
   GsStatusIndicator,
   GsToggleButton,
@@ -27,6 +28,7 @@ import { AddIcon, BellIcon, BrightnessIcon, PinIcon, RadarIcon } from '@wingbrac
 import { computed, ref } from 'vue'
 import FormsPanel from './FormsPanel.vue'
 import TokenSwatch from './TokenSwatch.vue'
+import WorkspacePanel from './WorkspacePanel.vue'
 
 const theme = provideTheme({ defaultMode: 'dark' })
 
@@ -137,6 +139,10 @@ const modeLabel = computed(() => (theme.mode.value === 'dark' ? 'Light mode' : '
 
     <GsDivider />
 
+    <WorkspacePanel />
+
+    <GsDivider />
+
     <section class="flex flex-col gap-m">
       <h2 class="text-header-l">Theme tokens in JavaScript</h2>
       <p class="text-body-s fg-primary-muted">
@@ -145,5 +151,8 @@ const modeLabel = computed(() => (theme.mode.value === 'dark' ? 'Light mode' : '
       </p>
       <TokenSwatch />
     </section>
+
+    <!-- One app-wide notice list, pinned to the viewport. -->
+    <GsNoticeList global placement="bottom right" :default-timeout="8000" />
   </div>
 </template>

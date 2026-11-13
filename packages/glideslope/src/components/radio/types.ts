@@ -7,6 +7,11 @@ export interface GsRadioProps {
   disabled?: boolean
   /** Side of the circle the label sits on. @default 'end' */
   labelPosition?: GsLabelPosition
+  /**
+   * Extra classes for inner parts: `control` (the circle) and `label` (the label text). Classes on
+   * the component itself go on the root button.
+   */
+  classes?: { control?: string; label?: string }
 }
 
 export interface GsRadioGroupProps {
@@ -20,4 +25,6 @@ export interface GsRadioGroupProps {
   orientation?: 'horizontal' | 'vertical'
   /** Label position for every radio in the group. */
   labelPosition?: GsLabelPosition
+  /** Extra classes for the group `label`. Classes on the component itself go on the group. */
+  classes?: { label?: string }
 }

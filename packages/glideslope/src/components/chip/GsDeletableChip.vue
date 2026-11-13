@@ -8,7 +8,7 @@ import { TagGroupItem, TagGroupItemDelete, TagGroupItemText } from 'reka-ui'
 import GsButton from '../button/GsButton.vue'
 import GsIcon from '../icon/GsIcon.vue'
 import styles from './styles.module.css'
-import type { GsChipItemProps } from './types'
+import type { GsDeletableChipProps } from './types'
 import { useChipStyle } from './use-chip-style'
 import { useId } from 'vue'
 
@@ -18,7 +18,8 @@ const {
   textValue,
   color: colorProp,
   size: sizeProp,
-} = defineProps<GsChipItemProps>()
+  classes,
+} = defineProps<GsDeletableChipProps>()
 
 defineSlots<{
   /** Chip content. */
@@ -42,7 +43,12 @@ const { color, size } = useChipStyle(() => ({ color: colorProp, size: sizeProp }
   >
     <TagGroupItemText :id="textId"><slot /></TagGroupItemText>
     <TagGroupItemDelete as-child>
-      <GsButton variant="icon" color="mono-muted" :size="size" :class="styles.remove">
+      <GsButton
+        variant="icon"
+        color="mono-muted"
+        :size="size"
+        :class="[styles.remove, classes?.remove]"
+      >
         <GsIcon :size="size === 'small' ? 'xsmall' : 'small'"><CancelFillIcon /></GsIcon>
       </GsButton>
     </TagGroupItemDelete>

@@ -33,12 +33,13 @@ const {
   name,
   validate,
   validationMode,
-  granularity = 'minute',
-  hourCycle,
+  granularity = 'second',
+  hourCycle = 24,
   minValue,
   maxValue,
   locale,
   readonly = false,
+  classes,
 } = defineProps<GsTimeFieldProps>()
 
 /** The time, or `null` when empty. */
@@ -62,6 +63,7 @@ const { rootAttrs, controlAttrs } = useSplitAttrs()
     :validate="validate"
     :validation-mode="validationMode"
     :native-label="false"
+    :classes="classes"
   >
     <!-- Reka UI's TimeFieldRoot doesn't join FieldRoot by itself (DateFieldRoot does). -->
     <GsFieldConnect v-slot="fieldAttrs" :value="model">
@@ -77,15 +79,15 @@ const { rootAttrs, controlAttrs } = useSplitAttrs()
         :locale="locale"
         :disabled="disabled"
         :readonly="readonly"
-        :class="[styles.control, styles.time]"
+        :class="[styles.control, styles.time, classes?.control]"
       >
-        <div :class="styles.input">
+        <div :class="[styles.input, classes?.input]">
           <template v-for="(segment, index) in segments" :key="`${segment.part}-${index}`">
             <span v-if="isVisibleLiteral(segment)" aria-hidden="true">:</span>
             <TimeFieldInput
               v-else-if="segment.part !== 'literal'"
               :part="segment.part"
-              :class="styles.segment"
+              :class="[styles.segment, classes?.segment]"
               :data-placeholder="isPlaceholderSegment(segment) ? '' : undefined"
             >
               {{ segment.value }}

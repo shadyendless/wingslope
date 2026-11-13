@@ -1,0 +1,278 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as ComboBoxStories from './combobox-field.stories'
+
+<Meta of={ComboBoxStories} />
+
+# ComboBoxField
+
+`GsComboBoxField` is an accessible searchable combobox with dropdown options. Typing filters the options, and the matching text is highlighted in each option's label. Bind the selected value with `v-model` and, optionally, the typed text with `v-model:search`.
+
+It includes a clear button that clears the input and the selection. The button appears while the input has focus and text, and never on a read-only field. Set `:clearable="false"` to remove it.
+
+It uses the [Options](?path=/docs/components-options--docs) components (`GsOption`, `GsOptionSection`) for the dropdown items.
+
+## Example usage
+
+### Basic
+
+```vue
+<GsComboBoxField v-model="animal" label="Select animal">
+  <GsOption v-for="item in items" :key="item.id" :value="item.id" :text-value="item.name">
+    <GsIcon><PlaceholderIcon /></GsIcon>
+    <GsOptionContent>
+      <GsOptionLabel>{{ item.name }}</GsOptionLabel>
+      <GsOptionDescription>{{ item.description }}</GsOptionDescription>
+    </GsOptionContent>
+  </GsOption>
+</GsComboBoxField>
+```
+
+<Canvas of={ComboBoxStories.Default} />
+
+> **Important:** Options are filtered against their `label`, or their `text-value` when the content is in the default slot. Give every slotted option a `text-value`, or filtering has nothing to match.
+
+### With sections
+
+```vue
+<GsComboBoxField v-model="bird" label="Select bird">
+  <GsOptionSection v-for="section in sections" :key="section.id" :header="section.name">
+    <GsOption
+      v-for="item in section.children"
+      :key="item.id"
+      :value="item.id"
+      :text-value="item.name"
+    >
+      <GsOptionLabel>{{ item.name }}</GsOptionLabel>
+    </GsOption>
+  </GsOptionSection>
+</GsComboBoxField>
+```
+
+<Canvas of={ComboBoxStories.WithDynamicSections} />
+
+### Custom value
+
+By default the value is always one of the options: text that doesn't match one is replaced when the field loses focus. With `allow-custom-value`, the typed text is kept and becomes the value when focus leaves the input, or on Enter while no option is highlighted. Typing an option's label (ignoring case) selects that option instead, and emptying the input clears the value to `null`.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+// An option's value, or the text the user typed.
+const animal = ref<number | string | null>()
+</script>
+
+<template>
+  <GsComboBoxField v-model="animal" label="Animal" allow-custom-value>
+    <GsOption v-for="item in items" :key="item.id" :value="item.id" :label="item.name" />
+  </GsComboBoxField>
+</template>
+```
+
+<Canvas of={ComboBoxStories.WithCustomValue} />
+
+### Readonly
+
+A read-only combobox shows its value as text that can't be edited, without the clear and list buttons: the selected option's label, or free text with `allow-custom-value`. Long text is truncated, with the full text in the input's tooltip.
+
+```vue
+<GsComboBoxField v-model="note" label="Note" allow-custom-value readonly>
+  <GsOption v-for="item in items" :key="item.id" :value="item.id" :label="item.name" />
+</GsComboBoxField>
+```
+
+<Canvas of={ComboBoxStories.Readonly} />
+
+### Selected value and typed text
+
+`v-model` holds the selected option's `value`; `v-model:search` holds the text in the input. When no option matches, the list shows "No matches", or the content of the `#empty` slot.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const animal = ref<number>()
+const search = ref('')
+</script>
+
+<template>
+  <GsComboBoxField v-model="animal" v-model:search="search" label="Animal">
+    <GsOption v-for="item in items" :key="item.id" :value="item.id" :label="item.name" />
+    <template #empty>No animal matches "{{ search }}"</template>
+  </GsComboBoxField>
+</template>
+```
+
+<Canvas of={ComboBoxStories.Controlled} />
+
+## Sizes
+
+| Size     | Description                                |
+| -------- | ------------------------------------------ |
+| `medium` | Standard size with visible label (default) |
+| `small`  | Compact size, label and description hidden |
+
+## Props
+
+<ArgTypes of={ComboBoxStories} />
+
+**`classes`:**
+
+| Key           | Description                          |
+| ------------- | ------------------------------------ |
+| `label`       | The label                            |
+| `control`     | The box around the input and buttons |
+| `input`       | The `<input>`                        |
+| `clear`       | The clear button                     |
+| `trigger`     | The button that opens the list       |
+| `popover`     | The dropdown list                    |
+| `description` | The help text                        |
+| `error`       | The error message                    |
+
+Classes on `GsComboBoxField` itself go on the field wrapper.
+
+### provideComboBoxFieldDefaults
+
+`provideComboBoxFieldDefaults()` sets the default `size`, `disabled`, `readonly` and `clearable` of every combobox rendered below the calling component. A prop set on a combobox still wins.
+
+```vue
+<script setup lang="ts">
+import { provideComboBoxFieldDefaults } from '@wingbrace/glideslope'
+
+provideComboBoxFieldDefaults({ size: 'small' })
+</script>
+
+<template>
+  <GsComboBoxField v-model="first" label="Small Combobox 1">...</GsComboBoxField>
+  <GsComboBoxField v-model="second" label="Small Combobox 2">...</GsComboBoxField>
+</template>
+```
+
+<Canvas of={ComboBoxStories.Provider} />
+
+## Usage patterns
+
+Options are always children of the default slot, written out one by one or rendered from data with `v-for`. Either way, the combobox filters them automatically against each option's `label` or `text-value` as the user types.
+
+```vue
+<!-- From data -->
+<GsComboBoxField v-model="animal" label="Animal">
+  <GsOption v-for="item in items" :key="item.id" :value="item.id" :label="item.name" />
+</GsComboBoxField>
+
+<!-- Written out -->
+<GsComboBoxField v-model="animal" label="Animal">
+  <GsOption value="cat" label="Cat" />
+  <GsOption value="dog" label="Dog" />
+  <GsOption value="bird" label="Bird" />
+</GsComboBoxField>
+```
+
+### Controlled filtering
+
+Set `ignore-filter` to filter the list yourself, for example for async search or custom match logic. The combobox then shows exactly the options in its default slot and does **not** filter them, so render them from `v-model:search`. The selected option keeps its label in the input even when your filter removes it from the list.
+
+```vue
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+
+const animal = ref<number>()
+const search = ref('')
+const matches = computed(() =>
+  items.filter((item) => item.name.toLowerCase().startsWith(search.value.toLowerCase())),
+)
+</script>
+
+<template>
+  <GsComboBoxField v-model="animal" v-model:search="search" label="Animal" ignore-filter>
+    <GsOption v-for="item in matches" :key="item.id" :value="item.id" :label="item.name" />
+  </GsComboBoxField>
+</template>
+```
+
+<Canvas of={ComboBoxStories.ControlledFiltering} />
+
+## Common issues
+
+### Filtering doesn't work
+
+**Problem:** You type in the combobox but options don't filter.
+
+**Solution:** Options with content in the default slot need a `text-value`, so the combobox knows what text to match against.
+
+```vue
+<!-- ❌ Filtering broken: no label or text-value -->
+<GsOption :value="item.id">
+  <GsOptionLabel>{{ item.name }}</GsOptionLabel>
+</GsOption>
+
+<!-- ✅ Filtering works -->
+<GsOption :value="item.id" :text-value="item.name">
+  <GsOptionLabel>{{ item.name }}</GsOptionLabel>
+</GsOption>
+```
+
+### Missing `:key`
+
+**Problem:** ESLint reports `vue/require-v-for-key`, or options update in the wrong place after the list changes.
+
+**Solution:** Add `:key="item.id"` to the element that has `v-for`.
+
+### Selection or keyboard navigation broken
+
+**Problem:** Selecting options behaves strangely, or keyboard navigation jumps unexpectedly.
+
+**Solution:** Every option's `value` must be unique across the entire list, including across sections.
+
+```ts
+// ❌ Duplicate values cause unpredictable behavior
+const items = [
+  { id: 1, name: 'Cat' },
+  { id: 1, name: 'Dog' }, // Duplicate id!
+  { id: 2, name: 'Bird' },
+]
+
+// ✅ All values are unique (string values work too)
+const items = [
+  { id: 'cat', name: 'Cat' },
+  { id: 'dog', name: 'Dog' },
+  { id: 'bird', name: 'Bird' },
+]
+```
+
+### Dropdown doesn't show at all
+
+**Problem:** Clicking or focusing the field doesn't open the dropdown.
+
+**Common causes:**
+
+1. **Z-index stacking context issue:** The list is portalled to `body`. Check whether another page-level element with a higher `z-index` covers it.
+2. **The field is `readonly`:** A read-only combobox never opens.
+
+### Typed text disappears on blur
+
+**Problem:** Text typed into the input is replaced when the field loses focus.
+
+**Cause:** When the list closes, the input shows the selected option's label again, or clears when nothing is selected. By default the value of a combobox is always one of its options.
+
+**Solution:** Set `allow-custom-value` to keep typed text as the value.
+
+## Accessibility
+
+- Keyboard: Arrow keys to navigate, Enter to select, Escape to close
+- Filtering as you type
+- ARIA attributes for screen readers
+- Focus management between the input and the dropdown
+- Clear button excluded from the tab order for streamlined keyboard navigation
+
+## Implementation notes
+
+- Wraps Reka UI's `ComboboxRoot`
+- Uses the [Options](?path=/docs/components-options--docs) components for dropdown content
+- Options are filtered against each option's `label` or `text-value`; the matching part of a plain-text `GsOptionLabel` is highlighted. `ignore-filter` (Reka UI's `ignoreFilter`) turns the filtering off
+
+**Related:**
+
+- [Reka UI Combobox](https://reka-ui.com/docs/components/combobox)
+- [Options](?path=/docs/components-options--docs)

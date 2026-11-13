@@ -11,6 +11,11 @@ export interface GsCheckboxProps {
   name?: string
   /** Side of the box the label sits on. @default 'end' */
   labelPosition?: GsLabelPosition
+  /**
+   * Extra classes for inner parts: `control` (the box) and `label` (the label text). Classes on
+   * the component itself go on the root button.
+   */
+  classes?: { control?: string; label?: string }
 }
 
 export interface GsCheckboxGroupProps {
@@ -24,4 +29,6 @@ export interface GsCheckboxGroupProps {
   orientation?: 'horizontal' | 'vertical'
   /** Label position for every checkbox in the group. */
   labelPosition?: GsLabelPosition
+  /** Extra classes for the group `label`. Classes on the component itself go on the group. */
+  classes?: { label?: string }
 }

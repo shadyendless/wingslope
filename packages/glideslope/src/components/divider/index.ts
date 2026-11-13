@@ -1,2 +1,3 @@
 export { default as GsDivider } from './GsDivider.vue'
-export type { GsDividerProps } from './types'
+export { provideDividerDefaults } from './defaults'
+export type { GsDividerDefaults, GsDividerProps } from './types'

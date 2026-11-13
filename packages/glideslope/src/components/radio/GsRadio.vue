@@ -9,7 +9,7 @@ import { injectChoiceDefaults } from '../checkbox/defaults'
 import styles from './styles.module.css'
 import type { GsRadioProps } from './types'
 
-const { value, disabled = false, labelPosition } = defineProps<GsRadioProps>()
+const { value, disabled = false, labelPosition, classes } = defineProps<GsRadioProps>()
 
 defineSlots<{
   /** Label content. */
@@ -26,7 +26,7 @@ const position = computed(() => labelPosition ?? defaults.value.labelPosition ??
     :disabled="disabled"
     :class="['group/radio', styles.radio, { [styles.labelStart ?? '']: position === 'start' }]"
   >
-    <span :class="styles.control" />
-    <span :class="styles.label"><slot /></span>
+    <span :class="[styles.control, classes?.control]" />
+    <span :class="[styles.label, classes?.label]"><slot /></span>
   </RadioGroupItem>
 </template>

@@ -1,0 +1,256 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as ColorPickerStories from './color-picker.stories'
+import GsCustomColorPicker from './GsCustomColorPicker.vue'
+import GsNoColorButton from './GsNoColorButton.vue'
+
+<Meta of={ColorPickerStories} />
+
+# ColorPicker
+
+`GsColorPicker` is a set of interactive color swatches for selecting from a predefined palette. It is built on Reka UI's Color Swatch Picker, with keyboard navigation and accessibility out of the box. Bind the selected color with `v-model`, or `undefined` for no color. Swatches and the model take color strings, RGBA tuples or Reka UI `Color` objects, and the model is updated in the format it was bound with (see [Value format](#value-format)).
+
+## Example usage
+
+### Basic
+
+Without a `label`, give the picker an `aria-label`.
+
+```vue
+<GsColorPicker
+  v-model="color"
+  aria-label="Color"
+  :items="['#ECECE6', '#898989', '#62a6ff', '#30D27E', '#FCA400', '#D4231D']"
+  @update:model-value="(color) => console.log('Selected:', color)"
+/>
+```
+
+<Canvas of={ColorPickerStories.Default} />
+
+### With label
+
+```vue
+<GsColorPicker
+  v-model="color"
+  label="Pick a color"
+  :items="['#ECECE6', '#898989', '#62a6ff', '#30D27E', '#FCA400', '#D4231D']"
+/>
+```
+
+<Canvas of={ColorPickerStories.WithLabel} />
+
+### Controlled
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const selectedColor = ref<string | undefined>('#30D27E')
+</script>
+
+<template>
+  <GsColorPicker
+    v-model="selectedColor"
+    aria-label="Color"
+    :items="['#ECECE6', '#898989', '#62a6ff', '#30D27E', '#FCA400', '#D4231D']"
+  />
+</template>
+```
+
+<Canvas of={ColorPickerStories.Controlled} />
+
+### Custom styling
+
+`classes` adds classes to the `label`, the swatch list (`picker`), each swatch option (`item`) and the color square inside it (`swatch`); classes on the component itself go on the outer container.
+
+```vue
+<GsColorPicker
+  v-model="color"
+  aria-label="Color"
+  :items="['#ff0000', '#00ff00', '#0000ff']"
+  :classes="{
+    picker: 'gap-m',
+    item: 'rounded-medium',
+    swatch: 'size-xl',
+  }"
+/>
+```
+
+### Value format
+
+`v-model` is updated in the format of the value bound to it:
+
+| Bound value                                         | Updated with                                      |
+| --------------------------------------------------- | ------------------------------------------------- |
+| A color string (`'#30d27e'`, `'rgb(48, 210, 126)'`) | A lowercase hex string (`#rrggbb` or `#rrggbbaa`) |
+| An RGBA tuple (`[48, 210, 126, 255]`)               | An RGBA tuple, every channel 0–255                |
+| A Reka UI `Color` (`parseColor('#30d27e')`)         | A `Color` in the same color space                 |
+
+The format is remembered, so choosing "no color" (`undefined`) and then a color keeps it. While nothing has been bound yet the picker uses hex strings; set `format` (`'hex'`, `'rgba'` or `'color'`) to choose explicitly.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+// Starts empty, but should hold RGBA tuples for a deck.gl layer.
+const fill = ref<[number, number, number, number]>()
+</script>
+
+<template>
+  <GsColorPicker v-model="fill" aria-label="Fill" :items="palette" format="rgba" allow-empty />
+</template>
+```
+
+### With RGBA tuples
+
+Swatches can be RGBA tuples with every channel 0–255, as used by deck.gl, and mixed with color strings. Bind the model to a tuple and it is updated with tuples; `toHex` converts any color to a hex string.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const color = ref<[number, number, number, number]>([48, 210, 126, 255])
+</script>
+
+<template>
+  <GsColorPicker
+    v-model="color"
+    aria-label="Color"
+    :items="['#ECECE6', [98, 166, 255, 255], '#30D27E', [252, 164, 0, 255]]"
+  />
+</template>
+```
+
+<Canvas of={ColorPickerStories.RgbaTuples} />
+
+<Canvas of={ColorPickerStories.MixedItems} />
+
+### With theme tokens
+
+`useTheme().tokens` gives the active theme's colors as RGBA tuples, so they work directly as swatches.
+
+```vue
+<script setup lang="ts">
+import { useTheme } from '@wingbrace/glideslope'
+import { computed, ref } from 'vue'
+
+const { tokens } = useTheme()
+const items = computed(() => [
+  tokens.value.bg.critical.bold,
+  tokens.value.bg.normal.bold,
+  tokens.value.bg.info.bold,
+])
+const color = ref(tokens.value.bg.critical.bold)
+</script>
+
+<template>
+  <GsColorPicker v-model="color" aria-label="Color" :items="items" />
+</template>
+```
+
+<Canvas of={ColorPickerStories.ThemeTokens} />
+
+### With Color objects
+
+Swatches and the model can also be Reka UI `Color` objects, from `parseColor` or the color components. A model bound to a `Color` is updated with `Color`s in the same color space.
+
+```vue
+<script setup lang="ts">
+import { parseColor, type Color } from 'reka-ui'
+import { shallowRef } from 'vue'
+
+const colorObjects = [
+  parseColor('#ff0000'),
+  parseColor('hsl(120, 100%, 50%)'),
+  parseColor('rgb(0, 0, 255)'),
+]
+const color = shallowRef<Color | undefined>(colorObjects[0])
+</script>
+
+<template>
+  <GsColorPicker v-model="color" aria-label="Color" :items="colorObjects" />
+</template>
+```
+
+### With other color formats
+
+Color strings can be hex (`#rgb`, `#rrggbb`, `#rrggbbaa`), `rgb()` / `rgba()`, `hsl()` / `hsla()` or `hsb()` / `hsba()`.
+
+```vue
+<GsColorPicker
+  v-model="color"
+  aria-label="Color"
+  :items="['#ff0000', 'hsl(120, 100%, 50%)', 'rgb(0, 0, 255)']"
+/>
+```
+
+### No color and custom colors
+
+`allow-empty` adds a leading "No color" button that sets the model to `undefined`. `show-custom-picker` adds a trailing button that opens a full picker, with a saturation and brightness area, a hue slider and RGB inputs, for any color.
+
+```vue
+<GsColorPicker
+  v-model="color"
+  aria-label="Color"
+  :items="['#ECECE6', '#898989', '#62a6ff', '#30D27E', '#FCA400', '#D4231D']"
+  allow-empty
+  show-custom-picker
+/>
+```
+
+<Canvas of={ColorPickerStories.CombinedColorControls} />
+
+### Building your own controls
+
+The "no color" and custom color buttons are also available on their own. `GsNoColorButton` is an icon button; handle `@click` and pass `active` to show it as selected. `GsCustomColorPicker` opens the full picker and is bound with `v-model`, in any of the formats above.
+
+```vue
+<GsNoColorButton :active="color === undefined" @click="color = undefined" />
+<GsCustomColorPicker v-model="color" :active="color !== undefined" />
+```
+
+<Canvas of={ColorPickerStories.NoColorButtonStory} />
+
+<Canvas of={ColorPickerStories.CustomColorPickerStory} />
+
+## Props
+
+### GsColorPicker
+
+<ArgTypes of={ColorPickerStories} />
+
+**`classes`:**
+
+| Key      | Description                                        |
+| -------- | -------------------------------------------------- |
+| `label`  | The label                                          |
+| `picker` | The list of swatches                               |
+| `item`   | Each swatch option (carries the selection outline) |
+| `swatch` | The color square inside each swatch option         |
+
+### GsCustomColorPicker
+
+<ArgTypes of={GsCustomColorPicker} />
+
+### GsNoColorButton
+
+<ArgTypes of={GsNoColorButton} />
+
+## Accessibility
+
+- Keyboard: arrow keys to navigate, Enter or Space to select
+- ARIA attributes for screen readers
+- Focus management and visual focus indicators
+- Each swatch is announced by its color name
+
+## Implementation notes
+
+- Wraps `ColorSwatchPickerRoot`, `ColorSwatchPickerItem` and `ColorSwatchPickerItemSwatch` from Reka UI
+- Supports color strings in these formats: hex, `rgb()`, `rgba()`, `hsl()`, `hsla()`, `hsb()` and `hsba()`
+- Also accepts RGBA tuples (`[r, g, b, a]`, every channel 0–255) and Reka UI `Color` objects
+- Duplicate colors are shown once
+- Swatches wrap to the width of the container
+
+**Related:**
+
+- [Reka UI Color Swatch Picker](https://reka-ui.com/docs/components/color-swatch-picker)

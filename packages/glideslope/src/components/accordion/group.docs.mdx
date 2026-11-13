@@ -1,0 +1,82 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as AccordionGroupStories from './group.stories'
+
+<Meta of={AccordionGroupStories} />
+
+# Accordion Group
+
+`GsAccordionGroup` groups several `GsAccordion` components with shared configuration. Use it when you need related accordions that share variant styling and expansion behavior.
+
+## Example usage
+
+```vue
+<GsAccordionGroup>
+  <GsAccordion>
+    <GsAccordionHeader>
+      <GsAccordionTrigger>
+        <GsIcon><PlaceholderIcon /></GsIcon>
+        Accordion one
+      </GsAccordionTrigger>
+    </GsAccordionHeader>
+    <GsAccordionPanel>
+      <p>First accordion content...</p>
+    </GsAccordionPanel>
+  </GsAccordion>
+  <GsAccordion>
+    <GsAccordionHeader>
+      <GsAccordionTrigger>
+        <GsIcon><PlaceholderIcon /></GsIcon>
+        Accordion two
+      </GsAccordionTrigger>
+    </GsAccordionHeader>
+    <GsAccordionPanel>
+      <p>Second accordion content...</p>
+    </GsAccordionPanel>
+  </GsAccordion>
+</GsAccordionGroup>
+```
+
+<Canvas of={AccordionGroupStories.Default} />
+
+### Controlled
+
+Give each accordion a `value` and bind the group's `v-model` to the open accordion's value. With `multiple`, the model is an array of values, and several accordions can be open at once.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const open = ref(['comms'])
+</script>
+
+<template>
+  <GsAccordionGroup v-model="open" multiple>
+    <GsAccordion value="sensors">…</GsAccordion>
+    <GsAccordion value="comms">…</GsAccordion>
+  </GsAccordionGroup>
+</template>
+```
+
+<Canvas of={AccordionGroupStories.Controlled} />
+
+## Variants
+
+- **cozy** - Standard size with larger text and spacing (default)
+- **compact** - Smaller size with reduced text and spacing for space-constrained layouts
+
+## Props
+
+<ArgTypes of={AccordionGroupStories} />
+
+See [Accordion](?path=/docs/components-accordion--docs) for the props of each accordion.
+
+## Implementation notes
+
+- Renders [Reka UI's `AccordionRoot`](https://reka-ui.com/docs/components/accordion), `type="multiple"` when `multiple` is set and `type="single"` (collapsible) otherwise.
+- Provides `variant` and `disabled` to every child accordion. An accordion's own `variant` wins over the group's.
+- Supports keyboard navigation between the accordion triggers with the arrow keys, Home and End.
+
+**Related:**
+
+- [Reka UI Accordion docs](https://reka-ui.com/docs/components/accordion)

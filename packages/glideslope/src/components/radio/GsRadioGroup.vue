@@ -25,6 +25,7 @@ const {
   name,
   orientation = 'vertical',
   labelPosition,
+  classes,
 } = defineProps<GsRadioGroupProps>()
 
 /** The selected value. */
@@ -54,7 +55,7 @@ provideChoiceDefaults(() => ({ labelPosition }))
     <span
       v-if="label"
       :id="labelId"
-      :class="[labelStyles.label, styles.groupLabel]"
+      :class="[labelStyles.label, styles.groupLabel, classes?.label]"
       :data-disabled="disabled ? '' : undefined"
     >
       {{ label }}<template v-if="!required"> (optional)</template>

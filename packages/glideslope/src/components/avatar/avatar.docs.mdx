@@ -1,0 +1,104 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as AvatarStories from './avatar.stories'
+
+<Meta of={AvatarStories} />
+
+# Avatar
+
+`GsAvatar` displays a user's profile picture, initials or a fallback icon. Avatars are commonly used to represent users, display profile pictures, show online status, and provide visual identification in lists, headers and user management screens.
+
+## Example usage
+
+### Basic
+
+```vue
+<GsAvatar src="https://example.com/avatar.jpg" alt="User profile" />
+```
+
+<Canvas of={AvatarStories.Default} />
+
+### With badge
+
+Badges in the default slot are automatically positioned in the top-right corner.
+
+```vue
+<GsAvatar src="https://example.com/avatar.jpg" alt="User with notification">
+  <GsBadge color="critical">99+</GsBadge>
+</GsAvatar>
+```
+
+<Canvas of={AvatarStories.WithBadge} />
+
+### With fallback
+
+While the image loads, or when it fails to load, the `#fallback` slot is shown. Without one, a person icon is shown.
+
+```vue
+<!-- Custom icon fallback -->
+<GsAvatar src="http://broken-url.com" alt="User">
+  <template #fallback>
+    <GsIcon><PlaceholderIcon /></GsIcon>
+  </template>
+</GsAvatar>
+
+<!-- Initials fallback -->
+<GsAvatar src="http://broken-url.com" alt="User">
+  <template #fallback>DS</template>
+</GsAvatar>
+```
+
+<Canvas of={AvatarStories.WithFallback} />
+
+## Sizes
+
+- **medium** - Standard size (32px) with larger text (default)
+- **small** - Compact size (24px) with smaller text for space-constrained layouts
+
+The size can be set with the `size` prop, or for every avatar below a component with `provideAvatarDefaults()`.
+
+## Props
+
+### GsAvatar
+
+`@load` fires once the image has loaded and `@error` when it fails to load (the fallback then stays). Both fire again when `src` changes; neither fires without a `src`.
+
+```vue
+<GsAvatar :src="user.avatarUrl" :alt="user.name" @error="reportMissingAvatar(user)" />
+```
+
+<ArgTypes of={AvatarStories} />
+
+### provideAvatarDefaults
+
+`provideAvatarDefaults()` sets the default `size` (and an extra root `class`) of every avatar rendered below the calling component. A `size` set on an avatar still wins.
+
+```vue
+<script setup lang="ts">
+import { provideAvatarDefaults } from '@wingbrace/glideslope'
+
+provideAvatarDefaults({ size: 'small' })
+</script>
+
+<template>
+  <GsAvatar src="avatar1.jpg" alt="User 1" />
+  <GsAvatar src="avatar2.jpg" alt="User 2" />
+</template>
+```
+
+<Canvas of={AvatarStories.Provider} />
+
+## Implementation notes
+
+- Wraps Reka UI's Avatar (`AvatarRoot`, `AvatarImage`, `AvatarFallback`)
+- Uses CSS grid to stack the image, the fallback and the overlay content
+- The fallback shows automatically while the image loads or when it fails; `fallbackDelay` waits before showing it, to avoid a flash on fast loads
+- `load` and `error` follow the loading status Reka UI's `AvatarImage` reports (`loadingStatusChange`)
+- The default fallback is a person icon, sized to the avatar
+- `alt` becomes the accessible name of the whole avatar (`role="img"`)
+- Badges in the default slot are positioned top-right through `provideBadgeDefaults`
+- `classes` adds classes to the `image`, `fallback` and `content` parts; classes on the component go on the root
+
+**Related:**
+
+- [Reka UI Avatar docs](https://reka-ui.com/docs/components/avatar)

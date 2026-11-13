@@ -27,15 +27,7 @@
       @apply fg-a11y-on-accent;
     }
 
-    @variant highlighted {
-      @apply fg-a11y-on-accent;
-    }
-
     @variant color-info {
-      @variant highlighted {
-        @apply bg-accent-primary-muted;
-      }
-
       @variant highlighted {
         @apply bg-accent-primary-muted;
       }
@@ -74,10 +66,6 @@
         @apply bg-serious-muted;
       }
 
-      @variant highlighted {
-        @apply bg-serious-muted;
-      }
-
       @variant active {
         @apply bg-serious-pressed;
       }
@@ -112,10 +100,6 @@
     }
 
     @variant color-critical {
-      @variant highlighted {
-        @apply bg-critical-muted;
-      }
-
       @variant highlighted {
         @apply bg-critical-muted;
       }
@@ -184,16 +168,8 @@
       @apply fg-primary-bold;
     }
 
-    @variant group-highlighted/options-item {
-      @apply fg-primary-bold;
-    }
-
     @variant group-selected/options-item {
       @apply fg-primary-bold;
-
-      @variant group-highlighted/options-item {
-        @apply fg-a11y-on-accent;
-      }
 
       @variant group-highlighted/options-item {
         @apply fg-a11y-on-accent;
@@ -208,10 +184,6 @@
       }
 
       @variant group-selected/options-item {
-        @variant group-highlighted/options-item {
-          @apply fg-a11y-on-accent;
-        }
-
         @variant group-highlighted/options-item {
           @apply fg-a11y-on-accent;
         }
@@ -234,10 +206,6 @@
           @apply fg-a11y-on-utility;
         }
 
-        @variant group-highlighted/options-item {
-          @apply fg-a11y-on-utility;
-        }
-
         @variant group-active/options-item {
           @apply fg-serious-bold;
         }
@@ -252,10 +220,6 @@
       }
 
       @variant group-selected/options-item {
-        @variant group-highlighted/options-item {
-          @apply fg-a11y-on-utility;
-        }
-
         @variant group-highlighted/options-item {
           @apply fg-a11y-on-utility;
         }
@@ -278,16 +242,8 @@
       @apply fg-primary-bold;
     }
 
-    @variant group-highlighted/options-item {
-      @apply fg-primary-bold;
-    }
-
     @variant group-selected/options-item {
       @apply fg-primary-bold;
-
-      @variant group-highlighted/options-item {
-        @apply fg-a11y-on-accent;
-      }
 
       @variant group-highlighted/options-item {
         @apply fg-a11y-on-accent;
@@ -302,10 +258,6 @@
       }
 
       @variant group-selected/options-item {
-        @variant group-highlighted/options-item {
-          @apply fg-a11y-on-accent;
-        }
-
         @variant group-highlighted/options-item {
           @apply fg-a11y-on-accent;
         }
@@ -328,10 +280,6 @@
           @apply fg-a11y-on-utility;
         }
 
-        @variant group-highlighted/options-item {
-          @apply fg-a11y-on-utility;
-        }
-
         @variant group-active/options-item {
           @apply fg-serious-bold;
         }
@@ -346,10 +294,6 @@
       }
 
       @variant group-selected/options-item {
-        @variant group-highlighted/options-item {
-          @apply fg-a11y-on-utility;
-        }
-
         @variant group-highlighted/options-item {
           @apply fg-a11y-on-utility;
         }
@@ -372,10 +316,6 @@
       color: inherit;
     }
 
-    @variant group-highlighted/options-item {
-      color: inherit;
-    }
-
     @variant group-selected/options-item {
       color: inherit;
     }
@@ -392,15 +332,7 @@
       @apply fg-primary-bold;
     }
 
-    @variant group-highlighted/options-item {
-      @apply fg-primary-bold;
-    }
-
     @variant group-selected/options-item {
-      @variant group-highlighted/options-item {
-        @apply fg-a11y-on-accent;
-      }
-
       @variant group-highlighted/options-item {
         @apply fg-a11y-on-accent;
       }
@@ -412,10 +344,6 @@
       }
 
       @variant group-selected/options-item {
-        @variant group-highlighted/options-item {
-          @apply fg-a11y-on-accent;
-        }
-
         @variant group-highlighted/options-item {
           @apply fg-a11y-on-accent;
         }
@@ -438,10 +366,6 @@
           @apply fg-a11y-on-utility;
         }
 
-        @variant group-highlighted/options-item {
-          @apply fg-a11y-on-utility;
-        }
-
         @variant group-active/options-item {
           @apply fg-serious-bold;
         }
@@ -455,10 +379,6 @@
 
       @variant group-selected/options-item {
         @apply fg-primary-bold;
-
-        @variant group-highlighted/options-item {
-          @apply fg-a11y-on-utility;
-        }
 
         @variant group-highlighted/options-item {
           @apply fg-a11y-on-utility;

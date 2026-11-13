@@ -1,0 +1,121 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as SelectFieldStories from './select-field.stories'
+
+<Meta of={SelectFieldStories} />
+
+# SelectField
+
+`GsSelectField` is a dropdown select with form field features (label, description, error message and validation) and grouped options. Bind the selection with `v-model`.
+
+## Basic
+
+```vue
+<GsSelectField v-model="bird" label="Choose a bird" placeholder="Select...">
+  <GsOption value="blue-jay" label="Blue Jay" />
+  <GsOption value="gray-catbird" label="Gray catbird" />
+  <GsOption value="black-capped-chickadee" label="Black-capped chickadee" />
+</GsSelectField>
+```
+
+<Canvas of={SelectFieldStories.Default} />
+
+## With grouped options
+
+```vue
+<GsSelectField v-model="bird" label="Choose a bird" placeholder="Select...">
+  <GsOptionSection header="North American Birds">
+    <GsOption value="blue-jay" text-value="Blue Jay">
+      <GsIcon><PlaceholderIcon /></GsIcon>
+      <GsOptionLabel>Blue Jay</GsOptionLabel>
+    </GsOption>
+    <GsOption value="gray-catbird" text-value="Gray catbird">
+      <GsIcon><PlaceholderIcon /></GsIcon>
+      <GsOptionLabel>Gray catbird</GsOptionLabel>
+    </GsOption>
+  </GsOptionSection>
+</GsSelectField>
+```
+
+Only an option's `GsOptionLabel` (or `label`) is shown in the trigger once it is chosen; icons and `GsOptionDescription` stay in the list.
+
+## Controlled selection
+
+`v-model` holds the `value` of the selected option. With `multiple`, it is an array of values.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const animal = ref('bison')
+</script>
+
+<template>
+  <GsSelectField v-model="animal" label="Animal">
+    <GsOption value="koala" label="Koala" />
+    <GsOption value="bison" label="Bison" />
+  </GsSelectField>
+</template>
+```
+
+<Canvas of={SelectFieldStories.ControlledSelection} />
+
+## Readonly
+
+Set `readonly` to display the current selection as non-interactive text. A `v-model` value is required to show content when `readonly` is set. Without a selected value, the field shows its placeholder.
+
+<Canvas of={SelectFieldStories.Readonly} />
+
+## With provided defaults
+
+`provideSelectFieldDefaults()` sets the default `size`, `disabled` and `readonly` of every select rendered below the calling component. A prop set on a select still wins.
+
+```vue
+<script setup lang="ts">
+import { provideSelectFieldDefaults } from '@wingbrace/glideslope'
+
+provideSelectFieldDefaults({ size: 'small' })
+</script>
+
+<template>
+  <GsSelectField v-model="first" label="Small Select 1">...</GsSelectField>
+  <GsSelectField v-model="second" label="Small Select 2">...</GsSelectField>
+</template>
+```
+
+<Canvas of={SelectFieldStories.Provider} />
+
+## Component structure
+
+- **GsSelectField**: Main select dropdown with form field features
+- **provideSelectFieldDefaults**: Sets default props for the selects below a component
+- **[GsOption, GsOptionSection](?path=/docs/components-options--docs)**: The option items and sections in the list
+
+## Props
+
+<ArgTypes of={SelectFieldStories} />
+
+**`classes`:**
+
+| Key           | Description                                            |
+| ------------- | ------------------------------------------------------ |
+| `label`       | The label                                              |
+| `trigger`     | The trigger button (the plain trigger when `readonly`) |
+| `value`       | The selected label or placeholder in the trigger       |
+| `popover`     | The dropdown list                                      |
+| `description` | The help text                                          |
+| `error`       | The error message                                      |
+
+Classes on `GsSelectField` itself go on the field wrapper.
+
+## Accessibility
+
+- Arrow keys navigate options
+- Enter or Space selects the focused option
+- Escape closes the dropdown
+- Automatic ARIA attributes and error announcements
+
+## Related
+
+- [Options](?path=/docs/components-options--docs)
+- [Reka UI Select](https://reka-ui.com/docs/components/select)

@@ -1,0 +1,64 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .popover {
+    --offset: var(--spacing-xs);
+    --origin: translateY(calc(var(--offset) * -1));
+
+    @apply z-50 rounded-medium bg-surface-raised p-s outline outline-static;
+    max-width: 280px;
+
+    @variant focus-visible {
+      @apply outline-static;
+    }
+
+    /* Slide in from the trigger's side. */
+    @variant side-top {
+      --origin: translateY(var(--offset));
+    }
+
+    @variant side-right {
+      --origin: translateX(calc(var(--offset) * -1));
+    }
+
+    @variant side-left {
+      --origin: translateX(var(--offset));
+    }
+
+    @variant motion-safe {
+      @variant open {
+        animation: enter var(--animation-duration-normal) var(--animation-easing-decelerate);
+      }
+
+      @variant closed {
+        animation: exit var(--animation-duration-fast) var(--animation-easing-accelerate);
+      }
+    }
+  }
+
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: var(--origin);
+    }
+  }
+
+  @keyframes exit {
+    to {
+      opacity: 0;
+      transform: var(--origin);
+    }
+  }
+
+  .title {
+    @apply mb-s text-header-m fg-primary-bold;
+  }
+
+  .content {
+    @apply text-body-s fg-primary-muted;
+  }
+
+  .footer {
+    @apply mt-s flex justify-end gap-s;
+  }
+}

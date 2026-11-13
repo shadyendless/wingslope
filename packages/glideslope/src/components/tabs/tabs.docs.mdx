@@ -1,0 +1,131 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as TabsStories from './tabs.stories'
+import GsTab from './GsTab.vue'
+import GsTabList from './GsTabList.vue'
+import GsTabPanel from './GsTabPanel.vue'
+
+<Meta of={TabsStories} />
+
+# Tabs
+
+Tab navigation for organizing content into multiple sections. Bind the selected tab's `value` with `v-model`; each `GsTab` and its `GsTabPanel` share a `value`.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const tab = ref('tab1')
+const settingsTab = ref('profile')
+const iconTab = ref('map')
+</script>
+
+<template>
+  <!-- Basic horizontal tabs -->
+  <GsTabs v-model="tab">
+    <GsTabList aria-label="Project">
+      <GsTab value="tab1">Overview</GsTab>
+      <GsTab value="tab2">Details</GsTab>
+      <GsTab value="tab3">Settings</GsTab>
+    </GsTabList>
+    <GsTabPanel value="tab1">Overview content</GsTabPanel>
+    <GsTabPanel value="tab2">Details content</GsTabPanel>
+    <GsTabPanel value="tab3">Settings content</GsTabPanel>
+  </GsTabs>
+
+  <!-- Vertical tabs -->
+  <GsTabs v-model="settingsTab" orientation="vertical">
+    <GsTabList aria-label="Settings">
+      <GsTab value="profile">Profile</GsTab>
+      <GsTab value="account">Account</GsTab>
+    </GsTabList>
+    <GsTabPanel value="profile">Profile settings</GsTabPanel>
+    <GsTabPanel value="account">Account settings</GsTabPanel>
+  </GsTabs>
+
+  <!-- Icon tabs: give icon-only tabs an aria-label -->
+  <GsTabs v-model="iconTab">
+    <GsTabList aria-label="Views">
+      <GsTab value="map" aria-label="Map"
+        ><GsIcon><MapPinIcon /></GsIcon
+      ></GsTab>
+      <GsTab value="search" aria-label="Search"
+        ><GsIcon><SearchIcon /></GsIcon
+      ></GsTab>
+    </GsTabList>
+    <GsTabPanel value="map">Map content</GsTabPanel>
+    <GsTabPanel value="search">Search content</GsTabPanel>
+  </GsTabs>
+</template>
+```
+
+<Canvas of={TabsStories.Default} />
+
+### Controlled
+
+`v-model` reads and sets the selected tab. Without a value, the first enabled tab is selected (and written back to `v-model`). A `disabled` tab can't be selected.
+
+<Canvas of={TabsStories.Controlled} />
+
+### Disabled
+
+`disabled` on `GsTabs` disables every tab, whatever the tabs' own `disabled`. The selected tab and its panel still show, but no tab can be focused or selected.
+
+```vue
+<GsTabs v-model="tab" disabled>
+  <GsTabList aria-label="Project">
+    <GsTab value="tab1">Overview</GsTab>
+    <GsTab value="tab2">Details</GsTab>
+  </GsTabList>
+  <GsTabPanel value="tab1">Overview content</GsTabPanel>
+  <GsTabPanel value="tab2">Details content</GsTabPanel>
+</GsTabs>
+```
+
+## Props
+
+### GsTabs
+
+<ArgTypes of={TabsStories} />
+
+### GsTabList
+
+Give the list an `aria-label` describing the set of tabs.
+
+<ArgTypes of={GsTabList} />
+
+### GsTab
+
+`align` and `flex` default to the values of the `GsTabs` around the tab.
+
+<ArgTypes of={GsTab} />
+
+### GsTabPanel
+
+<ArgTypes of={GsTabPanel} />
+
+## provideTabsDefaults
+
+`provideTabsDefaults()` sets default props for every `GsTabs` rendered below the calling component: `orientation`, `activationMode`, `align`, `flex` and `disabled`. A prop set on a `GsTabs` still wins.
+
+```vue
+<script setup lang="ts">
+import { provideTabsDefaults } from '@wingbrace/glideslope'
+
+provideTabsDefaults({ align: 'center', flex: false })
+</script>
+```
+
+`provideTabDefaults()` does the same for `GsTab` (`align`, `flex` and `disabled`), for example to style some tabs of a list differently. Each `GsTabs` provides its own `align` and `flex` this way, so call it in a component inside the `GsTabList`.
+
+## Accessibility
+
+- Arrow key navigation between tabs; Home and End jump to the first and last tab
+- Proper ARIA roles and attributes (`tablist`, `tab`, `tabpanel`)
+- Focus management for keyboard users
+- Screen reader announcements for selection
+- With `activationMode="manual"`, focusing a tab doesn't select it until Enter or Space is pressed
+
+## Related
+
+- [Reka UI Tabs](https://reka-ui.com/docs/components/tabs)

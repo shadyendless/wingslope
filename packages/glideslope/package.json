@@ -57,6 +57,7 @@
     "@wingbrace/glideslope-foundation": "workspace:^",
     "jsdom": "catalog:",
     "react": "catalog:",
+    "remark-gfm": "catalog:",
     "storybook": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",

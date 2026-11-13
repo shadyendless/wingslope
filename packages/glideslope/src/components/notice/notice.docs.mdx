@@ -1,0 +1,129 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as NoticeStories from './notice.stories'
+
+<Meta of={NoticeStories} />
+
+# Notice
+
+A notification component for displaying temporary messages, alerts, and user feedback.
+
+Notices are usually queued with `useNotices()` and shown by a [`GsNoticeList`](?path=/docs/components-noticelist--docs), which renders a `GsNotice` for each one. The examples below queue notices; see the NoticeList page for placement, limits and removing notices.
+
+## Basic
+
+```ts
+import { useNotices } from '@wingbrace/glideslope'
+
+const { queue } = useNotices()
+
+queue({ message: 'This is a basic notice message' })
+```
+
+<Canvas of={NoticeStories.Default} />
+
+## With Actions
+
+Each action is a button with a `label`, an optional `color` and `variant`, and an optional `onAction` callback. Set `closeOnAction` to close the notice once an action is chosen; otherwise it stays open.
+
+```ts
+queue({
+  color: 'serious',
+  message: 'Are you sure you want to delete this item?',
+  primary: { label: 'Delete', onAction: () => console.log('Primary action: Delete was pressed') },
+  secondary: {
+    label: 'Cancel',
+    onAction: () => console.log('Secondary action: Cancel was pressed'),
+  },
+  closeOnAction: true,
+})
+```
+
+<Canvas of={NoticeStories.ButtonEvents} />
+
+## With Metadata
+
+Attach custom metadata to pass context to action listeners. `useNotices().onAction` receives the notice's `id`, its `metadata` and which `action` was chosen:
+
+```ts
+const { queue, onAction } = useNotices()
+
+queue({
+  message: 'Layer failed to load',
+  primary: { label: 'Retry' },
+  metadata: { layerId: 'layer-123', mapId: 'map-456' },
+})
+
+onAction(({ metadata }) => {
+  // Metadata is passed to the listener
+  retryLayerLoad(metadata?.layerId, metadata?.mapId)
+})
+```
+
+The callbacks are plain functions too, so `onAction` on the action itself can use whatever it needs from the scope that queued the notice.
+
+## With Close Button
+
+A notice in a `GsNoticeList` shows a close button unless it has a timeout and both actions; set `showClose` to choose. Closing a notice removes it from the queue, and `useNotices().onClose` hears about it:
+
+```ts
+queue({
+  color: 'critical',
+  message: 'An error occurred while processing your request',
+  showClose: true,
+})
+
+onClose(({ id }) => console.log('Close was pressed', id))
+```
+
+## Rendering a notice directly
+
+A `GsNotice` is a Reka UI toast, so outside a `GsNoticeList` it must be inside a Reka `ToastProvider` that also renders a `ToastViewport`. Its `action` event fires with `'primary'` or `'secondary'`, and its `close` event when it closes for any reason: timeout, close button, swipe, or an action with `close-on-action`.
+
+```vue
+<script setup lang="ts">
+import { GsNotice } from '@wingbrace/glideslope'
+import { ToastProvider, ToastViewport } from 'reka-ui'
+
+const onClose = () => console.log('Close was pressed')
+</script>
+
+<template>
+  <ToastProvider>
+    <GsNotice
+      color="critical"
+      message="An error occurred while processing your request"
+      show-close
+      @close="onClose"
+    />
+    <ToastViewport />
+  </ToastProvider>
+</template>
+```
+
+## Props
+
+<ArgTypes of={NoticeStories} />
+
+`classes` styles the notice's inner parts: `content` (the row with the icon, message and actions), `message` and `actions`. Classes on a `GsNotice` go to its root; on a `GsNoticeList`, `classes.notice` styles each of its notices, with `notice` for the root.
+
+> **Note:** Icons are automatically displayed based on the color variant:
+>
+> - **info/advisory**: Information icon
+> - **normal**: Success/checkmark icon
+> - **serious**: Warning icon
+> - **critical**: Problem/error icon
+>
+> Small notices don't show an icon.
+
+## Accessibility
+
+- Notices are announced politely to screen readers through a live region
+- Action buttons are announced with their label as the alternative action
+- F8 moves focus to the notices; Escape dismisses the focused notice
+- Timeouts pause while the pointer is over a notice or a notice has focus
+- Swiping right dismisses a notice
+
+## Related
+
+- [Reka UI Toast](https://reka-ui.com/docs/components/toast)

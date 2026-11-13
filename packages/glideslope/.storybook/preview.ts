@@ -1,7 +1,15 @@
-import { DocsContainer, type DocsContainerProps } from '@storybook/addon-docs/blocks'
+import {
+  Controls,
+  Description,
+  DocsContainer,
+  Primary,
+  Subtitle,
+  Title,
+  type DocsContainerProps,
+} from '@storybook/addon-docs/blocks'
 import { withThemeByClassName } from '@storybook/addon-themes'
 import type { Preview, VueRenderer } from '@storybook/vue3-vite'
-import { createElement } from 'react'
+import { Fragment, createElement } from 'react'
 import { create } from 'storybook/theming'
 import './preview.css'
 
@@ -28,6 +36,21 @@ const docsThemes = {
   }),
 }
 
+/**
+ * Generated docs pages show the description, the first story and its controls, like the Design
+ * Toolkit's. Components with a written `*.docs.mdx` page use that instead.
+ */
+const docsPage = () =>
+  createElement(
+    Fragment,
+    null,
+    createElement(Title),
+    createElement(Subtitle),
+    createElement(Description),
+    createElement(Primary),
+    createElement(Controls),
+  )
+
 type DocsContainerWithGlobals = DocsContainerProps & {
   context: { store: { userGlobals: { globals: { theme?: string } } } }
 }
@@ -45,9 +68,15 @@ const preview: Preview = {
         const mode = props.context.store.userGlobals.globals.theme === 'light' ? 'light' : 'dark'
         return createElement(DocsContainer, { ...props, theme: docsThemes[mode] })
       },
+      page: docsPage,
+      codePanel: true,
     },
     options: {
-      storySort: { order: ['Foundation', 'Components'] },
+      storySort: {
+        method: 'alphabetical',
+        order: ['Foundation', 'Layout', 'Components'],
+        locales: 'en-US',
+      },
     },
   },
   decorators: [

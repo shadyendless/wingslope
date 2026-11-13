@@ -12,22 +12,36 @@
  */
 import { computed } from 'vue'
 import { provideDetailsListContext } from './context'
+import { injectDetailsListDefaults } from './defaults'
 import styles from './styles.module.css'
 import type { GsDetailsListProps } from './types'
 
-const { align = 'justify', classes } = defineProps<GsDetailsListProps>()
+const { align, classes } = defineProps<GsDetailsListProps>()
 
 defineSlots<{
   /** Alternating `GsDetailsListLabel` and `GsDetailsListValue` elements. */
   default?: () => unknown
 }>()
 
+const defaults = injectDetailsListDefaults()
+const resolvedAlign = computed(() => align ?? defaults.value.align ?? 'justify')
+
 provideDetailsListContext({
-  labelClass: computed(() => [styles.label, styles[align], classes?.label]),
-  valueClass: computed(() => [styles.value, styles[align], classes?.value]),
+  labelClass: computed(() => [
+    styles.label,
+    styles[resolvedAlign.value],
+    defaults.value.classes?.label,
+    classes?.label,
+  ]),
+  valueClass: computed(() => [
+    styles.value,
+    styles[resolvedAlign.value],
+    defaults.value.classes?.value,
+    classes?.value,
+  ]),
 })
 </script>
 
 <template>
-  <dl :class="styles.list"><slot /></dl>
+  <dl :class="[styles.list, defaults.class]"><slot /></dl>
 </template>

@@ -1,1 +1,1 @@
-export type { GsFieldProps, GsFieldSize } from './types'
+export type { GsFieldClasses, GsFieldProps, GsFieldSize } from './types'

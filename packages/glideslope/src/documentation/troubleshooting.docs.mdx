@@ -1,0 +1,183 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Troubleshooting" />
+
+# Troubleshooting
+
+Common issues and solutions when styling an app with Glideslope, its CSS Modules and Tailwind. The [Getting Started](?path=/docs/getting-started--docs) guide shows the full setup.
+
+## Components Render Without Styles
+
+**Symptoms**: Components render with no styles at all.
+
+**Checklist**:
+
+1. Are the foundation styles imported in your root CSS file? (`@import '@wingbrace/glideslope-foundation/styles';`)
+   - Ensure that file is imported by your entry module (`import './main.css'` in `main.ts`).
+2. Are the component styles imported after it? (`@import '@wingbrace/glideslope/styles.css';`). Components don't import their own CSS.
+3. Is `@tailwindcss/vite` registered in `vite.config.ts`?
+4. Are the Glideslope packages built? Apps consume each package's `dist` output, so run `pnpm build` from the repository root after pulling or changing Glideslope.
+5. Did the build complete without errors? A missing font package, for example, stops the foundation stylesheet from resolving (see below).
+6. Check browser DevTools: does the component's root element match rules in the `components.l1` layer?
+
+**Still not working?** A Vite config change needs a dev server restart; HMR doesn't pick it up. Clear Vite's cache, rebuild and restart:
+
+```bash
+rm -rf node_modules/.vite
+pnpm build
+pnpm dev
+```
+
+## Font Packages Not Found
+
+**Problem**: The build fails to resolve `@fontsource-variable/roboto-flex` or `@fontsource-variable/roboto-mono`.
+
+**Solution**: The foundation stylesheet imports both fonts, and they are peer dependencies of `@wingbrace/glideslope-foundation`. Add them to your app's dependencies:
+
+```json
+{
+  "dependencies": {
+    "@fontsource-variable/roboto-flex": "catalog:",
+    "@fontsource-variable/roboto-mono": "catalog:"
+  }
+}
+```
+
+## Tailwind's Default Colors and Sizes Are Back
+
+**Problem**: Classes such as `bg-red-500` or `text-sm` produce styles, although Glideslope replaces Tailwind's default colors and text sizes with its own tokens.
+
+**Solution**: Remove `@import 'tailwindcss'` from your CSS. `@wingbrace/glideslope-foundation/styles` already imports Tailwind and then replaces its default theme; importing Tailwind again adds the defaults back.
+
+```css
+/* WRONG - imports Tailwind a second time */
+@import 'tailwindcss';
+@import '@wingbrace/glideslope-foundation/styles';
+
+/* CORRECT */
+@import '@wingbrace/glideslope-foundation/styles';
+@import '@wingbrace/glideslope/styles.css';
+```
+
+## The Theme Doesn't Switch
+
+**Symptoms**: The page stays in light colors, or `toggleMode()` does nothing.
+
+**Checklist**:
+
+1. Is `provideTheme()` called in a component above the ones that call `useTheme()`? Without it, `useTheme()` returns the dark theme with setters that do nothing.
+2. Did you pass `target: null`? Then `provideTheme()` leaves the page alone, and you need to set the `dark` or `light` class (or `data-theme`) on `<html>` or an ancestor yourself.
+3. Without a `dark` or `light` class (or `data-theme`), colors follow the light theme.
+4. Does the browser support CSS `light-dark()` and relative color syntax (Chrome and Edge 123, Firefox 128, Safari 18 or later)? Glideslope's colors depend on both and have no fallback.
+
+## Common Mistakes
+
+### Using `<style module>` in an SFC
+
+**Problem**: Styles from a `<style module>` block are missing, and the CSS in DevTools still contains `@apply`.
+
+**Root Cause**: `@tailwindcss/vite` does not process inline `<style module>` blocks.
+
+**Solution**: Put the styles in an external `.module.css` file and import it in `<script setup>`.
+
+```vue
+<!-- WRONG - @apply is left untouched -->
+<style module>
+@reference '@wingbrace/glideslope-foundation/styles';
+
+.panel {
+  @apply bg-surface-raised p-m;
+}
+</style>
+
+<!-- CORRECT - styles.module.css next to the component -->
+<script setup lang="ts">
+import styles from './styles.module.css'
+</script>
+```
+
+### Using external `composes` in CSS Modules
+
+**Problem**: Styles from external files appear missing or unstyled.
+
+**Root Cause**: CSS Modules load the composed file themselves, so it skips Tailwind: its `@reference` and `@apply` reach the browser unprocessed.
+
+```css
+/* WRONG - Bypasses Tailwind processing */
+@reference '@wingbrace/glideslope-foundation/styles';
+
+.button {
+  composes: baseButton from '../other/styles.module.css';
+}
+```
+
+**Solution**: Combine the classes in the template instead.
+
+```vue
+<!-- CORRECT -->
+<script setup lang="ts">
+import otherStyles from '../other/styles.module.css'
+import styles from './styles.module.css'
+</script>
+
+<template>
+  <button :class="[otherStyles.baseButton, styles.button]" />
+</template>
+```
+
+### Forgetting to configure named group hashing
+
+**Problem**: Group-based state styling in a CSS Module doesn't work (e.g., `@variant group-hover/card` has no effect).
+
+**Root Cause**: CSS Modules hash the `group/card` class in the module's selector, breaking Tailwind's group selector pattern.
+
+**Solution**: Register the PostCSS plugin that keeps named groups global, as shown in the [Styling Guide](?path=/docs/styling-guide--docs#named-groups-in-css-modules). Group variants used as utility classes in a template are not affected.
+
+**To verify**: Inspect the compiled CSS output. If named groups are being hashed, you'll see selectors like:
+
+```css
+/* WRONG - group name is hashed, breaking the selector */
+:is(:where(._group\/card_1s7f8_9):where(:hover) ._button_1s7f8_3) {
+  /* ... */
+}
+```
+
+The class should remain unhashed:
+
+```css
+/* CORRECT - group name preserved */
+:is(:where(.group\/card):where(:hover) ._button_1s7f8_3) {
+  /* ... */
+}
+```
+
+### Using wrong layer for overrides
+
+**Problem**: Custom styles are ignored, or only win sometimes.
+
+```css
+/* WRONG - Same layer as the Glideslope button: which one wins depends on load order */
+@layer components.l1 {
+  .customButton {
+    @apply bg-critical-bold;
+  }
+}
+```
+
+**Solution**: Use a higher layer for application components that restyle Glideslope components, or a utility class.
+
+```css
+/* CORRECT - Glideslope uses l1 and l2, so application components that restyle it use l3+ */
+@layer components.l3 {
+  .customButton {
+    @apply bg-critical-bold; /* Will override properly */
+  }
+}
+```
+
+```vue
+<!-- CORRECT - Inline utility overrides. Utilities always win -->
+<GsButton class="bg-critical-bold">Delete</GsButton>
+```
+
+Keep your styles inside a layer. CSS outside any layer beats every layer, utilities included, so one-off utility classes can no longer override it.

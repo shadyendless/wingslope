@@ -1,0 +1,52 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as RadioStories from './radio.stories'
+
+<Meta of={RadioStories} />
+
+# Radio
+
+`GsRadio` is an individual radio button option for use within a `GsRadioGroup`. Built on Reka UI's `RadioGroupItem`, with keyboard and screen reader support out of the box.
+
+Components:
+
+- **`GsRadio`**: an individual radio button option
+- **[`GsRadioGroup`](?path=/docs/components-radiogroup--docs)**: a container for grouping radio buttons
+
+## Example usage
+
+```vue
+<GsRadio value="red">Red</GsRadio>
+```
+
+<Canvas of={RadioStories.Default} />
+
+## Props
+
+<ArgTypes of={RadioStories} />
+
+**`classes`:**
+
+| Key       | Description                |
+| --------- | -------------------------- |
+| `control` | The radio control (circle) |
+| `label`   | The label text             |
+
+Classes on `GsRadio` itself go on the radio container (the root button).
+
+## Accessibility
+
+- Arrow keys move between options.
+- Space selects the focused option.
+- The whole row is one control with `role="radio"`, so the label is its accessible name and clicking the label selects it.
+- Focus management and form integration come from the group.
+
+## Implementation notes
+
+- Wraps Reka UI's `RadioGroupItem`, rendered as a `<button>` that contains the circle and the label.
+- Must be used inside a `GsRadioGroup`.
+- Inherits `label-position` from the group when it isn't set directly.
+
+**Related:**
+
+- [Reka UI Radio Group](https://reka-ui.com/docs/components/radio-group)

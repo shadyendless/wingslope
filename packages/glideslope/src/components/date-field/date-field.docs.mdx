@@ -1,0 +1,125 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as DateFieldStories from './date-field.stories'
+
+<Meta of={DateFieldStories} />
+
+# DateField
+
+`GsDateField` is a form input for entering and editing date and time values. It supports several granularities (day, hour, minute, second) and an abbreviated or numeric month. Bind `v-model` to a `DateValue` from `@internationalized/date`.
+
+## Example usage
+
+```vue
+<script setup lang="ts">
+import { parseDateTime } from '@internationalized/date'
+import { shallowRef } from 'vue'
+
+const date = shallowRef(parseDateTime('2020-01-23T00:00:00'))
+</script>
+
+<template>
+  <GsDateField
+    v-model="date"
+    label="Select Date"
+    granularity="day"
+    description="Format: MMM dd yyyy"
+  />
+</template>
+```
+
+<Canvas of={DateFieldStories.Default} />
+
+### With numeric months
+
+```vue
+<GsDateField v-model="date" label="Select Date" :short-month="false" />
+```
+
+<Canvas of={DateFieldStories.WithoutShortMonth} />
+
+### Date and time
+
+```vue
+<script setup lang="ts">
+import { parseAbsoluteToLocal } from '@internationalized/date'
+import { shallowRef } from 'vue'
+
+const dateTime = shallowRef(parseAbsoluteToLocal('2021-04-07T18:45:22Z'))
+</script>
+
+<template>
+  <GsDateField v-model="dateTime" label="Select Date & Time" granularity="second" />
+</template>
+```
+
+<Canvas of={DateFieldStories.DateTime} />
+
+### Readonly
+
+```vue
+<GsDateField v-model="eventDate" label="Event Date" granularity="second" readonly />
+```
+
+<Canvas of={DateFieldStories.Readonly} />
+
+### Empty
+
+Bind `v-model` to `null` to start the field empty. The segments show placeholders until a date is entered.
+
+```vue
+<script setup lang="ts">
+import type { DateValue } from '@internationalized/date'
+import { shallowRef } from 'vue'
+
+const date = shallowRef<DateValue | null>(null)
+</script>
+
+<template>
+  <GsDateField v-model="date" label="Departure" />
+</template>
+```
+
+<Canvas of={DateFieldStories.Empty} />
+
+## Sizes
+
+| Size     | Description                                |
+| -------- | ------------------------------------------ |
+| `medium` | Standard size with calendar icon (default) |
+| `small`  | Compact size, no calendar icon or label    |
+
+## Props
+
+<ArgTypes of={DateFieldStories} />
+
+**`classes`:**
+
+| Key           | Description                                       |
+| ------------- | ------------------------------------------------- |
+| `label`       | The label                                         |
+| `control`     | The box around the segments and the calendar icon |
+| `input`       | The row of segments                               |
+| `segment`     | Each editable segment                             |
+| `description` | The help text                                     |
+| `error`       | The error message                                 |
+
+Classes on `GsDateField` itself go on the field wrapper.
+
+## Accessibility
+
+- Keyboard: Tab between segments, arrow keys to adjust values, type to enter values directly
+- ARIA attributes for screen readers
+- Focus management between date segments
+
+## Implementation notes
+
+- Wraps Reka UI's `DateFieldRoot` and `DateFieldInput`
+- Uses `@internationalized/date` for robust date handling across locales
+- Supports time-zone-aware dates with `parseAbsoluteToLocal`
+
+**Related:**
+
+- [Reka UI Date Field](https://reka-ui.com/docs/components/date-field)
+- [@internationalized/date](https://react-spectrum.adobe.com/internationalized/date/)
+- [TimeField](?path=/docs/components-timefield--docs)

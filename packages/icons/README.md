@@ -20,7 +20,7 @@ import RadarIcon from '@wingbrace/glideslope-icons/radar'
 - **Accessibility:** icons are decorative (`aria-hidden`) unless you pass a `title`, which makes them `role="img"` with that name.
 - **Other attributes** such as `class` and `style` go onto the `<svg>`.
 
-Browse every icon in Storybook under **Components / Icon / Gallery**.
+Browse and search every icon in Storybook under **Foundation / Icons**.
 
 ## Adding or changing icons
 

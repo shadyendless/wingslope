@@ -1,0 +1,62 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as SwitchStories from './switch.stories'
+
+<Meta of={SwitchStories} />
+
+# Switch
+
+Toggle control for binary on/off states. Use a switch for settings that take effect immediately; use a [Checkbox](?path=/docs/components-checkbox--docs) for choices submitted with a form.
+
+```vue
+<GsSwitch>Enable notifications</GsSwitch>
+
+<GsSwitch v-model="enabled">Dark mode</GsSwitch>
+
+<GsSwitch disabled>Feature unavailable</GsSwitch>
+
+<GsSwitch label-position="start">Option 1</GsSwitch>
+```
+
+```vue
+<script setup lang="ts">
+import { provideSwitchDefaults } from '@wingbrace/glideslope'
+
+provideSwitchDefaults({ labelPosition: 'start' })
+</script>
+
+<template>
+  <GsSwitch>Option 1</GsSwitch>
+  <GsSwitch>Option 2</GsSwitch>
+</template>
+```
+
+<Canvas of={SwitchStories.Default} />
+
+## Props
+
+<ArgTypes of={SwitchStories} />
+
+**`classes`:**
+
+| Key       | Description            |
+| --------- | ---------------------- |
+| `control` | Toggle control element |
+| `label`   | Label text             |
+
+## provideSwitchDefaults
+
+`provideSwitchDefaults()` sets defaults for every `GsSwitch` rendered below the calling component: `label-position`, `disabled` and `classes`. A prop set on a switch still wins.
+
+<Canvas of={SwitchStories.Provider} />
+
+## Accessibility
+
+- Full keyboard support (Space or Enter toggles the switch).
+- The whole row is one control with `role="switch"`, so the label is its accessible name. Without a label, give the switch an `aria-label`.
+- Focus management and visible focus indicators.
+- `aria-checked` announces the state to assistive technology.
+
+## Related
+
+- [Reka UI Switch](https://reka-ui.com/docs/components/switch)

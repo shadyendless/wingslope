@@ -1,73 +1,50 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
-import * as icons from '@wingbrace/glideslope-icons'
-import { SettingsIcon } from '@wingbrace/glideslope-icons'
-import { computed, ref } from 'vue'
+import { AddIcon } from '@wingbrace/glideslope-icons'
 import GsIcon from './GsIcon.vue'
-
-const iconEntries = Object.entries(icons).filter(([name]) => name !== 'createIcon')
+import { provideIconDefaults } from './defaults'
 
 const meta = {
   title: 'Components/Icon',
   component: GsIcon,
-  args: { size: 'medium' },
-  argTypes: { size: { control: 'select', options: ['large', 'medium', 'small', 'xsmall'] } },
-  render: (args) => ({
-    components: { GsIcon, SettingsIcon },
-    setup: () => ({ args }),
-    template: '<GsIcon v-bind="args"><SettingsIcon /></GsIcon>',
-  }),
+  args: {
+    class: 'fg-primary-bold',
+  },
+  argTypes: {
+    class: {
+      control: 'text',
+      description: 'Classes on the icon. Its color follows `fg-*` and `icon-*` utilities.',
+    },
+    size: {
+      control: 'select',
+      options: ['large', 'medium', 'small', 'xsmall'],
+    },
+  },
 } satisfies Meta<typeof GsIcon>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Playground: Story = {}
-
-/** Icon color follows `fg-*` (text and icon) or `icon-*` (icon only) utilities on any ancestor. */
-export const Color: Story = {
+export const Default: Story = {
   render: (args) => ({
-    components: { GsIcon, SettingsIcon },
+    components: { GsIcon, AddIcon },
     setup: () => ({ args }),
-    template: `
-      <div class="flex gap-m">
-        <GsIcon v-bind="args" class="fg-primary-bold"><SettingsIcon /></GsIcon>
-        <GsIcon v-bind="args" class="fg-accent-primary-bold"><SettingsIcon /></GsIcon>
-        <GsIcon v-bind="args" class="fg-serious-bold"><SettingsIcon /></GsIcon>
-        <GsIcon v-bind="args" class="fg-critical-bold"><SettingsIcon /></GsIcon>
-      </div>`,
+    template: '<GsIcon v-bind="args"><AddIcon /></GsIcon>',
   }),
 }
 
-/** Every icon in `@wingbrace/glideslope-icons`. */
-export const Gallery: Story = {
-  parameters: { layout: 'padded' },
+/** `provideIconDefaults()` sets the size of every icon rendered below the calling component. */
+export const Provider: Story = {
   render: (args) => ({
-    components: { GsIcon },
-    setup() {
-      const query = ref('')
-      const filtered = computed(() =>
-        iconEntries.filter(([name]) => name.toLowerCase().includes(query.value.toLowerCase())),
-      )
-      return { args, query, filtered }
+    components: { GsIcon, AddIcon },
+    setup: () => {
+      provideIconDefaults(() => ({ size: args.size }))
+      return { args }
     },
     template: `
-      <div class="flex flex-col gap-l">
-        <input
-          v-model="query"
-          placeholder="Filter icons"
-          aria-label="Filter icons"
-          class="bg-surface-raised fg-primary-bold rounded-medium px-s py-xs outline outline-interactive"
-        />
-        <ul class="grid gap-s" style="grid-template-columns: repeat(auto-fill, minmax(140px, 1fr))">
-          <li
-            v-for="[name, icon] in filtered"
-            :key="name"
-            class="bg-surface-raised rounded-medium p-s flex flex-col items-center gap-xs"
-          >
-            <GsIcon v-bind="args"><component :is="icon" /></GsIcon>
-            <code class="text-body-xs fg-primary-muted">{{ name }}</code>
-          </li>
-        </ul>
+      <div :class="args.class">
+        <GsIcon><AddIcon /></GsIcon>
+        <GsIcon><AddIcon /></GsIcon>
+        <GsIcon><AddIcon /></GsIcon>
       </div>`,
   }),
 }

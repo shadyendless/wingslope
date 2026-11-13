@@ -1,0 +1,195 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as OptionsStories from './options.stories'
+import GsOption from './GsOption.vue'
+import GsOptionContent from './GsOptionContent.vue'
+import GsOptionDescription from './GsOptionDescription.vue'
+import GsOptionLabel from './GsOptionLabel.vue'
+import GsOptionSection from './GsOptionSection.vue'
+
+<Meta of={OptionsStories} />
+
+# Options
+
+`GsOptions` is an accessible list of selectable items with rich content. Built on Reka UI's Listbox, it supports sections, icons, descriptions, and several selection modes (`none`, `single`, `multiple`). Bind the selection with `v-model`, and name the list with `aria-label` or `aria-labelledby`.
+
+The same `GsOption` and `GsOptionSection` items go inside [SelectField](?path=/docs/components-selectfield--docs) and [ComboBoxField](?path=/docs/components-comboboxfield--docs).
+
+## Basic
+
+```vue
+<GsOptions v-model="value" aria-label="Options">
+  <GsOption value="option-1" text-value="Option 1">
+    <GsIcon><PlaceholderIcon /></GsIcon>
+    <GsOptionLabel>Option 1</GsOptionLabel>
+  </GsOption>
+  <GsOption value="option-2" text-value="Option 2">
+    <GsIcon><PlaceholderIcon /></GsIcon>
+    <GsOptionLabel>Option 2</GsOptionLabel>
+  </GsOption>
+</GsOptions>
+```
+
+An option with only text can use the `label` prop instead of the default slot:
+
+```vue
+<GsOption value="hostile" label="Hostile" color="critical" />
+```
+
+<Canvas of={OptionsStories.Default} />
+
+## With sections
+
+```vue
+<GsOptions v-model="value" aria-label="Items">
+  <GsOptionSection header="Category A">
+    <GsOption value="a1" text-value="Item A1">
+      <GsIcon><PlaceholderIcon /></GsIcon>
+      <GsOptionLabel>Item A1</GsOptionLabel>
+    </GsOption>
+  </GsOptionSection>
+  <GsOptionSection header="Category B">
+    <GsOption value="b1" text-value="Item B1">
+      <GsIcon><PlaceholderIcon /></GsIcon>
+      <GsOptionLabel>Item B1</GsOptionLabel>
+    </GsOption>
+  </GsOptionSection>
+</GsOptions>
+```
+
+<Canvas of={OptionsStories.WithStaticSections} />
+
+## With descriptions
+
+```vue
+<GsOptions v-model="value" aria-label="Options">
+  <GsOption value="detailed" text-value="Detailed Option">
+    <GsIcon><InformationIcon /></GsIcon>
+    <GsOptionContent>
+      <GsOptionLabel>Detailed Option</GsOptionLabel>
+      <GsOptionDescription>Additional context and information</GsOptionDescription>
+    </GsOptionContent>
+  </GsOption>
+</GsOptions>
+```
+
+## Dynamic sections
+
+Render options and sections from data with `v-for`. Each option's `value` must be unique across the list.
+
+```vue
+<GsOptions v-model="value" aria-label="Birds">
+  <GsOptionSection v-for="section in sections" :key="section.id" :header="section.name">
+    <GsOption
+      v-for="item in section.children"
+      :key="item.id"
+      :value="item.id"
+      :text-value="item.name"
+    >
+      <GsOptionLabel>{{ item.name }}</GsOptionLabel>
+    </GsOption>
+  </GsOptionSection>
+</GsOptions>
+```
+
+<Canvas of={OptionsStories.WithDynamicSections} />
+
+## Multi-selection
+
+With `selection-mode="multiple"`, `v-model` is an array of the selected values.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const selected = ref(['item-1'])
+</script>
+
+<template>
+  <GsOptions v-model="selected" selection-mode="multiple" aria-label="Items">
+    <GsOption value="item-1" label="First Item" />
+    <GsOption value="item-2" label="Second Item" />
+  </GsOptions>
+</template>
+```
+
+<Canvas of={OptionsStories.WithSelectionState} />
+
+## Without selection
+
+`selection-mode` is `single` by default. With `none`, options are highlighted and navigable but never selected: choosing one (click, or Enter / Space) emits its `action` event instead, which suits a list of commands.
+
+```vue
+<GsOptions selection-mode="none" aria-label="Track actions">
+  <GsOption value="follow" label="Follow track" @action="follow(track)" />
+  <GsOption value="drop" label="Drop track" color="critical" @action="drop(track)" />
+</GsOptions>
+```
+
+The basic example at the top of this page has no selection; switch its `selection-mode` in the controls.
+
+## Color variants
+
+```vue
+<!-- Info (default): neutral or positive actions -->
+<GsOption value="info" color="info">...</GsOption>
+
+<!-- Serious: warnings or caution actions -->
+<GsOption value="serious" color="serious">...</GsOption>
+
+<!-- Critical: urgent or dangerous actions -->
+<GsOption value="critical" color="critical">...</GsOption>
+```
+
+## Props
+
+### GsOptions
+
+<ArgTypes of={OptionsStories} />
+
+### GsOption
+
+<ArgTypes of={GsOption} />
+
+**`classes`:**
+
+| Key    | Description                  |
+| ------ | ---------------------------- |
+| `icon` | Every `GsIcon` in the option |
+
+Classes on `GsOption` itself go on the option element.
+
+### GsOptionSection
+
+<ArgTypes of={GsOptionSection} />
+
+**`classes`:**
+
+| Key      | Description         |
+| -------- | ------------------- |
+| `header` | The section heading |
+
+Classes on `GsOptionSection` itself go on the group element.
+
+### GsOptionContent
+
+<ArgTypes of={GsOptionContent} />
+
+### GsOptionLabel
+
+<ArgTypes of={GsOptionLabel} />
+
+### GsOptionDescription
+
+<ArgTypes of={GsOptionDescription} />
+
+## Accessibility
+
+- Full keyboard navigation with the arrow keys, and Enter or Space to select (or to emit `action` when `selection-mode` is `none`)
+- Proper ARIA attributes and semantic structure (`role="listbox"` and `role="option"`)
+- Automatic focus management with visual indicators
+- Type-ahead: typing moves focus to the next option whose text starts with the typed characters
+
+## Related
+
+- [Reka UI Listbox](https://reka-ui.com/docs/components/listbox)

@@ -1,0 +1,6 @@
+export { default as GsDialog } from './GsDialog.vue'
+export { default as GsDialogClose } from './GsDialogClose.vue'
+export { default as GsDialogContent } from './GsDialogContent.vue'
+export { default as GsDialogFooter } from './GsDialogFooter.vue'
+export { default as GsDialogTitle } from './GsDialogTitle.vue'
+export type { GsDialogProps, GsDialogSize } from './types'

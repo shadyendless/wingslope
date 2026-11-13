@@ -11,17 +11,22 @@
  * </GsHotkeySet>
  * ```
  */
+import { computed } from 'vue'
+import { injectHotkeyDefaults } from './defaults'
 import styles from './styles.module.css'
 import type { GsHotkeyProps } from './types'
 
-const { variant = 'outline' } = defineProps<GsHotkeyProps>()
+const { variant } = defineProps<GsHotkeyProps>()
 
 defineSlots<{
   /** Key label, or a `GsIcon` when `variant="icon"`. */
   default?: () => unknown
 }>()
+
+const defaults = injectHotkeyDefaults()
+const resolvedVariant = computed(() => variant ?? defaults.value.variant ?? 'outline')
 </script>
 
 <template>
-  <kbd :class="[styles.key, styles[variant]]"><slot /></kbd>
+  <kbd :class="[styles.key, styles[resolvedVariant]]"><slot /></kbd>
 </template>

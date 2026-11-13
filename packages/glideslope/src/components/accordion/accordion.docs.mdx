@@ -1,0 +1,154 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as AccordionStories from './accordion.stories'
+import GsAccordionHeader from './GsAccordionHeader.vue'
+import GsAccordionPanel from './GsAccordionPanel.vue'
+import GsAccordionTrigger from './GsAccordionTrigger.vue'
+
+<Meta of={AccordionStories} />
+
+# Accordion
+
+`GsAccordion` is a collapsible content section that expands and collapses to show or hide its content. Accordions are commonly used in navigation menus, FAQ sections, settings panels, and anywhere you need to organize content into expandable sections to save space and improve readability.
+
+It is composed of the following components:
+
+- **[GsAccordionGroup](?path=/docs/components-accordiongroup--docs)** - Container that groups several accordions and gives them a shared `variant`, `disabled` state and expansion behavior.
+- **GsAccordion** - Manages the expanded state and holds the header and panel.
+- **GsAccordionHeader** - Container for the trigger and any extra header elements, such as a menu or action buttons.
+- **GsAccordionTrigger** - The heading button that expands and collapses the accordion.
+- **GsAccordionPanel** - The collapsible content, shown while the accordion is expanded.
+
+## Example usage
+
+### Basic
+
+```vue
+<GsAccordion>
+  <GsAccordionHeader>
+    <GsAccordionTrigger>
+      <GsIcon><PlaceholderIcon /></GsIcon>
+      Accordion title
+    </GsAccordionTrigger>
+  </GsAccordionHeader>
+  <GsAccordionPanel>
+    <p>This is the accordion content that can be expanded and collapsed.</p>
+  </GsAccordionPanel>
+</GsAccordion>
+```
+
+<Canvas of={AccordionStories.Default} />
+
+### With menu
+
+The accordion header can hold a [Menu](?path=/docs/components-menu--docs) next to the trigger. Buttons in the header are icon buttons styled for the header, show a kebab icon when they have no content of their own, and are disabled with the accordion.
+
+```vue
+<GsAccordion>
+  <GsAccordionHeader>
+    <GsAccordionTrigger>
+      <GsIcon><NoteIcon /></GsIcon>
+      Document options
+    </GsAccordionTrigger>
+    <GsMenu>
+      <template #trigger>
+        <GsButton aria-label="Document actions" />
+      </template>
+      <GsMenuItem label="Edit" @select="edit" />
+      <GsMenuItem label="Delete" @select="remove" />
+    </GsMenu>
+  </GsAccordionHeader>
+  <GsAccordionPanel>
+    <p>Document content...</p>
+  </GsAccordionPanel>
+</GsAccordion>
+```
+
+<Canvas of={AccordionStories.WithMenu} />
+
+### Controlled
+
+Bind `v-model:open` to read or set whether a standalone accordion is expanded. Without it, the accordion keeps its own state and starts collapsed; pass `:open="true"` to start it expanded. Inside a [GsAccordionGroup](?path=/docs/components-accordiongroup--docs), the group's `v-model` controls which accordions are open instead.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const open = ref(true)
+</script>
+
+<template>
+  <GsAccordion v-model:open="open">
+    <GsAccordionHeader>
+      <GsAccordionTrigger>Layers</GsAccordionTrigger>
+    </GsAccordionHeader>
+    <GsAccordionPanel>Airspace, terrain and track history.</GsAccordionPanel>
+  </GsAccordion>
+</template>
+```
+
+<Canvas of={AccordionStories.Controlled} />
+
+## Variants
+
+- **cozy** - Standard size with larger text and spacing (default)
+- **compact** - Smaller size with reduced text and spacing for space-constrained layouts
+
+The variant can be set with the `variant` prop on individual accordions, or for every accordion in a [GsAccordionGroup](?path=/docs/components-accordiongroup--docs).
+
+## Props
+
+### GsAccordion
+
+<ArgTypes of={AccordionStories} />
+
+### GsAccordionHeader
+
+Wraps the trigger and optional elements such as menus.
+
+<ArgTypes of={GsAccordionHeader} />
+
+### GsAccordionTrigger
+
+The button that expands and collapses the accordion, inside a heading element.
+
+<ArgTypes of={GsAccordionTrigger} />
+
+**classes:**
+
+| Key       | Applied to                                      |
+| --------- | ----------------------------------------------- |
+| `heading` | The heading element around the button (`h3`)    |
+| `trigger` | The button that expands and collapses the panel |
+
+```vue
+<GsAccordionTrigger :classes="{ heading: 'min-w-0', trigger: 'fg-accent-primary-bold' }">
+  Sensors
+</GsAccordionTrigger>
+```
+
+### GsAccordionPanel
+
+<ArgTypes of={GsAccordionPanel} />
+
+## Accessibility
+
+Built on [Reka UI's Accordion](https://reka-ui.com/docs/components/accordion), the component provides:
+
+- ARIA attributes for screen readers
+- Keyboard support: Enter and Space to expand and collapse
+- Focus management
+- A heading around each trigger (`h3` by default; set `level` on `GsAccordionTrigger`)
+- Expanded and collapsed state announcements
+
+When used within a [GsAccordionGroup](?path=/docs/components-accordiongroup--docs), the arrow keys move focus between the accordion triggers.
+
+## Implementation notes
+
+- A standalone `GsAccordion` renders a single-item Reka `AccordionRoot`; inside a group it renders an `AccordionItem` of the group's root.
+- The chevron icon rotates to indicate the expanded state.
+- Use [GsAccordionGroup](?path=/docs/components-accordiongroup--docs) for several accordions with shared behavior.
+
+**Related:**
+
+- [Reka UI Accordion docs](https://reka-ui.com/docs/components/accordion)

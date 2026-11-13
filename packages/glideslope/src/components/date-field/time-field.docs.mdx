@@ -1,0 +1,87 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as TimeFieldStories from './time-field.stories'
+
+<Meta of={TimeFieldStories} />
+
+# TimeField
+
+`GsTimeField` is a form input for entering and editing time values with configurable granularity. Bind `v-model` to a `Time` from `@internationalized/date`, or `null` for an empty field.
+
+```vue
+<script setup lang="ts">
+import { parseTime, type Time } from '@internationalized/date'
+import { shallowRef } from 'vue'
+
+const start = shallowRef<Time | null>(null)
+const meeting = shallowRef(parseTime('14:30'))
+const deadline = shallowRef<Time | null>(null)
+const time = shallowRef<Time | null>(null)
+const recorded = shallowRef(parseTime('09:15:30'))
+</script>
+
+<template>
+  <!-- Basic time field -->
+  <GsTimeField v-model="start" label="Start Time" />
+
+  <!-- With a value and granularity -->
+  <GsTimeField
+    v-model="meeting"
+    label="Meeting Time"
+    granularity="minute"
+    description="Select meeting start time"
+  />
+
+  <!-- With validation -->
+  <GsTimeField
+    v-model="deadline"
+    label="Deadline"
+    error-message="Please enter a valid time"
+    required
+  />
+
+  <!-- Small size -->
+  <GsTimeField v-model="time" label="Time" size="small" />
+
+  <!-- Readonly, on a 24-hour clock -->
+  <GsTimeField
+    v-model="recorded"
+    label="Recorded Time"
+    granularity="second"
+    :hour-cycle="24"
+    readonly
+  />
+</template>
+```
+
+<Canvas of={TimeFieldStories.Default} />
+
+## Props
+
+<ArgTypes of={TimeFieldStories} />
+
+**`classes`:**
+
+| Key           | Description                 |
+| ------------- | --------------------------- |
+| `label`       | The label                   |
+| `control`     | The box around the segments |
+| `input`       | The row of segments         |
+| `segment`     | Each editable segment       |
+| `description` | The help text               |
+| `error`       | The error message           |
+
+Classes on `GsTimeField` itself go on the field wrapper.
+
+## Accessibility
+
+- ARIA attributes for screen readers
+- Keyboard navigation between segments
+- Error state announcements
+- Required field indicators
+- Proper labeling and descriptions
+
+## Related
+
+- [Reka UI Time Field](https://reka-ui.com/docs/components/time-field)
+- [DateField](?path=/docs/components-datefield--docs)

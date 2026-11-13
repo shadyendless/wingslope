@@ -1,0 +1,174 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .notice {
+    @apply flex rounded-medium text-body-s fg-primary-bold shadow-elevation-overlay outline;
+
+    @variant size-small {
+      @apply flex-col flex-wrap gap-m p-s;
+    }
+
+    @variant size-medium {
+      @apply gap-l p-l;
+    }
+
+    /* Placed lists size their notices; in-flow lists let them fill the list's width. */
+    @variant group-[[data-placement]]/region {
+      @variant size-small {
+        min-width: 120px;
+        max-width: 320px;
+      }
+
+      @variant size-medium {
+        min-width: 200px;
+        max-width: 640px;
+      }
+    }
+
+    @variant color-info {
+      @apply bg-info-muted outline-info-bold;
+    }
+
+    @variant color-advisory {
+      @apply bg-advisory-muted outline-accent-primary-bold;
+    }
+
+    @variant color-normal {
+      @apply bg-normal-muted outline-normal-bold;
+    }
+
+    @variant color-serious {
+      @apply bg-serious-muted outline-serious-bold;
+    }
+
+    @variant color-critical {
+      @apply bg-critical-muted outline-critical-bold;
+    }
+
+    @variant motion-safe {
+      @variant open {
+        animation: enter var(--animation-duration-fast) ease-out;
+      }
+
+      @variant closed {
+        animation: exit var(--animation-duration-fast) ease-in;
+      }
+    }
+
+    /* Follow the finger while swiping, and slide out when swiped away. */
+    &:where([data-swipe='move']) {
+      transform: translateX(var(--reka-toast-swipe-move-x));
+    }
+
+    &:where([data-swipe='end']) {
+      animation: swipe-out var(--animation-duration-fast) ease-out;
+    }
+  }
+
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: translateY(-1rem);
+    }
+  }
+
+  @keyframes exit {
+    to {
+      opacity: 0;
+      transform: translateY(-1rem);
+    }
+  }
+
+  @keyframes swipe-out {
+    from {
+      transform: translateX(var(--reka-toast-swipe-end-x));
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  .content {
+    @apply flex flex-1 items-center;
+
+    @variant group-size-medium/notice {
+      @apply gap-l;
+    }
+
+    @variant group-size-small/notice {
+      @apply gap-m;
+    }
+  }
+
+  .message {
+    @apply flex-1;
+
+    @variant group-size-small/notice {
+      @apply basis-10/12;
+    }
+  }
+
+  .actions {
+    @apply flex flex-row-reverse items-center gap-s;
+
+    @variant group-size-small/notice {
+      @apply grow justify-start;
+    }
+  }
+
+  /*
+   * The notice stack and its "Clear all" button: in the page flow, or pinned to the positioned
+   * parent (or to the viewport, when global) once it has a placement.
+   */
+  .region {
+    @apply flex flex-col gap-y-s;
+
+    &:where([data-placement]) {
+      @apply absolute z-50 m-m;
+    }
+
+    &:where([data-placement][data-global]) {
+      @apply fixed;
+    }
+
+    &:where([data-placement~='top']) {
+      @apply top-0;
+    }
+
+    &:where([data-placement~='bottom']) {
+      @apply bottom-0;
+    }
+
+    &:where([data-placement~='right']) {
+      @apply right-0 items-end;
+    }
+
+    &:where([data-placement~='left']) {
+      @apply left-0 items-start;
+    }
+
+    &:where([data-placement='top'], [data-placement='bottom']) {
+      @apply left-1/2 -translate-x-1/2 items-center;
+    }
+
+    &:where([data-placement='right'], [data-placement='left']) {
+      @apply top-1/2 -translate-y-1/2;
+    }
+  }
+
+  .list {
+    @apply m-0 flex list-none flex-col gap-y-s p-0 outline-none;
+  }
+
+  .clearAll {
+    /* In the page flow, keep the button at its own width, at the end. */
+    :where(.region:not([data-placement])) > & {
+      @apply self-end;
+    }
+
+    /* Bottom-placed stacks grow upward, so "Clear all" goes below them. */
+    @variant group-[[data-placement~='bottom']]/region {
+      @apply order-last;
+    }
+  }
+}

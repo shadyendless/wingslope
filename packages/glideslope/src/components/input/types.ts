@@ -15,6 +15,10 @@ export interface GsInputProps {
   clearable?: boolean
   /** Grows and shrinks the input to fit its value (`text` and `number` types). */
   autoSize?: boolean
-  /** Extra classes for inner parts. Classes on the component itself go on the outer container. */
+  /**
+   * Extra classes for inner parts: `sizer` (the wrapper that sizes the input), `input` (the
+   * `<input>`), `prefix` and `suffix` (the slot wrappers) and `clear` (the clear button). Classes on
+   * the component itself go on the outer container.
+   */
   classes?: { sizer?: string; input?: string; prefix?: string; suffix?: string; clear?: string }
 }

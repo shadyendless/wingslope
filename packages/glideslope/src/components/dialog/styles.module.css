@@ -1,0 +1,96 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center;
+    background-color: var(--primitive-alpha-black-400);
+
+    /* Rendered into `portalTo`: cover that (positioned) element only. */
+    &:where([data-contained]) {
+      @apply absolute;
+    }
+
+    @variant motion-safe {
+      @variant open {
+        animation: backdrop-in var(--animation-duration-fast) var(--animation-easing-decelerate);
+      }
+
+      @variant closed {
+        animation: backdrop-out var(--animation-duration-fast) var(--animation-easing-accelerate);
+      }
+    }
+  }
+
+  @keyframes backdrop-in {
+    from {
+      background-color: transparent;
+    }
+  }
+
+  @keyframes backdrop-out {
+    to {
+      background-color: transparent;
+    }
+  }
+
+  .dialog {
+    @apply flex flex-col bg-surface-overlay text-body-m font-light fg-primary-muted shadow-elevation-overlay outline-none;
+
+    @variant motion-safe {
+      @variant open {
+        @apply animate-fade-enter;
+      }
+
+      @variant closed {
+        @apply animate-fade-exit;
+      }
+    }
+
+    @variant group-size-small/dialog {
+      @apply rounded-medium p-l;
+      width: 280px;
+    }
+
+    @variant group-size-large/dialog {
+      @apply rounded-large p-xl;
+      min-width: 320px;
+      max-width: 720px;
+    }
+  }
+
+  .title {
+    @apply fg-primary-bold;
+
+    @variant group-size-small/dialog {
+      @apply mb-s text-header-m;
+    }
+
+    @variant group-size-large/dialog {
+      @apply mb-m text-header-l;
+    }
+  }
+
+  .content {
+    @apply flex flex-col fg-primary-muted;
+
+    @variant group-size-small/dialog {
+      @apply gap-xs;
+    }
+
+    @variant group-size-large/dialog {
+      @apply gap-l;
+    }
+  }
+
+  .footer {
+    @apply flex justify-end gap-xs;
+
+    @variant group-size-small/dialog {
+      @apply mt-l;
+    }
+
+    @variant group-size-large/dialog {
+      @apply mt-xl;
+    }
+  }
+}
