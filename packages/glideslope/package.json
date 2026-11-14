@@ -35,7 +35,9 @@
   },
   "dependencies": {
     "@internationalized/date": "catalog:",
+    "@tanstack/vue-table": "catalog:",
     "@wingbrace/glideslope-icons": "workspace:^",
+    "media-chrome": "catalog:",
     "reka-ui": "catalog:"
   },
   "peerDependencies": {

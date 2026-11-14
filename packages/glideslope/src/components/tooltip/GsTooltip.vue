@@ -39,6 +39,7 @@ const {
   delay = 250,
   disabled = false,
   portalTo,
+  classes,
 } = defineProps<GsTooltipProps>()
 
 /** Open state. */
@@ -63,7 +64,12 @@ const Provider = injectTooltipProviderContext(null) ? Passthrough : TooltipProvi
         <slot name="trigger" />
       </TooltipTrigger>
       <TooltipPortal :to="portalTo">
-        <TooltipContent :side="side" :align="align" :side-offset="offset" :class="styles.tooltip">
+        <TooltipContent
+          :side="side"
+          :align="align"
+          :side-offset="offset"
+          :class="[styles.tooltip, classes?.content]"
+        >
           <slot />
         </TooltipContent>
       </TooltipPortal>

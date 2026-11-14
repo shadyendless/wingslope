@@ -1,0 +1,142 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .table {
+    @apply border-collapse;
+  }
+
+  .fullWidth {
+    @apply w-full table-fixed;
+  }
+
+  /* Header and body cells of a data-driven table take their TanStack column size. */
+  .sized {
+    width: var(--table-column-width);
+  }
+
+  .headerCell {
+    @apply flex items-center justify-between gap-xxs text-left align-middle text-body-s font-medium fg-primary-muted;
+
+    &.cozy {
+      @apply p-m pr-none;
+    }
+
+    &.compact {
+      @apply p-s pr-none;
+    }
+
+    &.crammed {
+      @apply overflow-hidden p-xxs text-ellipsis whitespace-nowrap;
+    }
+
+    @variant hover {
+      @apply fg-primary-bold;
+    }
+
+    /* The column whose menu is open: a box that continues down the column's cells. */
+    @variant selected {
+      @apply bg-accent-primary-muted;
+
+      box-shadow:
+        inset 0 1px 0 0 var(--outline-accent-primary-bold),
+        1px 0 0 0 var(--outline-accent-primary-bold),
+        -1px 0 0 0 var(--outline-accent-primary-bold);
+    }
+  }
+
+  .headerLabel {
+    @apply min-w-0;
+
+    .crammed > & {
+      @apply truncate;
+    }
+  }
+
+  .cell {
+    @apply text-left align-middle font-display text-body-s fg-primary-bold;
+
+    &.cozy {
+      @apply min-w-l p-m;
+    }
+
+    &.compact {
+      @apply min-w-l p-s;
+    }
+
+    &.crammed {
+      @apply min-w-0 overflow-hidden p-xxs text-ellipsis whitespace-nowrap;
+    }
+
+    @variant selected {
+      @apply bg-accent-primary-muted;
+
+      box-shadow:
+        1px 1px 0 0 var(--outline-accent-primary-bold),
+        -1px 0 0 0 var(--outline-accent-primary-bold);
+    }
+  }
+
+  /*
+   * Rows draw their lines with borders rather than outlines: in a collapsed table, borders are the
+   * grid lines rows share, while an outline on a `<tr>` would overlap its neighbors.
+   */
+  .row {
+    @apply border border-transparent border-b-(--outline-static);
+
+    &:first-of-type {
+      @apply border-t-(--outline-static);
+    }
+
+    @variant hover {
+      @apply bg-interactive-muted-hover;
+    }
+
+    @variant selected {
+      @apply border-l-2 border-l-(--outline-accent-primary-bold) bg-accent-primary-muted;
+    }
+  }
+
+  /*
+   * Hides a cell's content until its row is hovered or holds focus. The content is transparent
+   * rather than hidden so its controls stay reachable by keyboard, and the cell itself stays
+   * visible so a selected row keeps its background.
+   */
+  .hideInRow > * {
+    @apply opacity-0;
+
+    @variant group-hover/row {
+      @apply opacity-100;
+    }
+
+    @variant group-focus-within/row {
+      @apply opacity-100;
+    }
+  }
+
+  /* Hides a column menu until its header is hovered, holds focus or has its menu open. */
+  .hideInHeader {
+    @apply opacity-0;
+
+    @variant group-hover/header-cell {
+      @apply opacity-100;
+    }
+
+    @variant group-focus-within/header-cell {
+      @apply opacity-100;
+    }
+
+    @variant group-selected/header-cell {
+      @apply opacity-100;
+    }
+  }
+
+  .hidden {
+    @apply hidden;
+  }
+}
+
+@layer components.l1 {
+  .visuallyHidden {
+    @apply sr-only;
+  }
+}

@@ -1,0 +1,73 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as ClockStories from './clock.stories'
+
+<Meta of={ClockStories} />
+
+# Clock
+
+An **unstyled**, self-updating `<time>` element displaying the current time. Updates every second.
+
+## Example usage
+
+### Basic Clock
+
+```vue
+<GsClock />
+```
+
+<Canvas of={ClockStories.Default} />
+
+### Styled Clock
+
+```vue
+<GsClock class="fg-accent-primary-bold" />
+```
+
+<Canvas of={ClockStories.Styling} />
+
+### Custom Format
+
+```vue
+<script setup lang="ts">
+import { GsClock } from '@wingbrace/glideslope'
+
+const formatter = new Intl.DateTimeFormat('en-US', {
+  dateStyle: 'short',
+  timeStyle: 'long',
+  timeZone: 'UTC',
+  hour12: false,
+})
+</script>
+
+<template>
+  <GsClock :formatter="formatter" />
+</template>
+```
+
+<Canvas of={ClockStories.CustomFormat} />
+
+## Props
+
+<ArgTypes of={ClockStories} />
+
+**Default formatter:**
+
+```ts
+new Intl.DateTimeFormat('en-US', {
+  timeStyle: 'long',
+  timeZone: 'UTC',
+  hour12: false,
+})
+```
+
+## Implementation notes
+
+- Renders a `<time>` element whose `datetime` attribute holds the current time as an ISO string
+- Updates at the start of every second: the first update waits for the next whole second, and each later one is timed from the clock, so it never drifts
+- The timer starts when the clock mounts and stops when it unmounts. A server-rendered clock shows the render time until it hydrates, and the time is allowed to differ during hydration
+- Unstyled by default: add your own styles with `class`
+
+**Related:**
+
+- [Intl.DateTimeFormat MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat)

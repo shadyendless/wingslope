@@ -11,6 +11,7 @@ catalog:
   '@storybook/addon-themes': ^10.6.7
   '@storybook/vue3-vite': ^10.6.7
   '@tailwindcss/vite': ^4.3.5
+  '@tanstack/vue-table': ^9.3.1
   '@testing-library/jest-dom': ^7.0.1
   '@testing-library/user-event': ^14.6.10
   '@testing-library/vue': ^8.1.0
@@ -19,6 +20,7 @@ catalog:
   '@vitejs/plugin-vue': ^6.0.11
   '@vue/test-utils': ^2.5.1
   jsdom: ^31.0.1
+  media-chrome: ^4.19.5
   react: ^19.3.1
   reka-ui: ^2.11.0
   remark-gfm: ^4.0.1

@@ -1,0 +1,235 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as DrawerStories from './drawer.stories'
+import GsDrawer from './GsDrawer.vue'
+import GsDrawerBack from './GsDrawerBack.vue'
+import GsDrawerClose from './GsDrawerClose.vue'
+import GsDrawerContent from './GsDrawerContent.vue'
+import GsDrawerFooter from './GsDrawerFooter.vue'
+import GsDrawerHeader from './GsDrawerHeader.vue'
+import GsDrawerHeaderTitle from './GsDrawerHeaderTitle.vue'
+import GsDrawerMenu from './GsDrawerMenu.vue'
+import GsDrawerMenuItem from './GsDrawerMenuItem.vue'
+import GsDrawerPanel from './GsDrawerPanel.vue'
+import GsDrawerTrigger from './GsDrawerTrigger.vue'
+import GsDrawerView from './GsDrawerView.vue'
+
+<Meta of={DrawerStories} />
+
+# Drawer
+
+A slide-in panel for navigation or contextual content. Built on the [ViewStack](?path=/docs/components-viewstack--docs) system for stacked views, programmatic triggers, and nested navigation.
+
+Components:
+
+- **GsDrawer** - Root component managing state and view stack
+- **[GsDrawerLayout](?path=/docs/components-drawerlayout--docs)** - Layout container for panel positioning
+- **GsDrawerMenu** - Navigation menu for switching views
+- **GsDrawerMenuItem** - Individual menu item with tooltip support
+- **GsDrawerPanel** - Main panel container
+- **GsDrawerView** - Content region for a specific view
+- **GsDrawerHeader** - Header with optional `title` prop for automatic layout
+- **GsDrawerHeaderTitle** - Semantic heading element
+- **GsDrawerBack** - Back button for pushed views
+- **GsDrawerClose** - Close button for the drawer
+- **GsDrawerContent** - Main content area
+- **GsDrawerFooter** - Footer region for actions
+- **GsDrawerTrigger** - Programmatic trigger for drawer/view actions
+
+## Example Usage
+
+### Using the Title Prop
+
+```vue
+<script setup lang="ts">
+const ids = { drawer: 'left-drawer', a: 'view-a', b: 'view-b' }
+</script>
+
+<template>
+  <GsDrawer :id="ids.drawer" :default-view="ids.a">
+    <GsDrawerMenu aria-label="Views">
+      <GsDrawerMenuItem :for="ids.a" text-value="View A"><LayersIcon /></GsDrawerMenuItem>
+      <GsDrawerMenuItem :for="ids.b" text-value="View B"><SearchIcon /></GsDrawerMenuItem>
+    </GsDrawerMenu>
+    <GsDrawerPanel>
+      <GsDrawerView :id="ids.a">
+        <GsDrawerHeader title="Title A" />
+        <GsDrawerContent>Content for View A</GsDrawerContent>
+        <GsDrawerFooter>Footer Actions</GsDrawerFooter>
+      </GsDrawerView>
+      <GsDrawerView :id="ids.b">
+        <GsDrawerHeader title="Title B" />
+        <GsDrawerContent>Content for View B</GsDrawerContent>
+      </GsDrawerView>
+    </GsDrawerPanel>
+  </GsDrawer>
+</template>
+```
+
+### Custom Header Layout
+
+```vue
+<GsDrawerHeader>
+  <GsDrawerHeaderTitle :level="2">Custom Title</GsDrawerHeaderTitle>
+  <GsDrawerClose :for="ids.a" />
+</GsDrawerHeader>
+```
+
+<Canvas of={DrawerStories.StaticHeaderFooter} />
+
+Drawer and view ids are plain strings, unique on the page; each is also the `id` of its element. A view id must not be one of the command names (`back`, `clear`, `close`, `open`, `reset`, `toggle`) or start with one followed by a colon.
+
+## Sizes
+
+| Size     | Description                                         |
+| -------- | --------------------------------------------------- |
+| `small`  | Compact drawer with minimal width                   |
+| `medium` | Standard size with balanced content space (default) |
+| `large`  | Spacious drawer for complex interfaces              |
+
+## Props
+
+### GsDrawer
+
+`GsDrawer` emits `change` with the view it shows whenever that changes, or `null` when it closes.
+
+<ArgTypes of={GsDrawer} />
+
+### GsDrawerMenu
+
+<ArgTypes of={GsDrawerMenu} />
+
+### GsDrawerMenuItem
+
+The default slot holds the item's icon component, which the item wraps in a `GsIcon`. `classes.item` styles the button (classes on the component itself go there too) and `classes.tooltip` its tooltip.
+
+<ArgTypes of={GsDrawerMenuItem} />
+
+### GsDrawerHeader
+
+When using `title`, the component automatically adds back navigation (for pushed views) and a close button. The title is an `h2` in the drawer's first view and an `h4` in pushed views.
+
+<ArgTypes of={GsDrawerHeader} />
+
+### GsDrawerHeaderTitle
+
+<ArgTypes of={GsDrawerHeaderTitle} />
+
+### GsDrawerBack
+
+Pops the current view. It renders only while the drawer's stack holds more than one view. It is named "Back"; an `aria-label` replaces that.
+
+<ArgTypes of={GsDrawerBack} />
+
+### GsDrawerClose
+
+Close button that triggers a `close` action to close the entire drawer. It is named "Close"; an `aria-label` replaces that.
+
+<ArgTypes of={GsDrawerClose} />
+
+### GsDrawerTrigger
+
+Controls drawer state or navigates to views.
+
+<ArgTypes of={GsDrawerTrigger} />
+
+- `'open:<view id>'`, `'toggle:<view id>'`, `'close:<drawer or view id>'`: Control drawer state from anywhere
+- `'back'`, `'clear'`, `'close'`, `'reset'`: Act on the surrounding drawer
+- a view id: Push the view onto the stack
+- `Array`: Fire multiple commands in sequence
+
+`open` clears the stack before showing the view; pushing shows the view on top of the current one, so `back` returns to it.
+
+### GsDrawerPanel, GsDrawerView, GsDrawerContent and GsDrawerFooter
+
+<ArgTypes of={GsDrawerView} />
+
+`GsDrawerPanel`, `GsDrawerContent` and `GsDrawerFooter` take only content.
+
+<ArgTypes of={GsDrawerPanel} />
+
+<ArgTypes of={GsDrawerContent} />
+
+<ArgTypes of={GsDrawerFooter} />
+
+## Programmatic Control
+
+`useDrawers()` provides programmatic control over drawer state and navigation from anywhere in the application, including outside components. It combines [ViewStack](?path=/docs/components-viewstack--docs) commands with drawer-specific actions, and replaces the Design Toolkit's `useDrawerEmit()` hook, `DrawerEventHandlers` and bus events.
+
+### useDrawers
+
+```ts
+import { useDrawers } from '@wingbrace/glideslope'
+import { computed } from 'vue'
+
+const drawers = useDrawers()
+
+// Open a specific view
+drawers.open(viewId)
+
+// Toggle a view open/closed
+drawers.toggle(viewId)
+
+// Close the drawer
+drawers.close(drawerId)
+
+// Navigate within the stack
+drawers.push(viewId) // Push a view onto the stack
+drawers.back(drawerId) // Navigate back one view
+drawers.clear(drawerId) // Clear the view stack
+drawers.reset(drawerId) // Reset to default view
+
+// Reactive state
+const open = computed(() => drawers.isOpen(drawerId))
+const view = computed(() => drawers.view(drawerId))
+```
+
+### Available Methods
+
+| Method   | Parameter               | Description                                                       |
+| -------- | ----------------------- | ----------------------------------------------------------------- |
+| `open`   | view id                 | Opens the drawer that renders the view, showing only that view    |
+| `toggle` | view id                 | Closes the drawer if it shows the view, and opens the view if not |
+| `close`  | drawer id, or a view id | Closes the drawer                                                 |
+| `push`   | view id                 | Pushes a view onto the navigation stack                           |
+| `back`   | drawer id               | Navigates back one view in the stack                              |
+| `clear`  | drawer id               | Clears all views from the stack, closing the drawer               |
+| `reset`  | drawer id               | Resets the stack to the default view                              |
+| `isOpen` | drawer id               | Whether the drawer is open (reactive)                             |
+| `view`   | drawer id               | The view the drawer shows, or `null` (reactive)                   |
+| `stack`  | drawer id               | The views on the drawer's stack, oldest first (reactive)          |
+
+### Design Toolkit events
+
+| Design Toolkit event                                   | Glideslope                                                             |
+| ------------------------------------------------------ | ---------------------------------------------------------------------- |
+| `Drawer:open` / `DrawerEventHandlers.open(view)`       | `useDrawers().open(viewId)`                                            |
+| `Drawer:toggle` / `DrawerEventHandlers.toggle(view)`   | `useDrawers().toggle(viewId)`                                          |
+| `Drawer:close` / `DrawerEventHandlers.close(view)`     | `useDrawers().close(id)`                                               |
+| `ViewStack:push` / `DrawerEventHandlers.push(view)`    | `useDrawers().push(viewId)`                                            |
+| `ViewStack:back` / `DrawerEventHandlers.back(stack)`   | `useDrawers().back(drawerId)`                                          |
+| `ViewStack:clear` / `DrawerEventHandlers.clear(stack)` | `useDrawers().clear(drawerId)`                                         |
+| `ViewStack:reset` / `DrawerEventHandlers.reset(stack)` | `useDrawers().reset(drawerId)`                                         |
+| `bus.on('Drawer:…')` listeners                         | `@change` on `GsDrawer`, or a `watch` on `useDrawers().view(drawerId)` |
+
+The state lives at module level, keyed by drawer id, and goes when the drawer unmounts. It is client-side state: during server-side rendering a drawer shows its `default-view` and the functions do nothing.
+
+## Accessibility
+
+- `GsDrawerMenu` is a `<nav>` landmark (name it with `aria-label`) holding a tab list; each `GsDrawerMenuItem` is a tab named by its `text-value`, `aria-selected` while its view shows, with `aria-controls` pointing at the shown view
+- Each `GsDrawerView` is a tab panel labelled by its menu item
+- Menu items and triggers are buttons: Tab moves between them, Enter and Space activate them
+- `GsDrawerBack` and `GsDrawerClose` are named "Back" and "Close"
+- `GsDrawerMenuItem` tooltips show the item's name on hover and focus
+
+## Implementation Notes
+
+- Uses plain string ids for drawers and views
+- State is kept by `useDrawers()` and [`useViewStacks()`](?path=/docs/components-viewstack--docs), in place of the Design Toolkit's event bus
+- A drawer is a [ViewStack](?path=/docs/components-viewstack--docs) for stacked navigation, so view stack commands and triggers work on it
+- Only one `GsDrawerPanel` allowed per `GsDrawer`; `GsDrawerMenu` is optional
+
+**Related:**
+
+- [DrawerLayout](?path=/docs/components-drawerlayout--docs)
+- [ViewStack](?path=/docs/components-viewstack--docs)

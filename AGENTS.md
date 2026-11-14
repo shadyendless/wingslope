@@ -17,6 +17,8 @@ Durable, repo-specific instructions for coding agents. Project facts live in [RE
 - **Generated files** (`packages/foundation/src/tokens/{tokens.css,themes.css,types.ts,index.ts}`, `variants.css`, and `packages/icons/src/icons/*`, `packages/icons/src/index.ts`) are never edited by hand. Edit the JSON or SVG and run the package's `generate` script.
 - **Named groups in CSS Modules depend on `build/postcss-global-groups.js`.** It is registered in both `vite.config.ts` and `.storybook/vite.config.ts`. Keep both in sync, or `group-*/name` variants silently stop matching.
 - **Do not set `unmountOnHide: false` on a Reka combobox inside a portal.** Reka's `hideOthers()` then marks the open list `aria-hidden`. `GsOptionRegistry` exists to get option labels without that.
+- **`@vitejs/plugin-vue` options live in `build/vue-options.js`**, shared by `vite.config.ts`, `vitest.config.ts` and `.storybook/vite.config.ts`. It marks media-chrome's `media-*` tags as custom elements; change it there, not in one config.
+- **`tsconfig.app.json` doesn't catch declaration errors.** The library build (`vue-tsc -p tsconfig.build.json`) emits declarations and fails on exported values whose inferred types reach into a library's internals (e.g. a map of Reka components). Annotate those with public types. `pnpm verify` runs the build.
 - **Inputs that buffer typed text need a local draft.** Vue resets an `<input>`'s DOM value to its bound `:value` on any re-render. See the slider inputs.
 - **A Vite or Storybook config change needs a dev server restart.** HMR doesn't pick those up, and a stale server shows misleading story-index errors.
 

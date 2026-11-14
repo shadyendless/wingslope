@@ -1,0 +1,121 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as FlashcardStories from './flashcard.stories'
+import GsFlashcardAdditionalData from './GsFlashcardAdditionalData.vue'
+import GsFlashcardDetailsLabel from './GsFlashcardDetailsLabel.vue'
+import GsFlashcardDetailsList from './GsFlashcardDetailsList.vue'
+import GsFlashcardDetailsValue from './GsFlashcardDetailsValue.vue'
+
+<Meta of={FlashcardStories} />
+
+# Flashcard
+
+A quick visual identifier for displaying multiple data points about a map entity. Shows header, subheader, additional data, and a details list with loading state support.
+
+Components:
+
+- **GsFlashcard** - Container with loading state and header/subheader props
+- **GsFlashcardHero** - Upper section displaying header and subheader
+- **GsFlashcardAdditionalData** - Secondary data below the hero
+- **GsFlashcardDetailsList** - Wrapper for key-value pairs
+- **GsFlashcardDetailsLabel** - Label for detail items
+- **GsFlashcardDetailsValue** - Value for detail items
+
+## Example usage
+
+```vue
+<script setup lang="ts">
+import {
+  GsFlashcard,
+  GsFlashcardAdditionalData,
+  GsFlashcardDetailsLabel,
+  GsFlashcardDetailsList,
+  GsFlashcardDetailsValue,
+  GsFlashcardHero,
+} from '@wingbrace/glideslope'
+
+const details = [
+  { label: 'Status', value: 'Active', id: '1' },
+  { label: 'Type', value: 'Aircraft', id: '2' },
+  { label: 'Speed', value: '450 kts', id: '3' },
+]
+</script>
+
+<template>
+  <GsFlashcard :loading="loading" header="Identifier" subheader="DATA">
+    <GsFlashcardHero />
+    <GsFlashcardAdditionalData>SECONDARY_DATA</GsFlashcardAdditionalData>
+    <GsFlashcardDetailsList>
+      <template v-for="detail in details" :key="detail.id">
+        <GsFlashcardDetailsLabel>{{ detail.label }}</GsFlashcardDetailsLabel>
+        <GsFlashcardDetailsValue>{{ detail.value }}</GsFlashcardDetailsValue>
+      </template>
+    </GsFlashcardDetailsList>
+  </GsFlashcard>
+</template>
+```
+
+<Canvas of={FlashcardStories.Default} />
+
+## Props
+
+### GsFlashcard
+
+Renders a `<div>`; classes and attributes go on it.
+
+<ArgTypes of={FlashcardStories} />
+
+### GsFlashcardHero
+
+Displays the header (as an `<h3>`) and subheader of its `GsFlashcard`. Shows two skeleton lines when loading.
+
+### GsFlashcardAdditionalData
+
+Secondary data section. Hidden when loading.
+
+<ArgTypes of={GsFlashcardAdditionalData} />
+
+### GsFlashcardDetailsList
+
+A [`GsDetailsList`](?path=/docs/components-detailslist--docs) with `align="justify"`. Only the first five label/value pairs are shown.
+
+<ArgTypes of={GsFlashcardDetailsList} />
+
+### GsFlashcardDetailsLabel
+
+Label for detail items (a `<dt>`). Shows a skeleton when loading.
+
+<ArgTypes of={GsFlashcardDetailsLabel} />
+
+### GsFlashcardDetailsValue
+
+Value for detail items (a `<dd>`). Shows a skeleton when loading.
+
+<ArgTypes of={GsFlashcardDetailsValue} />
+
+### useFlashcard
+
+`useFlashcard()` returns the nearest card's reactive `loading`, `header` and `subheader`, for building parts of your own that follow its loading state:
+
+```vue
+<script setup lang="ts">
+import { useFlashcard } from '@wingbrace/glideslope'
+
+const flashcard = useFlashcard()
+</script>
+
+<template>
+  <GsSkeleton v-if="flashcard.loading" />
+  <p v-else>Tracking {{ flashcard.header }}</p>
+</template>
+```
+
+## Implementation notes
+
+- `GsFlashcard` shares `loading`, `header` and `subheader` with its parts through provide/inject
+- `GsFlashcardDetailsList` wraps the `GsDetailsList` component
+- All detail components show `GsSkeleton` placeholders during loading state
+
+**Related:**
+
+- [DetailsList](?path=/docs/components-detailslist--docs)

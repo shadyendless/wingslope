@@ -1,0 +1,97 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .container {
+    @apply relative flex w-full flex-col rounded-medium bg-surface-raised;
+    min-width: 270px;
+    /* Room below the video for the controls, which media-chrome lays over its bottom edge. */
+    --video-controls-height: 84px;
+    padding-bottom: var(--video-controls-height);
+
+    /* media-chrome theming: maps Glideslope tokens to media-chrome's custom properties. */
+    --media-primary-color: var(--fg-primary-bold);
+    --media-secondary-color: transparent;
+    --media-icon-color: var(--fg-primary-muted);
+    --media-text-color: var(--fg-accent-primary-bold);
+    --media-control-background: transparent;
+    --media-control-hover-background: transparent;
+
+    @variant disabled {
+      @apply opacity-50;
+    }
+  }
+
+  .video {
+    @apply aspect-video w-full rounded-t-medium;
+    object-fit: contain;
+    /* Letterboxing is black in both themes, like any video player. */
+    background-color: black;
+  }
+
+  .controlsOverlay {
+    @apply space-y-s self-stretch rounded-b-medium p-s;
+  }
+
+  .loadingOverlay {
+    @apply pointer-events-none absolute top-0 right-0 left-0 flex items-center justify-center rounded-t-medium fg-primary-muted;
+    bottom: var(--video-controls-height);
+  }
+
+  .errorOverlay {
+    @apply pointer-events-none absolute top-0 right-0 left-0 flex items-center justify-center gap-s rounded-t-medium fg-serious-bold;
+    bottom: var(--video-controls-height);
+  }
+
+  .errorText {
+    @apply text-body-m;
+  }
+
+  .timeRow {
+    @apply flex items-center gap-s;
+  }
+
+  .controls {
+    @apply space-y-s p-s;
+  }
+
+  .controlsRow {
+    @apply flex items-center;
+  }
+
+  .leftGroup,
+  .rightGroup {
+    @apply flex flex-1 items-center;
+  }
+
+  .leftGroup {
+    @apply justify-start;
+  }
+
+  .rightGroup {
+    @apply justify-end gap-xs;
+  }
+
+  .volumeGroup {
+    @apply flex gap-s;
+  }
+
+  .playbackGroup {
+    @apply flex items-center justify-center gap-xs;
+  }
+}
+
+/* Spins the loading overlay's GsIcon. */
+@layer components.l2 {
+  .loadingSpinner {
+    @variant motion-safe {
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  /* Local, so the CSS Module renames it together with the animation above. */
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}

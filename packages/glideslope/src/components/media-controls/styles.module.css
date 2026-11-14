@@ -1,0 +1,141 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+/*
+ * media-chrome's elements are styled through their `--media-*` custom properties and `::part()`s.
+ * State inside a part (`::part(thumb):hover`) can't take the foundation's `:where()` variants, so
+ * those few rules use plain pseudo-classes, with the disabled rule last.
+ */
+@layer components.l1 {
+  .mediaControls {
+    @apply flex items-center p-s;
+
+    @variant disabled {
+      @apply opacity-50;
+    }
+  }
+
+  .volumeSlider {
+    @apply flex items-center gap-s;
+
+    @variant disabled {
+      @apply cursor-not-allowed opacity-50;
+    }
+  }
+
+  .volumeLabel {
+    @apply text-body-s fg-primary-muted;
+  }
+
+  .volumeRange {
+    @apply h-xxs w-full;
+    --media-range-track-height: 2px;
+    --media-range-track-border-radius: 2px;
+    --media-range-padding: 0;
+
+    /* Filled track */
+    --media-range-bar-color: var(--bg-accent-primary-bold);
+
+    /* Thumb */
+    --media-range-thumb-height: 12px;
+    --media-range-thumb-width: 12px;
+    --media-range-thumb-border-radius: var(--radius-round);
+    --media-range-thumb-background: var(--fg-accent-primary-bold);
+
+    &::part(thumb) {
+      @variant motion-safe {
+        transition: transform var(--animation-duration-normal) var(--animation-easing-standard);
+      }
+
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+
+    @variant disabled {
+      --media-range-bar-color: var(--bg-interactive-disabled);
+      --media-range-thumb-background: var(--fg-disabled);
+    }
+  }
+
+  .timeRange {
+    @apply flex w-full grow items-center;
+  }
+
+  .timeRangeInput {
+    @apply w-full;
+
+    /* Track */
+    --media-control-background: var(--bg-surface-raised);
+    --media-control-hover-background: var(--bg-surface-raised);
+    --media-range-track-height: 4px;
+    --media-range-track-border-radius: 2px;
+    --media-range-bar-color: var(--bg-accent-primary-bold);
+    --media-range-padding: 0;
+
+    /* Thumb (playhead) */
+    --media-range-thumb-height: 16px;
+    --media-range-thumb-width: 4px;
+    --media-range-thumb-border-radius: var(--radius-round);
+    --media-range-thumb-background: var(--fg-accent-primary-bold);
+
+    /* Hide the built-in preview box; the current time shows in its place. */
+    --media-preview-box-display: none;
+    --media-box-arrow-display: none;
+    --media-text-color: var(--fg-primary-bold);
+    --media-primary-color: var(--fg-primary-bold);
+
+    &::part(thumb) {
+      &:hover {
+        background-color: var(--fg-accent-primary-hover);
+      }
+
+      &:focus-visible {
+        background-color: var(--fg-accent-primary-hover);
+        outline: 2px solid var(--outline-interactive-hover);
+        outline-offset: 2px;
+      }
+
+      &:active {
+        background-color: var(--fg-accent-primary-pressed);
+      }
+    }
+
+    &[disabled]::part(thumb) {
+      background-color: var(--fg-disabled);
+      cursor: not-allowed;
+    }
+  }
+
+  .timeDisplay {
+    @apply flex items-center;
+    --media-text-background: var(--bg-surface-raised);
+
+    @variant disabled {
+      @apply opacity-50;
+    }
+  }
+
+  .timeDisplayText {
+    @apply text-body-s fg-primary-bold tabular-nums;
+  }
+
+  .playbackRateText {
+    @apply text-body-s fg-primary-muted tabular-nums;
+  }
+
+  /* The time under the pointer, shown while the seek bar is hovered. */
+  .currentTimeDisplay {
+    @apply text-body-xs fg-primary-bold tabular-nums opacity-0;
+    --media-time-display-background: var(--bg-surface-raised);
+    --media-time-display-padding: var(--spacing-xs) var(--spacing-s);
+    --media-time-display-border-radius: var(--radius-small);
+
+    @variant motion-safe {
+      transition: opacity var(--animation-duration-normal) var(--animation-easing-standard);
+    }
+
+    @variant group-hover/time-range {
+      @apply opacity-100;
+    }
+  }
+}

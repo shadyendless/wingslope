@@ -1,0 +1,63 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .container {
+    @apply min-w-128 rounded-medium bg-surface-default font-display outline outline-interactive-hover;
+  }
+
+  .hero {
+    @apply mb-s flex flex-col bg-surface-muted p-s;
+  }
+
+  .loading {
+    @apply mb-s flex flex-col gap-s bg-surface-muted p-s;
+  }
+
+  .header {
+    @apply text-body-m fg-primary-bold;
+  }
+
+  .subheader {
+    @apply text-body-xs fg-primary-muted;
+  }
+
+  .data {
+    @apply px-s text-body-xs fg-primary-muted;
+  }
+}
+
+/* These restyle GsDetailsList and GsSkeleton, which live in components.l1. */
+@layer components.l2 {
+  .details-list {
+    @apply p-s text-body-xs;
+  }
+
+  /* A flashcard is a quick identifier: only the first five details are shown. */
+  .details-label {
+    @apply fg-primary-muted;
+
+    &:nth-of-type(n + 6) {
+      @apply hidden;
+    }
+  }
+
+  .details-value {
+    @apply fg-primary-bold;
+
+    &:nth-of-type(n + 6) {
+      @apply hidden;
+    }
+  }
+
+  .skeleton {
+    @apply min-h-8 py-0;
+  }
+
+  .half {
+    @apply max-w-1/2;
+  }
+
+  .smaller {
+    @apply my-xxs;
+  }
+}

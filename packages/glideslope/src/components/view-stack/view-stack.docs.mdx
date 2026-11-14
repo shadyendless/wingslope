@@ -1,0 +1,131 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import GsViewStackTrigger from './GsViewStackTrigger.vue'
+import GsViewStackView from './GsViewStackView.vue'
+import * as ViewStackStories from './view-stack.stories'
+
+<Meta of={ViewStackStories} />
+
+# ViewStack
+
+Stack-based navigation system for managing multiple views with push, pop, and reset operations.
+
+```vue
+<script setup lang="ts">
+import {
+  GsButton,
+  GsIcon,
+  GsViewStack,
+  GsViewStackTrigger,
+  GsViewStackView,
+} from '@wingbrace/glideslope'
+import ChevronLeftIcon from '@wingbrace/glideslope-icons/chevron-left'
+
+const ids = { stack: 'inspector', a: 'view-a', b: 'view-b' }
+</script>
+
+<template>
+  <!-- Basic stack navigation -->
+  <GsViewStack :id="ids.stack" :default-view="ids.a">
+    <GsViewStackView :id="ids.a">
+      <GsViewStackTrigger :for="ids.b">
+        <GsButton>Push View B</GsButton>
+      </GsViewStackTrigger>
+      <h1>View A</h1>
+    </GsViewStackView>
+    <GsViewStackView :id="ids.b">
+      <GsViewStackTrigger for="back">
+        <GsButton variant="icon" aria-label="Back">
+          <GsIcon><ChevronLeftIcon /></GsIcon>
+        </GsButton>
+      </GsViewStackTrigger>
+      <h1>View B</h1>
+    </GsViewStackView>
+  </GsViewStack>
+
+  <!-- External control with targeted commands -->
+  <GsViewStackTrigger :for="`reset:${ids.stack}`">
+    <GsButton>Reset Stack</GsButton>
+  </GsViewStackTrigger>
+
+  <!-- Chained commands -->
+  <GsViewStackTrigger :for="['clear', ids.a, ids.b]">
+    <GsButton>Clear and Push Multiple</GsButton>
+  </GsViewStackTrigger>
+</template>
+```
+
+Stack and view ids are plain strings, unique on the page. A view id must not be one of the command names (`back`, `clear`, `reset`) or start with one followed by a colon.
+
+<Canvas of={ViewStackStories.Default} />
+
+## Props
+
+### GsViewStack
+
+`GsViewStack` renders no element of its own, only its content. It emits `change` with the view it shows whenever that changes.
+
+<ArgTypes of={ViewStackStories} />
+
+### GsViewStackView
+
+<ArgTypes of={GsViewStackView} />
+
+### GsViewStackTrigger
+
+<ArgTypes of={GsViewStackTrigger} />
+
+### Trigger Actions
+
+**Simple commands** (within a `GsViewStack`):
+
+- `'back'` - Pop current view, return to previous
+- `'clear'` - Remove all views from stack
+- `'reset'` - Clear and return to `default-view`
+- a view id - Push that view onto the stack that renders it
+
+**Targeted commands** (work from anywhere):
+
+- `` `back:${stackId}` `` - Back on specific stack
+- `` `clear:${stackId}` `` - Clear specific stack
+- `` `reset:${stackId}` `` - Reset specific stack
+
+**Chained commands** (array of actions):
+
+- `['clear', viewId1, viewId2]` - Execute multiple actions in sequence
+
+## useViewStacks
+
+`useViewStacks()` controls stacks programmatically from anywhere in the application, including outside components. It replaces the Design Toolkit's `useViewStackEmit()` hook and `ViewStack:*` bus events. Its getters are reactive.
+
+```ts
+import { useViewStacks } from '@wingbrace/glideslope'
+import { computed } from 'vue'
+
+const viewStacks = useViewStacks()
+
+// Programmatic navigation
+viewStacks.push(viewId)
+viewStacks.back(stackId)
+viewStacks.clear(stackId)
+viewStacks.reset(stackId)
+
+// Reactive state
+const current = computed(() => viewStacks.view(stackId)) // the shown view, or null
+const depth = computed(() => viewStacks.stack(stackId).length) // views on the stack, oldest first
+```
+
+| Design Toolkit event | Glideslope                       |
+| -------------------- | -------------------------------- |
+| `ViewStack:push`     | `useViewStacks().push(viewId)`   |
+| `ViewStack:back`     | `useViewStacks().back(stackId)`  |
+| `ViewStack:clear`    | `useViewStacks().clear(stackId)` |
+| `ViewStack:reset`    | `useViewStacks().reset(stackId)` |
+
+The state lives at module level, keyed by stack id, and goes when the last stack with that id unmounts. It is client-side state: during server-side rendering a stack shows its `default-view` and the functions do nothing.
+
+## Accessibility
+
+- Keyboard navigation via trigger elements: a trigger acts on Enter and Space like the button inside it
+- Only the shown view is rendered, so hidden views are out of the tab order and the accessibility tree
+- Proper ARIA labeling through trigger children: give icon-only buttons an `aria-label`

@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import { readFileSync } from 'node:fs'
 import { defineConfig } from 'vite'
 import globalGroups from './build/postcss-global-groups.js'
+import { vueOptions } from './build/vue-options.js'
 
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf-8')) as {
   dependencies?: Record<string, string>
@@ -23,7 +24,7 @@ const isExternal = (id: string) => externals.some((dep) => id === dep || id.star
 const cssTarget = ['chrome123', 'edge123', 'firefox128', 'safari18']
 
 export default defineConfig({
-  plugins: [vue(), tailwindcss()],
+  plugins: [vue(vueOptions), tailwindcss()],
   css: {
     postcss: { plugins: [globalGroups()] },
     modules: {

@@ -1,0 +1,352 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as TableStories from './table.stories'
+import GsTableBody from './GsTableBody.vue'
+import GsTableCell from './GsTableCell.vue'
+import GsTableHeader from './GsTableHeader.vue'
+import GsTableHeaderCell from './GsTableHeaderCell.vue'
+import GsTableRow from './GsTableRow.vue'
+
+<Meta of={TableStories} />
+
+# Table
+
+Configurable data table with sorting, selection, and row actions built on [TanStack Table for Vue](https://tanstack.com/table/latest/docs/framework/vue/vue-table).
+
+Define the columns with `createTableColumnHelper`, which is bound to the table's TanStack feature set. Header and cell renderers return text or VNodes made with `h()`.
+
+```vue
+<script setup lang="ts">
+import { createTableColumnHelper, GsTable } from '@wingbrace/glideslope'
+import { h } from 'vue'
+
+interface Person {
+  id: string
+  firstName: string
+  lastName: string
+}
+
+// Bound to the table's feature set. TanStack v9's own `createColumnHelper` needs it as a second
+// type argument, so use this helper instead.
+const columnHelper = createTableColumnHelper<Person>()
+
+const columns = [
+  columnHelper.accessor('firstName', {
+    id: 'firstName',
+    cell: (info) => info.getValue(),
+    header: () => h('span', 'First Name'),
+  }),
+  columnHelper.accessor('lastName', {
+    id: 'lastName',
+    cell: (info) => h('i', info.getValue()),
+    header: () => h('span', 'Last Name'),
+  }),
+]
+
+const data: Person[] = [
+  { id: 'tanner', firstName: 'Tanner', lastName: 'Linsley' },
+  { id: 'joe', firstName: 'Joe', lastName: 'Dirte' },
+]
+</script>
+
+<template>
+  <GsTable :columns="columns" :data="data" show-checkbox />
+</template>
+```
+
+<Canvas of={TableStories.Default} />
+
+Define columns once, at module scope or in a `computed` with stable dependencies: a new `columns` array makes TanStack rebuild every column, header and cell.
+
+## Cell Slots
+
+To render a column's header or cells in the template rather than with `h()`, use the `#header-<columnId>` and `#cell-<columnId>` slots. A cell slot receives the `cell`, its `row` (with the data in `row.original`), its `column` and its `value`; a header slot receives the `header` and its `column`. The column menu stays next to slotted header content.
+
+```vue
+<GsTable :columns="columns" :data="data">
+  <template #header-progress>Progress (%)</template>
+  <template #cell-progress="{ value }">
+    <strong>{{ value }}%</strong>
+  </template>
+</GsTable>
+```
+
+<Canvas of={TableStories.CellSlots} />
+
+## Controlled and Uncontrolled State
+
+Sorting, row selection, row pinning, column order, column sizing and the page each follow the same convention: bind the state with `v-model:sort`, `v-model:row-selection`, `v-model:row-pinning`, `v-model:column-order`, `v-model:column-sizing` or `v-model:page`, or leave it unbound and the table keeps it itself, starting from the matching `default-*` prop. Every `update:*` event carries the plain next state value, ready to assign. To own the state without two-way binding, pass the prop and handle its `update:*` event yourself.
+
+The state types (`SortingState`, `RowSelectionState`, `RowPinningState`, `ColumnOrderState`, `ColumnSizingState`) are imported from `@tanstack/vue-table`; Glideslope does not re-export them.
+
+## Static Table
+
+For simple tables without sorting or selection, leave out `columns` and compose the parts directly.
+
+```vue
+<GsTable>
+  <GsTableHeader>
+    <GsTableRow>
+      <GsTableHeaderCell>First Name</GsTableHeaderCell>
+      <GsTableHeaderCell>Last Name</GsTableHeaderCell>
+    </GsTableRow>
+  </GsTableHeader>
+  <GsTableBody>
+    <GsTableRow v-for="person in data" :key="person.id">
+      <GsTableCell>{{ person.firstName }}</GsTableCell>
+      <GsTableCell>{{ person.lastName }}</GsTableCell>
+    </GsTableRow>
+  </GsTableBody>
+</GsTable>
+```
+
+<Canvas of={TableStories.Static} />
+
+## Column Sizing
+
+Define a `size` property in column definitions to set fixed widths.
+
+```ts
+columnHelper.accessor('firstName', {
+  id: 'firstName',
+  header: 'First Name',
+  size: 150, // Width in pixels
+})
+```
+
+`v-model:column-sizing` (or `default-column-sizing`) overrides those sizes by column id, for example `{ firstName: 200 }`. The table has no resize handles, so it never changes the sizing itself.
+
+<Canvas of={TableStories.ColumnSizing} />
+
+## Sorting
+
+Use the column header menu (kebab) to sort ascending, sort descending, or clear sorting. Sorting is uncontrolled by default; seed the initial order with `default-sort`, or bind it with `v-model:sort`.
+
+```vue
+<script setup lang="ts">
+import type { SortingState } from '@tanstack/vue-table'
+import { ref } from 'vue'
+
+const sort = ref<SortingState>([{ id: 'age', desc: true }])
+</script>
+
+<template>
+  <GsTable v-model:sort="sort" :columns="columns" :data="data" />
+</template>
+```
+
+The sort is `[{ id, desc }]`, or `[]` when sorting is cleared. The header menu writes at most one entry (no multi-column sort). A column's `sortFn` can name any of TanStack's built-in sorting functions.
+
+<Canvas of={TableStories.ControlledSorting} />
+
+### Server-side Sorting
+
+Set `manual-sorting` to sort the data yourself (for example on the server). The table renders `data` in the order you provide and still reflects the bound sort in the header menu and `aria-sort` attributes.
+
+```vue
+<script setup lang="ts">
+import type { SortingState } from '@tanstack/vue-table'
+import { ref } from 'vue'
+
+const sort = ref<SortingState>([])
+
+// Sort wherever the data lives, using sort.value[0]?.id and sort.value[0]?.desc
+const sortedData = useSortedFromServer(sort)
+</script>
+
+<template>
+  <GsTable v-model:sort="sort" :columns="columns" :data="sortedData" manual-sorting />
+</template>
+```
+
+<Canvas of={TableStories.ServerSideSorting} />
+
+## Row Selection
+
+Clicking a row, or its checkbox with `show-checkbox`, toggles its selection; the header checkbox selects or clears every row. Row selection is uncontrolled by default. Seed it with `default-row-selection`, or bind it with `v-model:row-selection`.
+
+```vue
+<script setup lang="ts">
+import type { RowSelectionState } from '@tanstack/vue-table'
+import { ref } from 'vue'
+
+const rowSelection = ref<RowSelectionState>({})
+</script>
+
+<template>
+  <!-- Uncontrolled: seed the initial selection -->
+  <GsTable
+    :columns="columns"
+    :data="data"
+    show-checkbox
+    :default-row-selection="{ tanner: true, joe: true }"
+  />
+
+  <!-- Controlled: hold the state yourself -->
+  <GsTable v-model:row-selection="rowSelection" :columns="columns" :data="data" show-checkbox />
+</template>
+```
+
+The selection is an object mapping selected row IDs to `true`, such as `{ tanner: true }`. Each row's ID is its data's `id`. To keep a row click from toggling the selection, compose the table from its parts and call `event.preventDefault()` in the `GsTableRow`'s `@click`.
+
+<Canvas of={TableStories.InitialRowSelection} />
+
+<Canvas of={TableStories.ControlledRowSelection} />
+
+## Row Pinning
+
+Pin rows to the top of the table through the row actions menu. Pinned rows show a pin in place of their number. Row pinning is uncontrolled by default; seed it with `default-row-pinning`, or bind it with `v-model:row-pinning`. Pinned IDs absent from `data` are skipped when rendering, never pruned; the owner of the bound state is responsible for removing stale IDs.
+
+```vue
+<script setup lang="ts">
+import type { RowPinningState } from '@tanstack/vue-table'
+import { ref } from 'vue'
+
+const rowPinning = ref<RowPinningState>({ top: ['joe'], bottom: [] })
+</script>
+
+<template>
+  <GsTable v-model:row-pinning="rowPinning" :columns="columns" :data="data" />
+</template>
+```
+
+<Canvas of={TableStories.ControlledRowPinning} />
+
+## Row Ordering
+
+The row actions menu also moves a row up or down, past the nearest unpinned row. Acting on a selected row moves every selected row together. The manual order survives `data` updates; rows that appear later are appended at the end.
+
+The moves come from `rowOrderingFeature`, a TanStack custom feature in the table's feature set (`tableFeatures`). It adds `row.moveUp()`, `row.moveDown()`, `row.getCanMoveUp()` and `row.getCanMoveDown()`, so your own cell renderers can call them too.
+
+<Canvas of={TableStories.LiveUpdates} />
+
+## Column Order
+
+Move columns left or right through the column header menu (kebab). Column order is uncontrolled by default; seed it with `default-column-order`, or bind it with `v-model:column-order`.
+
+```vue
+<script setup lang="ts">
+import type { ColumnOrderState } from '@tanstack/vue-table'
+import { ref } from 'vue'
+
+const columnOrder = ref<ColumnOrderState>(['age', 'firstName', 'lastName'])
+</script>
+
+<template>
+  <GsTable v-model:column-order="columnOrder" :columns="columns" :data="data" />
+</template>
+```
+
+Only your own column ids belong in the order; the numeral, selection, and kebab columns stay put, so don't use those ids for your own columns. An update lists every one of your columns in display order.
+
+<Canvas of={TableStories.ControlledColumnOrder} />
+
+## Pagination
+
+The table slices the data itself when `page-size` is set, showing the page bound with `v-model:page` (1-based). Render a [Pagination](?path=/docs/components-pagination--docs) bound to the same page to navigate. The two components are kept separate so you have full control over the pagination's placement and props.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const page = ref(1)
+</script>
+
+<template>
+  <GsTable v-model:page="page" :columns="columns" :data="data" :page-size="10" />
+  <GsPagination v-model="page" :total="Math.ceil(data.length / 10)" />
+</template>
+```
+
+<Canvas of={TableStories.ClientSidePagination} />
+
+### Server-side Pagination
+
+For server-side (pre-paginated) data, hold the page yourself and pass only the current page's data. The table reflects `data` changes directly.
+
+```vue
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+
+const page = ref(1)
+const pageData = computed(() => allData.slice((page.value - 1) * PAGE_SIZE, page.value * PAGE_SIZE))
+</script>
+
+<template>
+  <GsTable :columns="columns" :data="pageData" />
+  <GsPagination v-model="page" :total="totalPages" />
+</template>
+```
+
+<Canvas of={TableStories.PrePaginated} />
+
+## Variants
+
+The `variant` prop sets the density of header and body cells. Meta columns (numerals, checkbox, kebab menu) follow the same padding step, and row height follows the cells.
+
+| Variant   | Description                                                 |
+| --------- | ----------------------------------------------------------- |
+| `cozy`    | 12px cell padding (default)                                 |
+| `compact` | 8px cell padding for denser layouts                         |
+| `crammed` | 2px cell padding with single-line cells for maximum density |
+
+With `full-width` (fixed layout), `crammed` truncates text wider than its column with an ellipsis; set a column `size` to control the cutoff. Custom cell content that intentionally extends beyond the cell edge is also clipped at `crammed`; portalled overlays (menus, tooltips) are unaffected.
+
+A table written in markup takes `variant` too. `provideTableDefaults({ variant })` sets the density of every table below a component, including parts composed into a plain `<table>`.
+
+<Canvas of={TableStories.CompactDensity} />
+
+<Canvas of={TableStories.CrammedDensity} />
+
+## Props
+
+<ArgTypes of={TableStories} />
+
+## Subcomponents
+
+For static tables, compose these parts:
+
+| Component           | Description                   |
+| ------------------- | ----------------------------- |
+| `GsTableHeader`     | Renders the `<thead>` section |
+| `GsTableHeaderCell` | Individual header cell `<th>` |
+| `GsTableBody`       | Renders the `<tbody>` section |
+| `GsTableRow`        | Table row `<tr>`              |
+| `GsTableCell`       | Data cell `<td>`              |
+
+Each part also takes the TanStack object it renders (`header-groups`, `header`, `rows`, `row`, `cell`) and renders it when its slot is empty, for tables you build with your own `useTable`.
+
+### GsTableHeader
+
+<ArgTypes of={GsTableHeader} />
+
+### GsTableHeaderCell
+
+<ArgTypes of={GsTableHeaderCell} />
+
+### GsTableBody
+
+<ArgTypes of={GsTableBody} />
+
+### GsTableRow
+
+<ArgTypes of={GsTableRow} />
+
+### GsTableCell
+
+<ArgTypes of={GsTableCell} />
+
+## Accessibility
+
+- The table is a native `<table>`, so screen readers announce its rows, columns and headers. Every control in it is a regular tab stop.
+- Sorting is performed from each column's header menu (kebab), with Sort Ascending, Sort Descending, and Clear Sort items reachable by keyboard. Each menu button is named after its column header, such as "Age column actions".
+- `aria-sort` on the header of the sorted column.
+- The row actions menu button is named by the row number ("Row 1 actions"); Arrow keys move through its items, Enter or Space chooses one, and Escape closes it.
+- The selection checkboxes are named "Select all rows" and "Select row 1", and announce their checked, unchecked or mixed state. Row clicks toggle selection for pointer users; keyboard users use the checkboxes.
+- With `persist-row-kebab-menu` or `persist-header-kebab-menu` off, a menu shows while its row or header is hovered or holds focus, so it stays reachable by keyboard.
+- Pinned rows show a pin icon named "Pinned".
+
+## Related
+
+- [TanStack Table for Vue](https://tanstack.com/table/latest/docs/framework/vue/vue-table)
+- [Pagination](?path=/docs/components-pagination--docs)

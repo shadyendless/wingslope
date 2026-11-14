@@ -26,6 +26,7 @@ import {
 } from '@wingbrace/glideslope'
 import { AddIcon, BellIcon, BrightnessIcon, PinIcon, RadarIcon } from '@wingbrace/glideslope-icons'
 import { computed, ref } from 'vue'
+import DataPanel from './DataPanel.vue'
 import FormsPanel from './FormsPanel.vue'
 import TokenSwatch from './TokenSwatch.vue'
 import WorkspacePanel from './WorkspacePanel.vue'
@@ -140,6 +141,10 @@ const modeLabel = computed(() => (theme.mode.value === 'dark' ? 'Light mode' : '
     <GsDivider />
 
     <WorkspacePanel />
+
+    <GsDivider />
+
+    <DataPanel />
 
     <GsDivider />
 

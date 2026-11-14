@@ -1,0 +1,75 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as DeferredCollectionStories from './deferred-collection.stories'
+
+<Meta of={DeferredCollectionStories} />
+
+# DeferredCollection
+
+DeferredCollection solves a performance problem with large collections. Rendering a list or tree with thousands of items creates every item synchronously, which blocks the main thread and freezes the UI before anything is shown.
+
+This component defers the collection render by a few animation frames, allowing a fallback to display first while the browser remains responsive.
+
+## Demo
+
+Click the button to remount the component and observe the fallback → content transition:
+
+<Canvas of={DeferredCollectionStories.Default} />
+
+## Usage
+
+Put the content in the default slot and the placeholder in the `#fallback` slot. Vue renders slots lazily, so nothing in the default slot is created, not even its child components' `setup`, until the frames have passed:
+
+```vue
+<GsDeferredCollection>
+  <GsTree :items="thousandsOfItems" aria-label="Layers" />
+
+  <template #fallback>
+    <div class="flex w-300 flex-col gap-xs">
+      <GsSkeleton v-for="i in 10" :key="i" class="h-32" />
+    </div>
+  </template>
+</GsDeferredCollection>
+```
+
+### With Simple Content
+
+The fallback is optional; without one, nothing is shown until the content renders:
+
+```vue
+<GsDeferredCollection :defer-frames="3">
+  <div>Simple content renders here</div>
+</GsDeferredCollection>
+```
+
+## Props
+
+<ArgTypes of={DeferredCollectionStories} />
+
+## Implementation notes
+
+DeferredCollection uses the `useFrameDelay` composable, which:
+
+1. Starts with `ready` set to `false`
+2. Waits for `frames` animation frames using `requestAnimationFrame`, starting when the component mounts
+3. Sets `ready` to `true`, which renders the default slot
+
+This gives the browser time to paint the fallback before the expensive render begins. `useFrameDelay` is exported for components of your own:
+
+```vue
+<script setup lang="ts">
+import { useFrameDelay } from '@wingbrace/glideslope'
+
+const { ready } = useFrameDelay({ frames: 3, onReady: () => console.log('ready') })
+</script>
+
+<template>
+  <ExpensiveContent v-if="ready" />
+  <LoadingState v-else />
+</template>
+```
+
+| Option    | Type                                    | Default | Description                                                          |
+| --------- | --------------------------------------- | ------- | -------------------------------------------------------------------- |
+| `frames`  | `MaybeRefOrGetter<number \| undefined>` | `2`     | Number of animation frames to wait; a change restarts a pending wait |
+| `onReady` | `() => void`                            | -       | Called once the frames have passed                                   |

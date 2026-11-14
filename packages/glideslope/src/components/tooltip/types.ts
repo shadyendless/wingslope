@@ -14,4 +14,6 @@ export interface GsTooltipProps {
   disabled?: boolean
   /** Element or selector to render the tooltip into. @default 'body' */
   portalTo?: string | HTMLElement
+  /** Classes for inner parts. `content`: the tooltip itself (the Design Toolkit's `TooltipBody` class). */
+  classes?: { content?: string }
 }

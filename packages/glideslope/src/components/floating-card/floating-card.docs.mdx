@@ -1,0 +1,236 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as FloatingCardStories from './floating-card.stories'
+import GsFloatingCardProvider from './GsFloatingCardProvider.vue'
+
+<Meta of={FloatingCardStories} />
+
+# FloatingCard
+
+Draggable, resizable floating panels whose content is teleported into place. Provides a lightweight windowing system for overlay content such as detail views, inspectors, and contextual tooling.
+
+Components:
+
+- **GsFloatingCard** - A card that registers with its provider and teleports its content into its panel
+- **GsFloatingCardProvider** - Manages card layout, lifecycle, and stacking order, and renders the panels
+- **useFloatingCard** - Composable for programmatic control of cards from anywhere inside the provider
+
+## Example usage
+
+### Basic
+
+```vue
+<GsFloatingCardProvider>
+  <GsFloatingCard id="details" title="Details">
+    <p>Panel content goes here</p>
+  </GsFloatingCard>
+</GsFloatingCardProvider>
+```
+
+The provider covers its nearest positioned ancestor, so put it in an element with `position: relative` (the `relative` class). Cards stay inside the provider element by default. Set `bounds` to `viewport` to let them move anywhere on screen — toggle the control below and drag the card past the outlined box to compare.
+
+<Canvas of={FloatingCardStories.Default} />
+
+### With Header Actions
+
+Custom icons and action buttons can be added to the card header via the provider. The `#icon` slot renders at the start of every header. Alongside custom `{ icon, label, onClick }` buttons, two string shorthands are available: `'divider'` inserts a vertical separator, and `'pin'` adds the built-in pin toggle. A close button is always appended last.
+
+Action buttons render an icon with no visible text, so give each one a `label` — it becomes the button's accessible name.
+
+```vue
+<script setup lang="ts">
+import {
+  GsFloatingCard,
+  GsFloatingCardProvider,
+  type GsFloatingCardHeaderAction,
+} from '@wingbrace/glideslope'
+import { SettingsIcon } from '@wingbrace/glideslope-icons'
+
+const headerActions: GsFloatingCardHeaderAction[] = [
+  { icon: SettingsIcon, label: 'Settings', onClick: () => console.log('action') },
+  'divider',
+  'pin',
+]
+</script>
+
+<template>
+  <GsFloatingCardProvider :header-actions="headerActions">
+    <template #icon><span>🌟</span></template>
+    <GsFloatingCard id="settings" title="Settings">Panel content with custom header</GsFloatingCard>
+  </GsFloatingCardProvider>
+</template>
+```
+
+<Canvas of={FloatingCardStories.WithHeaderActions} />
+
+### Pinning
+
+The `'pin'` action adds a toggle that locks a card in place — a pinned card can no longer be dragged or resized. Use `initial-pinned` on the provider to pin cards at mount.
+
+```vue
+<GsFloatingCardProvider :header-actions="['pin']" :initial-pinned="['pinnable']">
+  <GsFloatingCard id="pinnable" title="Pinnable Card">
+    Dragging is disabled while pinned
+  </GsFloatingCard>
+</GsFloatingCardProvider>
+```
+
+<Canvas of={FloatingCardStories.Pinnable} />
+
+### Multiple Cards
+
+Multiple floating cards can coexist within the same provider, each independently draggable and resizable. Give each one an `initial-position` so they do not all open on the same spot.
+
+`header-actions` accepts a function that receives the card ID, and the `#icon` slot receives it as `id`, so each card can have its own header configuration — below, only Card A gets a pin button.
+
+```vue
+<GsFloatingCardProvider :header-actions="(cardId) => (cardId === 'a' ? ['pin'] : [])">
+  <template #icon="{ id }">
+    <PlaceholderIcon v-if="id !== 'b'" />
+  </template>
+  <GsFloatingCard id="a" title="Card A" :initial-position="{ x: 24, y: 24 }">
+    Has a pin button
+  </GsFloatingCard>
+  <GsFloatingCard id="b" title="Card B" :initial-position="{ x: 132, y: 260 }">
+    Close button only, and no icon
+  </GsFloatingCard>
+</GsFloatingCardProvider>
+```
+
+<Canvas of={FloatingCardStories.MultipleCards} />
+
+### Custom Dimensions and Position
+
+Override the default panel size with `initial-dimensions`, and its starting coordinates with `initial-position`. Both are applied each time the card opens; changing them while it is open has no effect, since the user is free to move and resize the card from there.
+
+Cards that do not set `initial-position` all start at the same default spot, so give each one a position when several open at once.
+
+```vue
+<GsFloatingCardProvider>
+  <GsFloatingCard
+    id="compact"
+    title="Compact"
+    :initial-dimensions="{ width: 250, height: 200 }"
+    :initial-position="{ x: 24, y: 24 }"
+  >
+    Smaller panel
+  </GsFloatingCard>
+</GsFloatingCardProvider>
+```
+
+<Canvas of={FloatingCardStories.CustomDimensions} />
+
+### Controlled Visibility
+
+Open and close a card with `v-model:open`. The card's close button and `closeCard()` set it to `false`. Closing removes the panel and unmounts its content, and reopening mounts it again at its initial size and position — so any state held inside the card is lost. Keep state you need to survive a close outside the `GsFloatingCard`.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const isOpen = ref(true)
+</script>
+
+<template>
+  <GsButton @click="isOpen = !isOpen">{{ isOpen ? 'Close Card' : 'Open Card' }}</GsButton>
+  <GsFloatingCardProvider>
+    <GsFloatingCard id="toggleable" v-model:open="isOpen" title="Toggleable">
+      This card can be opened and closed
+    </GsFloatingCard>
+  </GsFloatingCardProvider>
+</template>
+```
+
+<Canvas of={FloatingCardStories.ControlledVisibility} />
+
+### Scrollable Content
+
+Cards do not scroll their own content. Make the content container scrollable when it can overflow the card's height.
+
+```vue
+<GsFloatingCardProvider>
+  <GsFloatingCard id="log" title="Log">
+    <div class="h-full overflow-auto p-m">
+      <p v-for="line in lines" :key="line.id">{{ line.text }}</p>
+    </div>
+  </GsFloatingCard>
+</GsFloatingCardProvider>
+```
+
+<Canvas of={FloatingCardStories.WithScrollableContent} />
+
+### Programmatic Control
+
+`useFloatingCard()` exposes the open cards and control methods to any component rendered inside the provider. It throws if called outside one.
+
+```vue
+<script setup lang="ts">
+import { useFloatingCard } from '@wingbrace/glideslope'
+
+const { cardId } = defineProps<{ cardId: string }>()
+const { closeCard, togglePinCard, isPinned } = useFloatingCard()
+</script>
+
+<template>
+  <GsButton @click="closeCard(cardId)">Close</GsButton>
+  <GsButton @click="togglePinCard(cardId)">{{ isPinned(cardId) ? 'Unpin' : 'Pin' }}</GsButton>
+</template>
+```
+
+`isPinned` reads reactive state, so templates and `computed` values that use it update when a card is pinned or unpinned:
+
+```ts
+const { isPinned } = useFloatingCard()
+const pinned = computed(() => isPinned(cardId))
+```
+
+## Props
+
+### GsFloatingCard
+
+<ArgTypes of={FloatingCardStories} />
+
+### GsFloatingCardProvider
+
+Classes and attributes on the provider go on its root element.
+
+<ArgTypes of={GsFloatingCardProvider} />
+
+**GsFloatingCardHeaderAction:**
+
+Each entry is either a custom button object or one of two string shorthands.
+
+| Value                      | Description                                                                                                                                 |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `{ icon, label, onClick }` | Icon button. `icon` is a component (e.g. from `@wingbrace/glideslope-icons`), `label` its accessible name, `onClick` a `() => void` handler |
+| `'divider'`                | Vertical divider separating action groups                                                                                                   |
+| `'pin'`                    | Built-in pin toggle. Pinning a card disables dragging and resizing                                                                          |
+
+### useFloatingCard
+
+Returns the provider's controls. Throws if called outside a `GsFloatingCardProvider`.
+
+| Member              | Type                          | Description                                                             |
+| ------------------- | ----------------------------- | ----------------------------------------------------------------------- |
+| `cards`             | `Record<string, HTMLElement>` | Each open card's content element (its teleport target), by ID. Reactive |
+| `closeCard(id)`     | `(id: string) => void`        | Closes a card by ID; its `v-model:open` becomes `false`                 |
+| `togglePinCard(id)` | `(id: string) => void`        | Toggles a card's pin state                                              |
+| `isPinned(id)`      | `(id: string) => boolean`     | Reads a card's current pin state. Reactive                              |
+
+## Accessibility
+
+- Each card is exposed as a non-modal dialog (`role="dialog"`, `aria-modal="false"`), labelled by its `title`
+- Header action buttons are in the tab order and operable by keyboard
+- The pin toggle reports its state with `aria-pressed`
+- Moving focus into a card raises it above the others, like pressing it
+- Provide an `#icon` with meaning conveyed by the card `title` rather than by the icon alone — header buttons render icons without visible text
+
+## Implementation notes
+
+- Has no third-party dependencies; drag, resize, and stacking are implemented directly
+- Teleports each card's content into its panel, so the content keeps the provide/inject context of where it is written
+- The provider creates an absolutely-positioned overlay with `pointer-events: none`; only the cards themselves receive pointer events
+- Cards are bounded within the provider element by default, so a provider can occupy any region of the page; pass `bounds="viewport"` to let cards move anywhere on screen
+- Cards are dragged by their header and resized from any edge or corner; pinning a card freezes both
+- Pressing a card raises it above its siblings; stacking order is tracked per provider, so several providers on a page do not interfere
+- A card is removed from its provider when it closes or unmounts

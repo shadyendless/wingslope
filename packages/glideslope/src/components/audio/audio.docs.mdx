@@ -1,0 +1,139 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as AudioStories from './audio.stories'
+
+<Meta of={AudioStories} />
+
+# Audio
+
+`GsAudio` wraps an HTML `<audio>` element with [media controls](?path=/docs/components-mediacontrols--docs), providing playback controls, seek functionality, volume control, and playback rate adjustment.
+
+Built on [media-chrome](https://www.media-chrome.org/) for state management and accessibility.
+
+It is composed of the following components:
+
+- **GsAudio** - Main audio player component with integrated controls
+- **GsPlayButton** - Play/pause toggle button
+- **GsMuteButton** - Mute/unmute toggle button
+- **GsVolumeSlider** - Volume level slider
+- **GsTimeRange** - Seek/scrub bar for audio position
+- **GsTimeDisplay** - Current time or duration display
+- **GsSeekButton** - Skip forward/backward button
+- **GsPlaybackRateButton** - Playback speed selector
+
+## Example usage
+
+```vue
+<!-- Basic usage -->
+<GsAudio src="audio.mp3" title="My Audio File" />
+
+<!-- With event listeners -->
+<GsAudio
+  src="audio.mp3"
+  title="My Audio File"
+  @play="console.log('Playing')"
+  @pause="console.log('Paused')"
+  @ended="console.log('Ended')"
+  @time-update="(time) => console.log('Current time:', time)"
+/>
+
+<!-- Custom controls layout -->
+<GsAudio src="audio.mp3">
+  <GsMediaControls class="gap-s">
+    <GsPlayButton />
+    <GsTimeRange />
+    <GsMuteButton />
+  </GsMediaControls>
+</GsAudio>
+
+<!-- Disable keyboard shortcuts (e.g. when inside a form) -->
+<GsAudio src="audio.mp3" no-hotkeys />
+
+<!-- Disable preference persistence -->
+<GsAudio src="audio.mp3" no-volume-pref no-muted-pref />
+```
+
+<Canvas of={AudioStories.Default} />
+
+## With Title
+
+Display a title above the controls, useful for showing the filename or track name.
+
+<Canvas of={AudioStories.WithTitle} />
+
+## Events
+
+`GsAudio` emits events for common media events. Open the Actions panel to see them.
+
+<Canvas of={AudioStories.Events} />
+
+## No Hotkeys
+
+Disable keyboard shortcuts when embedding in forms or apps with custom hotkey systems.
+
+<Canvas of={AudioStories.NoHotkeys} />
+
+## Looping
+
+Enable looping to automatically restart playback when the audio ends.
+
+<Canvas of={AudioStories.Looping} />
+
+## Error State
+
+When audio fails to load, an error message is displayed and controls are automatically disabled. The message is cleared when `src` changes.
+
+<Canvas of={AudioStories.ErrorState} />
+
+## Props
+
+<ArgTypes of={AudioStories} />
+
+**classes:**
+
+| Key             | Applied to                 |
+| --------------- | -------------------------- |
+| `title`         | The title element          |
+| `mediaControls` | The media controls wrapper |
+| `timeRow`       | The time/seek row          |
+| `controlsRow`   | The controls row           |
+
+Classes on `GsAudio` itself go on the main container (the Design Toolkit's `classNames.container`).
+
+### Media Controller Props
+
+These props configure the underlying media-chrome `<media-controller>`:
+
+- `noHotkeys` disables all keyboard shortcuts (Space plays and pauses, the arrow keys seek and change the volume, `m` mutes). Useful when embedding in forms or apps with their own hotkey system.
+- `hotkeys` turns off individual shortcuts, such as `noarrowleft noarrowright`. See [media-chrome's keyboard shortcuts](https://www.media-chrome.org/docs/en/keyboard-shortcuts).
+- `noVolumePref` and `noMutedPref` stop the volume level and muted state from being saved to `localStorage` across page loads.
+- `lang` sets the language of media-chrome's built-in accessibility labels. media-chrome keeps one language for the whole page.
+
+## Implementation Notes
+
+`GsAudio` wraps the HTML `<audio>` element and uses media-chrome for state management. It renders a [GsMediaController](?path=/docs/components-mediacontrols--docs), so control components in its default slot can access the media state without additional setup, and are disabled with it.
+
+### Default Controls
+
+`GsAudio` includes more controls than the basic [media controls](?path=/docs/components-mediacontrols--docs) example:
+
+- **Time row**: Current time display, seek bar, duration display
+- **Controls row**: Mute button, volume slider, seek backward, play/pause, seek forward, playback rate
+
+Use `GsAudio` when you need all controls. Put `GsMediaControls` and the controls you want in its default slot to customize which controls appear.
+
+[media-chrome Docs](https://www.media-chrome.org/docs)
+
+The underlying elements are:
+
+- `media-controller` for the accessible media chrome container
+- `audio` element for the actual audio playback, set through its `src` attribute so a failed load reports a `MediaError`
+- The control components (`GsPlayButton`, `GsTimeRange`, …) for user interaction
+
+The component handles accessibility features including:
+
+- ARIA attributes for screen readers
+- Keyboard navigation for all controls
+- Focus management
+- Proper labeling of interactive elements
+- An alert when the audio fails to load

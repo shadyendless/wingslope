@@ -1,0 +1,340 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .sidenav {
+    --sidenav-width: 64px;
+    @apply absolute left-0 row-span-full flex h-full flex-col gap-xs bg-surface-default p-m fg-primary-bold;
+
+    @variant motion-safe {
+      transition: transform var(--animation-duration-normal) var(--animation-easing-standard);
+    }
+
+    /* Collapsed, only the rail at the sidenav's inner edge shows. */
+    @variant closed {
+      @apply items-center;
+      transform: translateX(calc(-100% + var(--sidenav-width)));
+    }
+
+    /* In a layout that pushes from the left, the sidenav takes its grid column instead. */
+    @variant group-[[data-push~='left']]/layout {
+      @apply relative;
+      transform: translateX(0);
+    }
+  }
+
+  .header {
+    @apply mb-m flex justify-center;
+  }
+
+  .toggle {
+    @apply flex cursor-pointer items-center gap-s rounded-medium p-xs;
+
+    @variant hover {
+      @apply bg-interactive-muted-hover;
+    }
+
+    @variant focus-visible {
+      @apply bg-interactive-muted-hover outline-none;
+    }
+
+    @variant active {
+      @apply bg-interactive-muted-pressed;
+    }
+
+    @variant group-open/sidenav {
+      @apply px-s;
+    }
+  }
+
+  .content {
+    @apply flex h-full max-h-full w-fit flex-col gap-xs;
+
+    @variant group-open/sidenav {
+      @apply w-full;
+    }
+
+    @variant group-closed/sidenav {
+      @apply items-center;
+    }
+  }
+
+  .avatar {
+    @apply grid w-full grid-rows-2 items-center gap-x-m;
+    grid-template-areas: 'content heading' 'content text';
+    grid-template-columns: auto 1fr;
+
+    @variant group-closed/sidenav {
+      @apply flex;
+    }
+  }
+
+  .avatarHeading {
+    @apply text-left text-body-m fg-primary-bold normal-case;
+    grid-area: heading;
+  }
+
+  .avatarText {
+    @apply grow text-left text-body-s fg-primary-muted;
+    grid-area: text;
+  }
+
+  /* Section labels (`GsSidenavHeading` in the content) are uppercase. */
+  .heading {
+    @apply text-body-xs uppercase;
+  }
+
+  .item {
+    @apply flex w-full cursor-pointer items-center justify-center gap-s rounded-medium p-xs text-body-m;
+
+    @variant hover {
+      @apply bg-interactive-muted-hover;
+    }
+
+    @variant focus-visible {
+      @apply bg-interactive-muted-hover outline-none;
+    }
+
+    @variant active {
+      @apply bg-accent-primary-pressed fg-a11y-on-accent;
+    }
+
+    @variant selected {
+      @apply bg-accent-primary-bold fg-a11y-on-accent;
+
+      @variant hover {
+        @apply bg-accent-primary-hover;
+      }
+
+      @variant focus-visible {
+        @apply bg-accent-primary-hover;
+      }
+
+      @variant active {
+        @apply bg-accent-primary-pressed;
+      }
+
+      @variant disabled {
+        @apply fg-a11y-on-accent;
+      }
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed fg-disabled;
+    }
+
+    @variant group-open/sidenav {
+      @apply px-s;
+    }
+
+    @variant group-closed/sidenav {
+      @apply max-w-fit;
+    }
+  }
+
+  .text {
+    @apply grow text-left text-body-s;
+  }
+
+  .link {
+    @apply flex w-full cursor-pointer items-center justify-center gap-s rounded-medium p-xs text-body-m;
+
+    @variant hover {
+      @apply bg-interactive-muted-hover;
+    }
+
+    @variant focus-visible {
+      @apply bg-interactive-muted-hover outline-none;
+    }
+
+    @variant active {
+      @apply bg-accent-primary-pressed fg-a11y-on-accent;
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed fg-disabled;
+    }
+
+    @variant group-open/sidenav {
+      @apply w-full;
+    }
+
+    @variant group-closed/sidenav {
+      @apply max-w-fit;
+    }
+  }
+
+  .menu {
+    @apply relative text-body-s;
+  }
+
+  .menuHeading {
+    @apply flex-1 text-left text-body-s normal-case;
+  }
+
+  /* Items of the expanded menu, indented under its title. */
+  .menuItem {
+    @apply flex w-full cursor-pointer items-center gap-s rounded-medium p-s text-left text-body-s;
+
+    @variant hover {
+      @apply bg-interactive-muted-hover;
+    }
+
+    @variant focus-visible {
+      @apply bg-interactive-muted-hover outline-none;
+    }
+
+    @variant active {
+      @apply bg-accent-primary-pressed fg-a11y-on-accent;
+    }
+
+    @variant selected {
+      @apply bg-accent-primary-bold fg-a11y-on-accent;
+
+      @variant hover {
+        @apply bg-accent-primary-hover;
+      }
+
+      @variant focus-visible {
+        @apply bg-accent-primary-hover;
+      }
+
+      @variant active {
+        @apply bg-accent-primary-pressed;
+      }
+
+      @variant disabled {
+        @apply fg-a11y-on-accent;
+      }
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed fg-disabled;
+    }
+
+    @variant group-open/menu {
+      @apply block;
+
+      @variant group-open/sidenav {
+        padding-left: 32px;
+      }
+    }
+  }
+
+  .trigger {
+    @apply flex w-full cursor-pointer items-center justify-center gap-s rounded-medium p-xs;
+
+    @variant hover {
+      @apply bg-interactive-muted-hover;
+    }
+
+    @variant focus-visible {
+      @apply bg-interactive-muted-hover outline-none;
+    }
+
+    @variant active {
+      @apply bg-interactive-muted-hover;
+    }
+
+    @variant group-closed/sidenav {
+      @apply max-w-fit;
+    }
+  }
+
+  .triggerChevron {
+    @apply transform;
+
+    @variant group-open/menu {
+      @apply rotate-180;
+    }
+  }
+
+  /* The collapsed menu's items, under its panel's title. */
+  .panelContent {
+    @apply flex h-full max-h-full w-full flex-col gap-xs bg-surface-default p-xs;
+  }
+
+  /* Items of the collapsed menu's panel. */
+  .panelItem {
+    @apply flex w-full cursor-pointer items-center gap-s rounded-medium p-s text-left text-body-s;
+
+    @variant hover {
+      @apply bg-interactive-muted-hover;
+    }
+
+    @variant focus-visible {
+      @apply bg-interactive-muted-hover outline-none;
+    }
+
+    @variant active {
+      @apply bg-accent-primary-pressed fg-a11y-on-accent;
+    }
+
+    @variant selected {
+      @apply bg-accent-primary-bold fg-a11y-on-accent;
+
+      @variant hover {
+        @apply bg-accent-primary-hover;
+      }
+
+      @variant focus-visible {
+        @apply bg-accent-primary-hover;
+      }
+
+      @variant active {
+        @apply bg-accent-primary-pressed;
+      }
+
+      @variant disabled {
+        @apply fg-a11y-on-accent;
+      }
+    }
+
+    @variant disabled {
+      @apply cursor-not-allowed fg-disabled;
+    }
+  }
+}
+
+@layer components.l2 {
+  /* The collapsed menu's panel restyles `GsPopover`, and its title `GsPopoverTitle`. */
+  .panel {
+    @apply overflow-hidden rounded-medium bg-surface-raised p-0 fg-primary-bold outline outline-static;
+  }
+
+  .panelHeading {
+    @apply m-0 rounded-t-medium bg-surface-overlay px-m py-s text-body-s normal-case;
+  }
+
+  /* Icons and avatars in a `GsSidenavAvatar` sit in its first column. */
+  .avatarIcon {
+    grid-area: content;
+  }
+
+  .divider {
+    @apply my-s;
+  }
+
+  /*
+   * The collapsed rail's tooltips (`GsTooltip` content): one line of body text, with the link's
+   * arrow beside it. They are rendered in `body`, away from their item, so a disabled item marks
+   * its tooltip with `tooltipDisabled` rather than through a group variant.
+   */
+  .tooltip {
+    @apply flex items-center gap-s text-body-s whitespace-nowrap;
+  }
+
+  .tooltipDisabled {
+    @apply fg-disabled;
+  }
+
+  /*
+   * Parts that only show while the sidenav is open: labels, headings and decorative icons. Collapsed,
+   * they are visually hidden but stay in the accessibility tree, so the rail's buttons keep their
+   * names. They include `GsIcon`s, so this sits above the icon's layer.
+   */
+  .transient {
+    @variant group-closed/sidenav {
+      @apply sr-only;
+    }
+  }
+}

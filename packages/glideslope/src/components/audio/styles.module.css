@@ -1,0 +1,65 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .container {
+    @apply flex w-full flex-col space-y-s rounded-medium bg-surface-raised p-s;
+    min-width: 270px;
+
+    /* media-chrome theming: maps Glideslope tokens to media-chrome's custom properties. */
+    --media-primary-color: var(--fg-primary-bold);
+    --media-secondary-color: transparent;
+    --media-icon-color: var(--fg-primary-muted);
+    --media-text-color: var(--fg-accent-primary-bold);
+    --media-control-background: transparent;
+    --media-control-hover-background: transparent;
+
+    @variant disabled {
+      @apply opacity-50;
+    }
+  }
+
+  .audio {
+    @apply hidden;
+  }
+
+  .titleRow {
+    @apply text-center text-header-l fg-primary-bold;
+  }
+
+  .errorMessage {
+    @apply text-center text-body-m fg-serious-bold;
+  }
+
+  .timeRow {
+    @apply flex items-center gap-s;
+  }
+
+  .controls {
+    @apply space-y-s p-s;
+  }
+
+  .controlsRow {
+    @apply flex items-center;
+  }
+
+  .leftGroup,
+  .rightGroup {
+    @apply flex flex-1 items-center;
+  }
+
+  .leftGroup {
+    @apply justify-start;
+  }
+
+  .rightGroup {
+    @apply justify-end;
+  }
+
+  .volumeGroup {
+    @apply flex gap-s;
+  }
+
+  .playbackGroup {
+    @apply flex items-center justify-center gap-xs;
+  }
+}

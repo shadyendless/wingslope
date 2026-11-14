@@ -18,3 +18,15 @@ describe('GsTooltip', () => {
     target.remove()
   })
 })
+
+describe('GsTooltip classes', () => {
+  it('styles the tooltip content', async () => {
+    render(GsTooltip, {
+      props: { delay: 0, classes: { content: 'custom-tip' } },
+      slots: { trigger: () => h(GsButton, null, () => 'Help'), default: () => 'More info' },
+    })
+    screen.getByRole('button', { name: 'Help' }).focus()
+    const tip = await screen.findByRole('tooltip')
+    expect(tip.closest('.custom-tip')).not.toBeNull()
+  })
+})

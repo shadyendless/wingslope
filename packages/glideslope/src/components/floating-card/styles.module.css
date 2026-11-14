@@ -1,0 +1,119 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  /* The provider covers its container but lets pointer events through, so only the cards are
+     interactive and the application content beneath keeps working. */
+  .provider {
+    @apply pointer-events-none absolute inset-0;
+  }
+
+  .panel {
+    @apply pointer-events-auto absolute flex flex-col overflow-hidden rounded-large bg-surface-default shadow-elevation-overlay;
+    top: var(--floating-card-y);
+    left: var(--floating-card-x);
+    width: var(--floating-card-width);
+    height: var(--floating-card-height);
+    z-index: var(--floating-card-z-index);
+  }
+
+  .header {
+    @apply flex h-32 shrink-0 cursor-grab items-center gap-xs p-xs text-header-m;
+    container: floating-card-header / inline-size;
+
+    /* A pinned card can't be moved, so its header stops advertising a drag. */
+    .panel:where([data-pinned]) & {
+      @apply cursor-default;
+    }
+  }
+
+  .header-side {
+    @apply flex h-full items-center gap-xs;
+  }
+
+  .header-actions {
+    @apply ml-auto flex h-full items-center gap-xs;
+  }
+
+  /* Zero width and no pointer events let the title overflow the flex row visually without taking
+     space or swallowing the header's drag gesture. */
+  .header-title-container {
+    @apply pointer-events-none h-full w-0 pl-xs text-header-m;
+  }
+
+  /* The title truncates within the header rather than pushing its siblings. The 10rem reserves
+     room for the icon, padding, gaps and action buttons. The container query scopes the width to
+     the header, so `cqw` never falls back to the viewport. */
+  .header-title {
+    @apply h-full truncate leading-24;
+
+    @container floating-card-header (width >= 1rem) {
+      width: calc(100cqw - 10rem);
+    }
+  }
+
+  .content {
+    @apply min-h-0 flex-1;
+  }
+
+  /* Resize handles are invisible hit areas over the card's edges and corners. Corners sit above
+     edges, so the diagonal cursors win where they overlap. */
+  .resize-n,
+  .resize-s,
+  .resize-e,
+  .resize-w,
+  .resize-ne,
+  .resize-nw,
+  .resize-se,
+  .resize-sw {
+    @apply absolute;
+  }
+
+  .resize-n,
+  .resize-s {
+    @apply inset-x-0 h-xxs cursor-ns-resize;
+  }
+
+  .resize-e,
+  .resize-w {
+    @apply inset-y-0 w-xxs cursor-ew-resize;
+  }
+
+  .resize-n {
+    @apply top-0;
+  }
+
+  .resize-s {
+    @apply bottom-0;
+  }
+
+  .resize-e {
+    @apply right-0;
+  }
+
+  .resize-w {
+    @apply left-0;
+  }
+
+  .resize-ne,
+  .resize-nw,
+  .resize-se,
+  .resize-sw {
+    @apply z-1 size-s;
+  }
+
+  .resize-ne {
+    @apply top-0 right-0 cursor-nesw-resize;
+  }
+
+  .resize-nw {
+    @apply top-0 left-0 cursor-nwse-resize;
+  }
+
+  .resize-se {
+    @apply right-0 bottom-0 cursor-nwse-resize;
+  }
+
+  .resize-sw {
+    @apply bottom-0 left-0 cursor-nesw-resize;
+  }
+}

@@ -1,0 +1,8 @@
+export { default as GsFlashcard } from './GsFlashcard.vue'
+export { default as GsFlashcardAdditionalData } from './GsFlashcardAdditionalData.vue'
+export { default as GsFlashcardDetailsLabel } from './GsFlashcardDetailsLabel.vue'
+export { default as GsFlashcardDetailsList } from './GsFlashcardDetailsList.vue'
+export { default as GsFlashcardDetailsValue } from './GsFlashcardDetailsValue.vue'
+export { default as GsFlashcardHero } from './GsFlashcardHero.vue'
+export { useFlashcard } from './context'
+export type { GsFlashcardProps, GsFlashcardState } from './types'

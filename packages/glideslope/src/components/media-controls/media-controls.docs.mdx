@@ -1,0 +1,276 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import GsFullscreenButton from './GsFullscreenButton.vue'
+import GsMediaController from './GsMediaController.vue'
+import GsMediaControls from './GsMediaControls.vue'
+import GsMuteButton from './GsMuteButton.vue'
+import GsPlaybackRateButton from './GsPlaybackRateButton.vue'
+import GsSeekButton from './GsSeekButton.vue'
+import GsTimeDisplay from './GsTimeDisplay.vue'
+import GsTimeRange from './GsTimeRange.vue'
+import GsVolumeSlider from './GsVolumeSlider.vue'
+import * as MediaControlsStories from './media-controls.stories'
+
+<Meta of={MediaControlsStories} />
+
+# MediaControls
+
+The media controls are a composable set of playback controls for audio and video. Combine the control components (play, seek, volume, …) into a control bar.
+
+It is composed of the following components:
+
+- **GsMediaController** - Connects the controls to an `<audio>` or `<video>` element. [GsAudio](?path=/docs/components-audio--docs) and [GsVideo](?path=/docs/components-video--docs) render one for you.
+- **GsMediaControls** - Container for the controls that can disable all of them
+- **GsPlayButton** - Toggle play/pause button
+- **GsMuteButton** - Toggle mute/unmute button
+- **GsVolumeSlider** - Adjust volume level slider
+- **GsTimeRange** - Seek/scrub bar for navigating media
+- **GsTimeDisplay** - Current playback time, remaining time or duration display
+- **GsSeekButton** - Forward and backward seek buttons
+- **GsPlaybackRateButton** - Playback speed selector
+- **GsFullscreenButton** - Enter/exit fullscreen button, for video
+
+## Example Usage
+
+### Basic
+
+Put the media element in the controller's `media` slot (`slot="media"`) and the controls next to it.
+
+```vue
+<script setup lang="ts">
+import {
+  GsMediaController,
+  GsMediaControls,
+  GsMuteButton,
+  GsPlayButton,
+  GsTimeDisplay,
+  GsTimeRange,
+  GsVolumeSlider,
+} from '@wingbrace/glideslope'
+</script>
+
+<template>
+  <GsMediaController audio>
+    <audio slot="media" src="audio.mp3" />
+    <GsMediaControls>
+      <GsPlayButton />
+      <GsTimeDisplay mode="current" />
+      <GsTimeRange />
+      <GsMuteButton />
+      <GsVolumeSlider />
+    </GsMediaControls>
+  </GsMediaController>
+</template>
+```
+
+### Full-Featured Layout
+
+```vue
+<!-- Two-row layout with all controls -->
+<GsMediaControls class="flex-col gap-s">
+  <!-- Time row -->
+  <div class="flex items-center gap-s">
+    <GsTimeDisplay mode="current" />
+    <GsTimeRange />
+    <GsTimeDisplay mode="duration" />
+  </div>
+
+  <!-- Controls row -->
+  <div class="flex items-center">
+    <GsMuteButton />
+    <GsVolumeSlider />
+    <GsSeekButton direction="backward" />
+    <GsPlayButton />
+    <GsSeekButton direction="forward" />
+    <GsPlaybackRateButton :rates="[0.5, 1, 1.5, 2]" />
+  </div>
+</GsMediaControls>
+```
+
+<Canvas of={MediaControlsStories.MediaControlsComposed} />
+
+### Disabled State
+
+```vue
+<!-- Disable all controls via the container -->
+<GsMediaControls disabled>
+  <GsPlayButton />
+  <GsTimeRange />
+  <GsMuteButton />
+</GsMediaControls>
+
+<!-- Or disable individual controls -->
+<GsMediaControls>
+  <GsPlayButton />
+  <GsTimeRange disabled />
+  <GsMuteButton />
+</GsMediaControls>
+```
+
+A control can't enable itself while its container (or the `GsAudio` / `GsVideo` around it) is disabled.
+
+## Individual Control Components
+
+Each control component can be used on its own inside a `GsMediaController`.
+
+### PlayButton
+
+Toggle play/pause button.
+
+<Canvas of={MediaControlsStories.PlayButtonDefault} />
+
+### MuteButton
+
+Toggle mute/unmute button. It shows as muted whenever no sound plays, including at zero volume.
+
+<Canvas of={MediaControlsStories.MuteButtonDefault} />
+
+### SeekButton
+
+Forward and backward seek buttons.
+
+<Canvas of={MediaControlsStories.SeekButtonDefault} />
+
+### VolumeSlider
+
+Volume adjustment slider.
+
+<Canvas of={MediaControlsStories.VolumeSliderDefault} />
+
+### TimeRange
+
+Seek/scrub bar for navigating media. It shows the time under the pointer while hovered.
+
+### TimeDisplay
+
+Current playback time display.
+
+<Canvas of={MediaControlsStories.TimeDisplayDefault} />
+
+### PlaybackRateButton
+
+Playback speed selector button.
+
+<Canvas of={MediaControlsStories.PlaybackRateButtonDefault} />
+
+### FullscreenButton
+
+Enter/exit fullscreen button. The controller is the element that goes fullscreen, so the controls stay visible. See [GsVideo](?path=/docs/components-video--docs).
+
+### Custom controls
+
+Build a control of your own with the media store composables, which mirror the hooks of media-chrome's React store (`media-chrome/react/media-store`):
+
+- `useMediaSelector(selector)` returns a computed ref of a value from the media state. Until media-chrome has loaded the selector sees an empty state, so give it a fallback.
+- `useMediaDispatch()` returns a function that sends requests (`MediaActionTypes`) to the store.
+- `useMediaStore()` returns the store itself, as a ref that is `undefined` until media-chrome has loaded.
+- `useMediaControlsDisabled(disabled)` combines a control's `disabled` prop with its containers', and `provideMediaControlsDisabled(disabled)` disables the controls below, like `GsMediaControls` without its element.
+
+```vue
+<script setup lang="ts">
+import {
+  GsButton,
+  GsIcon,
+  MediaActionTypes,
+  useMediaDispatch,
+  useMediaSelector,
+} from '@wingbrace/glideslope'
+import UndoIcon from '@wingbrace/glideslope-icons/undo'
+
+const dispatch = useMediaDispatch()
+const atStart = useMediaSelector((state) => !state.mediaCurrentTime)
+const restart = () => dispatch({ type: MediaActionTypes.MEDIA_SEEK_REQUEST, detail: 0 })
+</script>
+
+<template>
+  <GsButton
+    variant="icon"
+    aria-label="Restart"
+    :disabled="atStart"
+    @click="restart"
+    @keydown.space.stop
+  >
+    <GsIcon><UndoIcon /></GsIcon>
+  </GsButton>
+</template>
+```
+
+The controller uses Space as its play/pause shortcut and cancels the key press, so a button of your own inside it needs `@keydown.space.stop` to be pressed with Space, as the media buttons are.
+
+<Canvas of={MediaControlsStories.CustomControl} />
+
+## Props
+
+Media buttons have a fixed `icon` variant and `medium` size. Classes and attributes, including `@click` listeners, pass through to the root element.
+
+### GsMediaController
+
+<ArgTypes of={GsMediaController} />
+
+### GsMediaControls
+
+<ArgTypes of={GsMediaControls} />
+
+### GsPlayButton
+
+<ArgTypes of={MediaControlsStories} />
+
+### GsMuteButton
+
+<ArgTypes of={GsMuteButton} />
+
+### GsSeekButton
+
+<ArgTypes of={GsSeekButton} />
+
+> **Note:** The seek button is disabled until the media's duration is known. This shows that seeking isn't available until the media is ready.
+
+### GsVolumeSlider
+
+<ArgTypes of={GsVolumeSlider} />
+
+### GsTimeRange
+
+<ArgTypes of={GsTimeRange} />
+
+### GsTimeDisplay
+
+<ArgTypes of={GsTimeDisplay} />
+
+### GsPlaybackRateButton
+
+<ArgTypes of={GsPlaybackRateButton} />
+
+### GsFullscreenButton
+
+<ArgTypes of={GsFullscreenButton} />
+
+## Implementation Notes
+
+The media controls are built on [media-chrome](https://www.media-chrome.org/) for state management and accessibility. Its `<media-controller>` element (rendered by `GsMediaController`) watches the media element and keeps a media store; the buttons read that store and send requests to it, and `GsTimeRange`, `GsVolumeSlider` and `GsTimeDisplay` render media-chrome's own elements.
+
+**GsMediaController required:** the controls must be inside a `GsMediaController`. `GsAudio` and `GsVideo` render one, so their custom controls need nothing more. Outside one, the controls and composables throw an error.
+
+**Loaded in the browser:** media-chrome loads when the first controller mounts in the browser. Until then, on the server, and in test environments without `matchMedia` (jsdom), the controls render in their initial state, unconnected.
+
+[media-chrome Docs](https://www.media-chrome.org/docs)
+
+The Design Toolkit's React APIs map to Glideslope as follows:
+
+| Design Toolkit                                          | Glideslope                                        |
+| ------------------------------------------------------- | ------------------------------------------------- |
+| `<MediaProvider><MediaController>` (media-chrome)       | `<GsMediaController>`                             |
+| `useMediaRef()` on the media element                    | `slot="media"` on the media element               |
+| `useMediaSelector`, `useMediaDispatch`, `useMediaStore` | the composables of the same names                 |
+| `MediaControlsProvider`                                 | `provideMediaControlsDisabled()`                  |
+| `useMediaControlsDisabled`                              | `useMediaControlsDisabled()`                      |
+| `useMediaProviderGuard`                                 | built in: the controls throw outside a controller |
+| `isDisabled`, `className`, `classNames.container`       | `disabled`, `class`                               |
+
+The components handle accessibility features including:
+
+- Accessible names on every button, which follow its state (`Play` / `Pause`, `Mute` / `Unmute`)
+- Keyboard operation of every control: Enter and Space press the buttons, and the arrow keys move the sliders
+- media-chrome's keyboard shortcuts on the controller: Space and `k` play and pause, the arrow keys seek and change the volume, `m` mutes and `f` toggles fullscreen
+- Focus management
+- Spoken values for the seek bar and volume slider

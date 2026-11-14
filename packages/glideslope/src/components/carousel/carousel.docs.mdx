@@ -1,0 +1,159 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as CarouselStories from './carousel.stories'
+import GsCarouselGallery from './GsCarouselGallery.vue'
+import GsCarouselNext from './GsCarouselNext.vue'
+import GsCarouselPosition from './GsCarouselPosition.vue'
+import GsCarouselSelect from './GsCarouselSelect.vue'
+import GsCarouselViewer from './GsCarouselViewer.vue'
+
+<Meta of={CarouselStories} />
+
+# Carousel
+
+A compound component for navigating a collection of media items. The carousel displays a main viewer alongside navigable thumbnails, with support for previous/next buttons, a position indicator, and a dropdown select.
+
+Its layout is fully composable using the following sub-components:
+
+- **GsCarouselViewer** - Displays the full-size media for the active item.
+- **GsCarouselPrevious** - Navigates to the previous item. Disables at the start.
+- **GsCarouselNext** - Navigates to the next item. Disables at the end.
+- **GsCarouselGallery** - A horizontally-scrolling strip of clickable thumbnails.
+- **GsCarouselPosition** - Displays the current position and total count (e.g. "3 / 9").
+- **GsCarouselSelect** - A [`GsSelectField`](?path=/docs/components-selectfield--docs) dropdown listing all items by title.
+
+## Example usage
+
+### Gallery View
+
+The default layout with thumbnail navigation.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const currentPosition = ref(0)
+</script>
+
+<template>
+  <GsCarousel v-model="currentPosition" :items="items">
+    <GsCarouselViewer />
+    <div class="flex w-full flex-row justify-between gap-s">
+      <GsCarouselPrevious />
+      <GsCarouselGallery />
+      <GsCarouselNext />
+    </div>
+  </GsCarousel>
+</template>
+```
+
+<Canvas of={CarouselStories.Default} />
+
+### Select View
+
+Replace the thumbnail gallery with a position indicator and dropdown select for a more compact layout.
+
+```vue
+<GsCarousel v-model="currentPosition" :items="items">
+  <GsCarouselViewer />
+  <div class="flex flex-row justify-between gap-s p-s">
+    <div class="flex shrink-0 flex-row gap-s">
+      <GsCarouselPrevious />
+      <GsCarouselPosition />
+      <GsCarouselNext />
+    </div>
+    <GsCarouselSelect />
+  </div>
+</GsCarousel>
+```
+
+<Canvas of={CarouselStories.WithSelect} />
+
+### Mixed Media
+
+Items can be images, videos and audio files. The viewer shows videos in a `GsVideo` player and audio in a `GsAudio` player.
+
+<Canvas of={CarouselStories.MixedMedia} />
+
+## Props
+
+### GsCarousel
+
+The root component. Provides carousel state to all sub-components. Bind the zero-based index of the active item with `v-model`; without it, the carousel keeps the position itself, starting at the first item.
+
+<ArgTypes of={CarouselStories} />
+
+#### GsCarouselData
+
+| Field          | Type                            | Description                                                                |
+| -------------- | ------------------------------- | -------------------------------------------------------------------------- |
+| `dataType`     | `'image' \| 'video' \| 'audio'` | The media type of the item.                                                |
+| `dataUrl`      | `string`                        | URL for the full-size media displayed in the viewer.                       |
+| `fileName`     | `string`                        | Original file name of the media asset.                                     |
+| `title`        | `string`                        | Display title shown in the gallery and select, and the image's `alt` text. |
+| `thumbnailUrl` | `string`                        | URL for the thumbnail image in the gallery, also the video's poster.       |
+| `id`           | `string \| number`              | Unique identifier for the item.                                            |
+| `metadata`     | `Record<string, unknown>`       | Optional metadata associated with the item.                                |
+
+### GsCarouselViewer
+
+Displays the full-size media for the currently active item. Classes on the component go on the viewer container; `classes.media` styles the box around the media.
+
+<ArgTypes of={GsCarouselViewer} />
+
+### GsCarouselGallery
+
+A horizontally-scrolling strip of thumbnail buttons. Automatically scrolls to keep the selected thumbnail visible. Classes on the component go on the gallery container; `classes.item` styles every thumbnail.
+
+<ArgTypes of={GsCarouselGallery} />
+
+### GsCarouselPrevious, GsCarouselNext
+
+Navigates to the previous or next item. Automatically disables at the first or last item. They take `GsButton`'s `size`, `color`, `variant` (`flat` by default) and `disabled`.
+
+<ArgTypes of={GsCarouselNext} />
+
+### GsCarouselPosition
+
+Displays the current position and total count (e.g. "3 / 9") in a `<div>`.
+
+### GsCarouselSelect
+
+A [`GsSelectField`](?path=/docs/components-selectfield--docs) dropdown listing all items by title. Selecting an item navigates the carousel. Classes on the component go on the field wrapper; `classes.select` takes `GsSelectField`'s `classes`, and `classes.option` styles every option.
+
+<ArgTypes of={GsCarouselSelect} />
+
+### useCarousel
+
+Sub-components read the carousel's state with `useCarousel()`, which you can use to build parts of your own:
+
+```vue
+<script setup lang="ts">
+import { useCarousel } from '@wingbrace/glideslope'
+
+const carousel = useCarousel()
+</script>
+
+<template>
+  <GsButton :disabled="carousel.position === 0" @click="carousel.setPosition(0)">First</GsButton>
+</template>
+```
+
+| Member               | Description                         |
+| -------------------- | ----------------------------------- |
+| `items`              | The carousel's items                |
+| `position`           | Zero-based index of the active item |
+| `setPosition(index)` | Makes the item at `index` active    |
+
+## Accessibility
+
+- Navigation buttons have accessible labels ("Previous", "Next"); pass `aria-label` to relabel them.
+- Gallery thumbnails derive their accessible name from the item's `title` via image alt text, and report the active item with `aria-pressed`.
+- The select dropdown has an `aria-label` for screen readers.
+- Previous and Next buttons are disabled at boundary positions.
+
+## Implementation notes
+
+- Supports displaying images, videos, and audio files. The viewer automatically renders an `<img>`, a [`GsVideo`](?path=/docs/components-video--docs) or a [`GsAudio`](?path=/docs/components-audio--docs) based on the item's `dataType`.
+- The carousel position is a `v-model`, so it can be controlled from outside or left to the carousel.
+- Sub-components read state from the carousel with `useCarousel()` and can be composed in any order or layout.

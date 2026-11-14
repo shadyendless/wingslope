@@ -1,0 +1,182 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import GsSidenav from './GsSidenav.vue'
+import GsSidenavAvatar from './GsSidenavAvatar.vue'
+import GsSidenavContent from './GsSidenavContent.vue'
+import GsSidenavFooter from './GsSidenavFooter.vue'
+import GsSidenavHeader from './GsSidenavHeader.vue'
+import GsSidenavHeading from './GsSidenavHeading.vue'
+import GsSidenavItem from './GsSidenavItem.vue'
+import GsSidenavLink from './GsSidenavLink.vue'
+import GsSidenavMenu from './GsSidenavMenu.vue'
+import GsSidenavMenuItem from './GsSidenavMenuItem.vue'
+import GsSidenavText from './GsSidenavText.vue'
+import GsSidenavTrigger from './GsSidenavTrigger.vue'
+import * as SidenavStories from './sidenav.stories'
+
+<Meta of={SidenavStories} />
+
+# Sidenav
+
+A collapsible side navigation panel for hierarchical navigation. Must be used within a [`GsDrawerLayout`](?path=/docs/components-drawerlayout--docs).
+
+```vue
+<template>
+  <GsDrawerLayout push="left">
+    <GsDrawerLayoutMain>
+      <GsSidenavTrigger for="app-nav">
+        <GsButton variant="icon" size="large" aria-label="Navigation">
+          <GsIcon><MenuIcon /></GsIcon>
+        </GsButton>
+      </GsSidenavTrigger>
+    </GsDrawerLayoutMain>
+
+    <GsSidenav id="app-nav" aria-label="Main">
+      <GsSidenavHeader>
+        <GsSidenavAvatar>
+          <GsIcon><AppLogo /></GsIcon>
+          <GsSidenavHeading>App Name</GsSidenavHeading>
+          <GsSidenavText>subheader</GsSidenavText>
+        </GsSidenavAvatar>
+      </GsSidenavHeader>
+
+      <GsSidenavContent>
+        <GsSidenavItem v-model="onHome" text-value="Home">
+          <GsIcon><HomeIcon /></GsIcon>
+          <GsSidenavText>Home</GsSidenavText>
+        </GsSidenavItem>
+        <GsSidenavMenu title="More">
+          <template #icon
+            ><GsIcon><MenuIcon /></GsIcon
+          ></template>
+          <GsSidenavMenuItem><GsSidenavText>Sub Item</GsSidenavText></GsSidenavMenuItem>
+        </GsSidenavMenu>
+      </GsSidenavContent>
+
+      <GsSidenavFooter>
+        <GsSidenavAvatar>
+          <GsAvatar alt="User" src="/avatar.jpg" />
+          <GsSidenavHeading>User Name</GsSidenavHeading>
+          <GsSidenavText>email@example.com</GsSidenavText>
+        </GsSidenavAvatar>
+      </GsSidenavFooter>
+    </GsSidenav>
+  </GsDrawerLayout>
+</template>
+```
+
+<Canvas of={SidenavStories.Default} />
+
+## Component Structure
+
+- **GsSidenav**: Root navigation container
+- **GsSidenavTrigger**: Button to toggle sidenav open/closed
+- **GsSidenavHeader**: Header section with toggle button
+- **GsSidenavAvatar**: Avatar display with icon, heading, and text
+- **GsSidenavContent**: Main content container
+- **GsSidenavItem**: Selectable navigation item with tooltip
+- **GsSidenavLink**: External link with tooltip
+- **GsSidenavMenu**: Collapsible menu with nested items
+- **GsSidenavMenuItem**: Item within a `GsSidenavMenu`
+- **GsSidenavFooter**: Footer section
+- **GsSidenavHeading** and **GsSidenavText**: Headings and labels, styled for where they are. They stand in for react-aria's `Heading` and `Text`, which the Design Toolkit styles through contexts
+
+## Props
+
+### GsSidenav
+
+Bind the open state with `v-model:open`, or control it with a trigger or `useSidenavs()`.
+
+<ArgTypes of={GsSidenav} />
+
+### GsSidenavTrigger
+
+<ArgTypes of={GsSidenavTrigger} />
+
+### GsSidenavHeader
+
+<ArgTypes of={GsSidenavHeader} />
+
+### GsSidenavItem
+
+A toggle button: bind its selected state with `v-model`.
+
+<ArgTypes of={GsSidenavItem} />
+
+### GsSidenavLink
+
+An anchor, or the element or component given in `as`. Other attributes, such as `target`, go to it.
+
+<ArgTypes of={GsSidenavLink} />
+
+### GsSidenavMenu
+
+The menu's icon goes in the `icon` slot. Bind the expanded state with `v-model:expanded`.
+
+<ArgTypes of={GsSidenavMenu} />
+
+### GsSidenavMenuItem
+
+A toggle button: bind its selected state with `v-model`.
+
+<ArgTypes of={GsSidenavMenuItem} />
+
+### GsSidenavAvatar
+
+<ArgTypes of={GsSidenavAvatar} />
+
+### GsSidenavHeading and GsSidenavText
+
+<ArgTypes of={GsSidenavHeading} />
+
+<ArgTypes of={GsSidenavText} />
+
+### GsSidenavContent and GsSidenavFooter
+
+<ArgTypes of={GsSidenavContent} />
+
+<ArgTypes of={GsSidenavFooter} />
+
+## Programmatic Control
+
+`useSidenavs()` opens and closes sidenavs from anywhere in the application, including outside components, and replaces the Design Toolkit's `Sidenav:*` bus events. `isOpen` is reactive, in place of reading the Design Toolkit's `SidenavContext`.
+
+```ts
+import { useSidenavs } from '@wingbrace/glideslope'
+import { computed } from 'vue'
+
+const sidenavs = useSidenavs()
+
+sidenavs.open('app-nav')
+sidenavs.close('app-nav')
+sidenavs.toggle('app-nav')
+
+const expanded = computed(() => sidenavs.isOpen('app-nav'))
+```
+
+| Design Toolkit event | Glideslope                        |
+| -------------------- | --------------------------------- |
+| `Sidenav:open`       | `useSidenavs().open(sidenavId)`   |
+| `Sidenav:close`      | `useSidenavs().close(sidenavId)`  |
+| `Sidenav:toggle`     | `useSidenavs().toggle(sidenavId)` |
+
+The state lives at module level, keyed by sidenav id, and goes when the sidenav unmounts. It is client-side state: during server-side rendering the functions do nothing, so set the initial state with `v-model:open`.
+
+## Layout Requirements
+
+1. Wrap in `GsDrawerLayout` with `push="left"` for push behavior (omit for overlay)
+2. Place `GsSidenavTrigger` in `GsDrawerLayoutMain`
+3. Place `GsSidenav` as direct child of `GsDrawerLayout`
+
+## Accessibility
+
+- `GsSidenav` is a `<nav>` landmark: name it with `aria-label`
+- The header button and `GsSidenavTrigger`s set `aria-expanded` and `aria-controls` for the sidenav they toggle
+- The expanded `GsSidenavMenu` is a disclosure: its button sets `aria-expanded` and `aria-controls`, and its items form a group named by the button. The collapsed menu opens a dialog titled by the menu's `title`
+- Keyboard navigation: Tab moves between items, links and menus; Enter and Space activate them; Escape closes the collapsed menu's panel
+- Collapsed, labels are visually hidden but stay in the accessibility tree, so items in the rail keep their names
+- Tooltips appear when sidenav is collapsed, greyed out for disabled items and links
+
+## Related
+
+- [DrawerLayout](?path=/docs/components-drawerlayout--docs)

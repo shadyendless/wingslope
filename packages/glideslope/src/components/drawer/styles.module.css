@@ -1,0 +1,317 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .layout {
+    --drawer-menu-size: 40px;
+    --drawer-size-small: 100px;
+    --drawer-size-medium: 200px;
+    --drawer-size-large: 400px;
+
+    /*
+     * Sidenav grid track sizes. The layout reads them at its own scope in the sidenav rules below;
+     * the sidenav's own `--sidenav-width` is scoped to the sidenav and not visible here.
+     */
+    --sidenav-width: 64px;
+    --sidenav-width-open: 240px;
+
+    --drawer-left-size: 0px;
+    --drawer-right-size: 0px;
+    --drawer-top-size: 0px;
+    --drawer-bottom-size: 0px;
+
+    --drawer-main-row-start: 1;
+    --drawer-main-col-end: 4;
+    --drawer-main-row-end: 4;
+    --drawer-main-col-start: 1;
+
+    --drawer-main-cols: var(--drawer-main-col-start) / var(--drawer-main-col-end);
+    --drawer-main-rows: var(--drawer-main-row-start) / var(--drawer-main-row-end);
+
+    @apply relative grid h-full w-full overflow-hidden;
+    grid-template-columns: var(--drawer-left-size) 1fr var(--drawer-right-size);
+    grid-template-rows: var(--drawer-top-size) 1fr var(--drawer-bottom-size);
+
+    @variant motion-safe {
+      transition:
+        grid-template-columns var(--animation-duration-slow) var(--animation-easing-standard),
+        grid-template-rows var(--animation-duration-slow) var(--animation-easing-standard);
+    }
+
+    &:where([data-push~='top']) {
+      --drawer-main-row-start: 2;
+    }
+
+    &:where([data-push~='right']) {
+      --drawer-main-col-end: 3;
+    }
+
+    &:where([data-push~='bottom']) {
+      --drawer-main-row-end: 3;
+    }
+
+    &:where([data-push~='left']) {
+      --drawer-main-col-start: 2;
+    }
+
+    /* A sidenav reserves a left column sized to its rail, wider while it is open. */
+    &:where(:has(> .group\/sidenav)) {
+      --drawer-main-col-start: 2;
+      --drawer-left-size: var(--sidenav-width);
+    }
+
+    &:where(:has(> .group\/sidenav[data-state='open'])) {
+      --drawer-left-size: var(--sidenav-width-open);
+    }
+
+    /* Each open drawer sizes its own edge's track. */
+    &:where(:has(> .drawer[data-placement='left'][data-state='open'][data-size='large'])) {
+      --drawer-left-size: var(--drawer-size-large);
+    }
+    &:where(:has(> .drawer[data-placement='left'][data-state='open'][data-size='medium'])) {
+      --drawer-left-size: var(--drawer-size-medium);
+    }
+    &:where(:has(> .drawer[data-placement='left'][data-state='open'][data-size='small'])) {
+      --drawer-left-size: var(--drawer-size-small);
+    }
+
+    &:where(:has(> .drawer[data-placement='right'][data-state='open'][data-size='large'])) {
+      --drawer-right-size: var(--drawer-size-large);
+    }
+    &:where(:has(> .drawer[data-placement='right'][data-state='open'][data-size='medium'])) {
+      --drawer-right-size: var(--drawer-size-medium);
+    }
+    &:where(:has(> .drawer[data-placement='right'][data-state='open'][data-size='small'])) {
+      --drawer-right-size: var(--drawer-size-small);
+    }
+
+    &:where(:has(> .drawer[data-placement='top'][data-state='open'][data-size='large'])) {
+      --drawer-top-size: var(--drawer-size-large);
+    }
+    &:where(:has(> .drawer[data-placement='top'][data-state='open'][data-size='medium'])) {
+      --drawer-top-size: var(--drawer-size-medium);
+    }
+    &:where(:has(> .drawer[data-placement='top'][data-state='open'][data-size='small'])) {
+      --drawer-top-size: var(--drawer-size-small);
+    }
+
+    &:where(:has(> .drawer[data-placement='bottom'][data-state='open'][data-size='large'])) {
+      --drawer-bottom-size: var(--drawer-size-large);
+    }
+    &:where(:has(> .drawer[data-placement='bottom'][data-state='open'][data-size='medium'])) {
+      --drawer-bottom-size: var(--drawer-size-medium);
+    }
+    &:where(:has(> .drawer[data-placement='bottom'][data-state='open'][data-size='small'])) {
+      --drawer-bottom-size: var(--drawer-size-small);
+    }
+  }
+
+  .main {
+    @apply relative;
+    grid-column: var(--drawer-main-cols);
+    grid-row: var(--drawer-main-rows);
+  }
+
+  .drawer {
+    @apply pointer-events-none relative flex min-h-0 min-w-0 flex-col bg-surface-default text-body-m;
+
+    &:where([data-placement='top']) {
+      @apply col-span-full row-start-1 row-end-2;
+
+      @variant group-[[data-extend~='right']]/layout {
+        @apply col-end-3;
+      }
+
+      @variant group-[[data-extend~='left']]/layout {
+        @apply col-start-2;
+      }
+
+      @variant group-[[data-extend='bottom']]/layout {
+        @apply col-start-2 col-end-3;
+      }
+    }
+
+    &:where([data-placement='right']) {
+      @apply col-start-3 col-end-4 row-span-full;
+
+      @variant group-[[data-extend~='top']]/layout {
+        @apply row-start-2;
+      }
+
+      @variant group-[[data-extend~='bottom']]/layout {
+        @apply row-end-3;
+      }
+
+      @variant group-[[data-extend='left']]/layout {
+        @apply row-start-2 row-end-3;
+      }
+    }
+
+    &:where([data-placement='bottom']) {
+      @apply col-span-full row-start-3 row-end-4;
+
+      @variant group-[[data-extend~='right']]/layout {
+        @apply col-end-3;
+      }
+
+      @variant group-[[data-extend~='left']]/layout {
+        @apply col-start-2;
+      }
+
+      @variant group-[[data-extend='top']]/layout {
+        @apply col-start-2 col-end-3;
+      }
+    }
+
+    &:where([data-placement='left']) {
+      @apply col-start-1 col-end-2 row-span-full;
+
+      @variant group-[[data-extend~='top']]/layout {
+        @apply row-start-2;
+      }
+
+      @variant group-[[data-extend~='bottom']]/layout {
+        @apply row-end-3;
+      }
+
+      @variant group-[[data-extend='right']]/layout {
+        @apply row-start-2 row-end-3;
+      }
+    }
+
+    /* The closed drawer takes no pointer events over the main content; its menu and panel do. */
+    & > * {
+      @apply pointer-events-auto;
+    }
+  }
+
+  /* The menu's landmark and surface, attached to the drawer's inner edge. */
+  .menu {
+    @apply absolute rounded-large bg-surface-default p-xs;
+
+    @variant group-[[data-placement='top']]/drawer {
+      @apply top-full left-1/2 rounded-t-none;
+    }
+
+    @variant group-[[data-placement='right']]/drawer {
+      @apply right-full rounded-r-none;
+    }
+
+    @variant group-[[data-placement='bottom']]/drawer {
+      @apply bottom-full left-1/2 rounded-b-none;
+    }
+
+    @variant group-[[data-placement='left']]/drawer {
+      @apply left-full rounded-l-none;
+    }
+
+    &.start {
+      @variant group-[[data-placement='top']]/drawer {
+        @apply left-xl;
+      }
+
+      @variant group-[[data-placement='right']]/drawer {
+        @apply top-xl;
+      }
+
+      @variant group-[[data-placement='bottom']]/drawer {
+        @apply left-xl;
+      }
+
+      @variant group-[[data-placement='left']]/drawer {
+        @apply top-xl;
+      }
+    }
+
+    &.center {
+      @variant group-[[data-placement='top']]/drawer {
+        @apply left-1/2 -translate-x-1/2;
+      }
+
+      @variant group-[[data-placement='right']]/drawer {
+        @apply top-1/2 -translate-y-1/2;
+      }
+
+      @variant group-[[data-placement='bottom']]/drawer {
+        @apply left-1/2 -translate-x-1/2;
+      }
+
+      @variant group-[[data-placement='left']]/drawer {
+        @apply top-1/2 -translate-y-1/2;
+      }
+    }
+
+    &.end {
+      @variant group-[[data-placement='top']]/drawer {
+        @apply right-xl left-auto;
+      }
+
+      @variant group-[[data-placement='right']]/drawer {
+        @apply bottom-xl;
+      }
+
+      @variant group-[[data-placement='bottom']]/drawer {
+        @apply right-xl left-auto;
+      }
+
+      @variant group-[[data-placement='left']]/drawer {
+        @apply bottom-xl;
+      }
+    }
+  }
+
+  /* The menu's tab list: a row along top and bottom drawers, a column along side drawers. */
+  .tabs {
+    @apply flex gap-xs;
+
+    @variant orientation-horizontal {
+      @apply flex-row;
+    }
+
+    @variant orientation-vertical {
+      @apply flex-col;
+    }
+  }
+
+  .panel {
+    @apply hidden h-full min-h-0 flex-col gap-s overflow-hidden p-l;
+
+    @variant group-open/drawer {
+      @apply flex;
+    }
+  }
+
+  .view {
+    @apply flex h-full flex-col gap-s;
+  }
+
+  .header {
+    @apply flex flex-row items-center justify-between gap-s pt-px pr-px;
+  }
+
+  .title {
+    @apply w-fit fg-primary-bold;
+
+    &.large {
+      @apply text-header-l;
+    }
+
+    &.medium {
+      @apply text-header-m;
+    }
+  }
+
+  .content {
+    @apply flex max-h-full flex-1 flex-col overflow-y-auto fg-primary-bold;
+  }
+
+  .footer {
+    @apply mt-s flex flex-row items-center justify-end fg-primary-bold;
+  }
+}
+
+@layer components.l2 {
+  /* Menu items are toggle buttons. */
+  .item {
+    @apply rounded-medium;
+  }
+}

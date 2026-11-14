@@ -1,8 +1,9 @@
 import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vitest/config'
+import { vueOptions } from './build/vue-options.js'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(vueOptions)],
   test: {
     environment: 'jsdom',
     include: ['src/**/*.test.ts'],
