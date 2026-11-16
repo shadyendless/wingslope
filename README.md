@@ -2,8 +2,6 @@
 
 Glideslope is a Vue 3 design system: design tokens and a Tailwind CSS v4 foundation, Vue components built on [Reka UI](https://reka-ui.com), and an icon set.
 
-It reimplements the Accelint design system ([`standard-toolkit`](https://github.com/gohypergiant/standard-toolkit) `design-foundation` and `design-toolkit`) for Vue, keeping its tokens, Tailwind approach and component designs.
-
 ## Packages
 
 | Package                                                     | What it is                                                                                                                                                |
