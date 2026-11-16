@@ -29,7 +29,7 @@ defineOptions({ inheritAttrs: false })
 const {
   side = 'bottom',
   align = 'center',
-  offset = 4,
+  offset = 8,
   modal = false,
   label,
   classes,

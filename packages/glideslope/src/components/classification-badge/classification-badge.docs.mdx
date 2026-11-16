@@ -1,0 +1,87 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as ClassificationBadgeStories from './classification-badge.stories'
+
+<Meta of={ClassificationBadgeStories} />
+
+# ClassificationBadge
+
+`GsClassificationBadge` displays the security classification level of a document, dataset or information system. It provides standardized visual indicators for the classification levels commonly used in government and secure environments.
+
+## Example usage
+
+```vue
+<GsClassificationBadge variant="unclassified" />
+<GsClassificationBadge variant="cui" />
+<GsClassificationBadge variant="confidential" />
+<GsClassificationBadge variant="secret" />
+<GsClassificationBadge variant="top-secret" />
+<GsClassificationBadge variant="ts-sci" />
+
+<!-- With custom text -->
+<GsClassificationBadge variant="confidential">CONFIDENTIAL//NOFORN</GsClassificationBadge>
+
+<!-- Different sizes -->
+<GsClassificationBadge variant="secret" size="medium" />
+<GsClassificationBadge variant="secret" size="small" />
+```
+
+<Canvas of={ClassificationBadgeStories.Default} />
+
+## Variants
+
+| Variant        | Default text | Description                                      |
+| -------------- | ------------ | ------------------------------------------------ |
+| `missing`      | Missing      | Red styling for missing classification (default) |
+| `unclassified` | Unclassified | Unclassified information                         |
+| `cui`          | CUI          | Controlled Unclassified Information              |
+| `confidential` | Confidential | Confidential level information                   |
+| `secret`       | Secret       | Secret level information                         |
+| `top-secret`   | Top Secret   | Top secret level information                     |
+| `ts-sci`       | TS/SCI       | Top Secret/Sensitive Compartmented Information   |
+
+## Sizes
+
+| Size     | Description                                |
+| -------- | ------------------------------------------ |
+| `medium` | Standard size (default)                    |
+| `small`  | Compact size for space-constrained layouts |
+
+## Props
+
+<ArgTypes of={ClassificationBadgeStories} />
+
+The `default` slot is custom text. When it's empty, the badge shows the level's default text.
+
+### Shared defaults
+
+`provideClassificationBadgeDefaults()` sets `variant` and `size` for every badge rendered below the calling component. A prop set on a badge still wins.
+
+```vue
+<script setup lang="ts">
+import { provideClassificationBadgeDefaults } from '@wingbrace/glideslope'
+
+provideClassificationBadgeDefaults({ variant: 'secret', size: 'small' })
+</script>
+
+<template>
+  <GsClassificationBadge />
+  <GsClassificationBadge />
+</template>
+```
+
+## Accessibility
+
+- Contrast ratios for every classification level
+- Semantic color usage following security standards
+- The level is always written out as text, so it isn't carried by color alone
+
+## Implementation notes
+
+- Renders a `<span>`. Attributes and classes you add go on it.
+- Shows the level's default text when the `default` slot is empty
+- The color scheme follows standard security classification conventions
+
+**Related:**
+
+- [ClassificationBanner](?path=/docs/components-classificationbanner--docs)

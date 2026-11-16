@@ -4,7 +4,19 @@ export interface GsInputProps {
   /** @default 'medium' */
   size?: GsInputSize
   /** Native input type. @default 'text' */
-  type?: 'text' | 'email' | 'number' | 'password' | 'search' | 'tel' | 'url' | 'date' | 'time'
+  type?:
+    | 'text'
+    | 'email'
+    | 'number'
+    | 'password'
+    | 'search'
+    | 'tel'
+    | 'url'
+    | 'date'
+    | 'time'
+    | 'datetime-local'
+    | 'month'
+    | 'week'
   placeholder?: string
   disabled?: boolean
   readonly?: boolean

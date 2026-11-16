@@ -6,7 +6,7 @@ export interface GsTooltipProps {
   side?: GsOverlaySide
   /** @default 'center' */
   align?: GsOverlayAlign
-  /** Gap between trigger and tooltip, in pixels. @default 4 */
+  /** Gap between trigger and tooltip, in pixels. @default 5 */
   offset?: number
   /** Hover delay before opening, in milliseconds. @default 250 */
   delay?: number

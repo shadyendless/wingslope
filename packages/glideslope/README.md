@@ -125,9 +125,21 @@ Queue notices from anywhere with `useNotices().queue({ message, color, timeout }
 | Clock               | `GsClock`                                                                                                                                                                                                                                                                 | —                            |
 | Deferred collection | `GsDeferredCollection`, `useFrameDelay()`                                                                                                                                                                                                                                 | —                            |
 
+### Planning, query and domain components
+
+| Family           | Components                                                                                                                                                                                                                | Built on                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| Gantt            | `GsGantt`, `GsGanttPanelContainer`, `GsGanttPanelRow`, `GsGanttContentContainer`, `GsGanttContentRow`, `GsGanttBlock`, `GsGanttSpacer`, `GsGanttMarker`, `GsGanttIconMarker`, `GsGanttBracketOpen`, `GsGanttBracketClose` | —                         |
+| Kanban           | `GsKanban`, `GsKanbanHeader`, `GsKanbanColumnContainer`, `GsKanbanColumn`, `GsKanbanColumnContent`, `GsKanbanCard`, `GsKanbanCardMoveMenu` and their header, title and action parts, `useKanban()`                        | `@dnd-kit/vue`            |
+| Query builder    | `GsQueryBuilder`, `GsQueryBuilderCombinatorSelector`, `GsQueryBuilderCloneAction`, `GsQueryBuilderLockAction`, `GsQueryBuilderRemoveRuleAction`                                                                           | `@react-querybuilder/vue` |
+| Coordinate field | `GsCoordinateField`, `useCoordinateField()` and its focus, paste and copy composables                                                                                                                                     | `@wingbrace/geo`          |
+| Classification   | `GsClassificationBanner`, `GsClassificationBadge`                                                                                                                                                                         | —                         |
+
+`GsTree` and `GsKanban` support drag-and-drop on `@dnd-kit/vue`, with keyboard dragging, screen-reader announcements and a way to move items without dragging (`useTree().moveStep()`, `GsKanbanCardMoveMenu`).
+
 Drawers, view stacks and side navs can be controlled from anywhere by id with `useDrawers()`, `useViewStacks()` and `useSidenavs()` (e.g. `useDrawers().open('layers')`), in place of the Design Toolkit's `@accelint/bus` events. media-chrome loads lazily on the client, so importing Glideslope stays safe in server rendering and jsdom.
 
-Composables: `provideTheme` / `useTheme`, `useNotices`, `useTree`, and `provide*Defaults` for the families whose defaults a parent can set, as the Design Toolkit's `*Provider` components do: Avatar, Badge, Button (and LinkButton, ToggleButton), Chip, ComboBoxField, DetailsList, Divider, Hotkey, Icon, Label, Link, SearchField, SelectField, Switch, Tab and Tabs, Table, TextAreaField, TextField. For example, `provideButtonDefaults({ size: 'small' })`.
+Composables: `provideTheme` / `useTheme`, `useNotices`, `useTree`, and `provide*Defaults` for the families whose defaults a parent can set, as the Design Toolkit's `*Provider` components do: Avatar, Badge, Button (and LinkButton, ToggleButton), Chip, ComboBoxField, DetailsList, Divider, Hotkey, Icon, Label, Link, SearchField, SelectField, Switch, Tab and Tabs, Table, TextAreaField, TextField, CoordinateField, ClassificationBadge, ClassificationBanner. For example, `provideButtonDefaults({ size: 'small' })`.
 
 Components with inner parts take a `classes` prop (the Design Toolkit's `classNames`), e.g. `<GsTextField :classes="{ label: 'sr-only' }" />`; `class` always goes on the root.
 

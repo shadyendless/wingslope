@@ -38,7 +38,7 @@ const {
   variant = 'cozy',
   side = 'bottom',
   align = 'start',
-  offset = 4,
+  offset = 8,
   classes,
 } = defineProps<GsMenuProps>()
 

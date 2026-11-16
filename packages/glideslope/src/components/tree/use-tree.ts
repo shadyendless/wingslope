@@ -4,13 +4,21 @@ import {
   getTreeFlaggedKeys,
   getTreeKeys,
   getTreeParentKeys,
+  getTreeStepMove,
   insertTreeNodes,
   moveTreeNodes,
   normalizeTreeSelection,
   removeTreeNodes,
   updateTreeNode,
 } from './tree-data'
-import type { GsTreeInsertPosition, GsTreeKey, GsTreeNode, GsTreeStateFlag } from './types'
+import type {
+  GsTreeInsertPosition,
+  GsTreeKey,
+  GsTreeMove,
+  GsTreeMoveDirection,
+  GsTreeNode,
+  GsTreeStateFlag,
+} from './types'
 
 export interface UseTreeOptions<T> {
   /** Initial tree data. */
@@ -62,6 +70,16 @@ export interface UseTree<T> {
   moveAfter: (target: GsTreeKey | null, keys: Iterable<GsTreeKey>) => void
   /** Moves nodes into a node, as its first children. */
   moveInto: (target: GsTreeKey | null, keys: Iterable<GsTreeKey>) => void
+  /** Applies a move: bind it to `GsTree`'s `move` event (`drag-and-drop`). */
+  applyMove: (move: GsTreeMove) => void
+  /**
+   * Moves a node one step (`up`, `down`, `indent`, `outdent`, see `getTreeStepMove`): the
+   * non-drag alternative to dragging, for a row menu or buttons. Does nothing when it can't go that
+   * way.
+   */
+  moveStep: (key: GsTreeKey, direction: GsTreeMoveDirection) => void
+  /** Whether `moveStep` can move a node that way, to disable a menu item or button. */
+  canMoveStep: (key: GsTreeKey, direction: GsTreeMoveDirection) => boolean
   /** Removes nodes and their descendants, and forgets their keys. */
   remove: (keys: Iterable<GsTreeKey>) => void
   /** Replaces a node with the result of `update`. */
@@ -72,6 +90,9 @@ export interface UseTree<T> {
  * Holds tree data and state for a `GsTree`, with actions to change them. The data transforms are
  * the pure functions from `tree-data.ts`; use those directly to keep the data somewhere else
  * (a store, a server).
+ *
+ * With `drag-and-drop`, bind `applyMove` to the tree's `move` event; `moveStep` offers the same
+ * moves without dragging.
  *
  * @example
  * ```vue
@@ -116,10 +137,10 @@ export function useTree<T>(options: UseTreeOptions<T>): UseTree<T> {
     (position: GsTreeInsertPosition) => (target: GsTreeKey | null, inserted: GsTreeNode<T>[]) =>
       change(insertTreeNodes(nodes.value, target, inserted, position))
 
-  // Drag-and-drop reordering will call these move actions once a Vue DnD library is chosen.
   const move =
     (position: GsTreeInsertPosition) => (target: GsTreeKey | null, keys: Iterable<GsTreeKey>) =>
       change(moveTreeNodes(nodes.value, keys, target, position))
+  const applyMove = ({ keys, target, position }: GsTreeMove) => move(position)(target, keys)
 
   return {
     nodes,
@@ -154,6 +175,12 @@ export function useTree<T>(options: UseTreeOptions<T>): UseTree<T> {
     moveBefore: move('before'),
     moveAfter: move('after'),
     moveInto: move('into'),
+    applyMove,
+    moveStep: (key, direction) => {
+      const step = getTreeStepMove(nodes.value, key, direction)
+      if (step) applyMove(step)
+    },
+    canMoveStep: (key, direction) => getTreeStepMove(nodes.value, key, direction) !== undefined,
     remove: (keys) => change(removeTreeNodes(nodes.value, keys)),
     updateNode: (key, update) => change(updateTreeNode(nodes.value, key, update)),
   }

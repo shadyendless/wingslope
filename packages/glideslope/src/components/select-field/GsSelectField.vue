@@ -119,7 +119,7 @@ provideOptionsContext({ kind: 'select' })
       <SelectPortal>
         <SelectContent
           position="popper"
-          :side-offset="4"
+          :side-offset="8"
           :class="['group/options', optionStyles.list, styles.popover, classes?.popover]"
         >
           <SelectViewport>

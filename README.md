@@ -6,12 +6,13 @@ It reimplements the Accelint design system ([`standard-toolkit`](https://github.
 
 ## Packages
 
-| Package                                                     | What it is                                                               |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------ |
-| [`@wingbrace/glideslope-foundation`](./packages/foundation) | Tokens, Tailwind theme, variants and utilities. No framework dependency. |
-| [`@wingbrace/glideslope`](./packages/glideslope)            | Vue 3 components and composables                                         |
-| [`@wingbrace/glideslope-icons`](./packages/icons)           | 259 icons as Vue components                                              |
-| [`apps/playground`](./apps/playground)                      | A plain Vue SPA consuming the built packages, the way a real app would   |
+| Package                                                     | What it is                                                                                                                                                |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`@wingbrace/glideslope-foundation`](./packages/foundation) | Tokens, Tailwind theme, variants and utilities. No framework dependency.                                                                                  |
+| [`@wingbrace/glideslope`](./packages/glideslope)            | Vue 3 components and composables                                                                                                                          |
+| [`@wingbrace/glideslope-icons`](./packages/icons)           | 259 icons as Vue components                                                                                                                               |
+| [`@wingbrace/geo`](./packages/geo)                          | Coordinate parsing, formatting and conversion (DD, DDM, DMS, MGRS, UTM) and geodesy helpers. No framework dependency. Began as a copy of `@accelint/geo`. |
+| [`apps/playground`](./apps/playground)                      | A plain Vue SPA consuming the built packages, the way a real app would                                                                                    |
 
 ## Getting started
 

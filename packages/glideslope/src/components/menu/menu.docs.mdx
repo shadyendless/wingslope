@@ -82,12 +82,12 @@ Use `side` and `align` to customize the menu position relative to the trigger.
 
 ## With Offset
 
-Use `offset` to control spacing between the trigger and menu.
+Use `offset` to control spacing between the trigger and menu (8px by default).
 
 <Canvas of={MenuStories.WithOffset} />
 
 ```vue
-<GsMenu side="bottom" align="center" :offset="8">
+<GsMenu side="bottom" align="center" :offset="16">
   <template #trigger><GsButton>Open Menu</GsButton></template>
   <GsMenuItem label="Item" />
 </GsMenu>

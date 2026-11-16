@@ -1,0 +1,809 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as CoordinateFieldStories from './coordinate-field.stories'
+
+<Meta of={CoordinateFieldStories} />
+
+# CoordinateField
+
+`GsCoordinateField` is a coordinate input supporting multiple coordinate systems (DD, DDM, DMS, MGRS, UTM) with validation, format conversion and paste handling. It provides an interface for entering geographic coordinates in various formats, with automatic conversion and validation.
+
+Values are always in Decimal Degrees (DD), `{ lat, lon }`, while users enter and view coordinates in the coordinate system you choose with `format`.
+
+## Features
+
+- **Multiple coordinate systems** - DD, DDM, DMS, MGRS and UTM
+- **Segmented input** - Masked input with a separate segment for each part of the coordinate
+- **Validation** - Validates coordinates with the parsers of `@wingbrace/geo`
+- **Format conversion** - View and copy the coordinate in every supported system from a popover
+- **Paste handling** - Detects and parses pasted coordinates in any supported system
+- **Keyboard navigation** - Tab, arrow keys, Home and End move between segments
+- **Accessible** - Named segments, a labelled group, and descriptions and errors linked to it
+
+## When to use
+
+Use `GsCoordinateField` when you need:
+
+- Geographic coordinate input in forms or applications
+- Support for multiple coordinate systems
+- Validation of coordinate values against standard ranges and formats
+- Conversion between different coordinate representations
+- Coordinate entry with paste support
+- Accessible coordinate input for all users
+
+## Example usage
+
+```vue
+<script setup lang="ts">
+import { GsCoordinateField, type GsCoordinateValue } from '@wingbrace/glideslope'
+import { ref } from 'vue'
+
+const coordinates = ref<GsCoordinateValue | null>({ lat: 40.7128, lon: -74.006 })
+</script>
+
+<template>
+  <!-- Basic usage -->
+  <GsCoordinateField
+    label="Location"
+    description="Enter a coordinate in Decimal Degrees"
+    format="dd"
+  />
+
+  <!-- With a default value -->
+  <GsCoordinateField
+    label="Target Position"
+    format="ddm"
+    :default-value="{ lat: 40.7128, lon: -74.006 }"
+    @update:model-value="(value) => console.log('Coordinate:', value)"
+  />
+
+  <!-- With v-model -->
+  <GsCoordinateField v-model="coordinates" label="Current Location" format="dms" required />
+</template>
+```
+
+## Supported coordinate systems
+
+### Decimal Degrees (DD)
+
+The simplest and most common coordinate format, using decimal values for latitude and longitude.
+
+**Format:** `latitude, longitude`
+**Example:** `40.7128, -74.0060` (New York City)
+**Range:** Latitude: -90 to 90, Longitude: -180 to 180
+**Precision:** Up to 6-8 decimal places for sub-meter accuracy
+
+**When to use DD:**
+
+- General purpose applications and mapping tools
+- GPS devices and mobile applications
+- Simple data storage and exchange
+- When precision to 5-6 decimal places is sufficient
+- Integration with most modern mapping APIs
+
+<Canvas of={CoordinateFieldStories.DecimalDegrees} />
+
+### Degrees Decimal Minutes (DDM)
+
+A hybrid format commonly used in navigation and aviation, combining whole degrees with decimal minutes.
+
+**Format:** `DD° MM.MMMM' N/S, DD° MM.MMMM' E/W`
+**Example:** `40° 42.768' N, 74° 0.360' W` (New York City)
+**Range:** Degrees: 0-90 (lat) or 0-180 (lon), Minutes: 0-59.9999
+**Precision:** Decimal minutes provide meter-level accuracy
+
+**When to use DDM:**
+
+- Navigation applications (marine, aviation)
+- Aviation charts and marine navigation
+- When you need a balance between precision and readability
+- Professional navigation and surveying contexts
+
+<Canvas of={CoordinateFieldStories.DegreesDecimalMinutes} />
+
+### Degrees Minutes Seconds (DMS)
+
+Traditional format used in surveying, cartography and historical mapping, dividing degrees into minutes and seconds.
+
+**Format:** `DD° MM' SS.SS" N/S, DD° MM' SS.SS" E/W`
+**Example:** `40° 42' 46.08" N, 74° 0' 21.60" W` (New York City)
+**Range:** Degrees: 0-90 (lat) or 0-180 (lon), Minutes: 0-59, Seconds: 0-59.99
+**Precision:** Seconds with decimals provide high accuracy
+
+**When to use DMS:**
+
+- Surveying and mapping applications
+- Historical data that uses DMS format
+- Traditional cartography and land records
+- When compatibility with paper maps is needed
+- Educational contexts teaching coordinate systems
+
+<Canvas of={CoordinateFieldStories.DegreesMinutesSeconds} />
+
+### MGRS (Military Grid Reference System)
+
+A grid-based coordinate system used by NATO militaries, dividing the Earth into grid zones with alphanumeric identifiers.
+
+**Format:** `ZZ[A-Z] [A-Z][A-Z] EEEEE NNNNN`
+**Example:** `18T WL 80654 06346` (New York City)
+**Components:**
+
+- Grid Zone Designator (e.g., 18T)
+- 100km Square ID (e.g., WL)
+- Easting (5 digits)
+- Northing (5 digits)
+
+**When to use MGRS:**
+
+- Military applications and operations
+- Search and rescue operations
+- Emergency response coordination
+- When grid-based references are preferred
+- NATO and allied military communications
+
+<Canvas of={CoordinateFieldStories.MGRS} />
+
+### UTM (Universal Transverse Mercator)
+
+A metric grid system dividing the world into 60 zones, commonly used in scientific research and GIS applications.
+
+**Format:** `ZZ[N/S] EEEEEE NNNNNNN`
+**Example:** `18N 585628 4511644` (New York City)
+**Components:**
+
+- Zone number (1-60)
+- Hemisphere (N or S)
+- Easting (6-7 digits in meters)
+- Northing (7 digits in meters)
+
+**When to use UTM:**
+
+- Scientific research and GIS applications
+- Engineering and construction projects
+- When metric measurements are required
+- Working within specific UTM zones
+- Cartographic applications requiring planar coordinates
+
+<Canvas of={CoordinateFieldStories.UTM} />
+
+## Sizes
+
+`GsCoordinateField` supports two sizes:
+
+- **medium** - Standard size with label and description (default)
+- **small** - Compact size with minimal footprint: no visible label or description. The label becomes the group's `aria-label`.
+
+Both sizes show the format conversion button unless `show-format-button` is `false`. Use **medium** for most use cases, and **small** in dense layouts, data tables, or when space is constrained.
+
+<Canvas of={CoordinateFieldStories.Default} />
+
+## Layout variants
+
+`GsCoordinateField` supports two layout variants:
+
+- **inline** - All coordinate segments are displayed in a single horizontal row (default)
+- **stacked** - Coordinate segments are split into separate rows, with latitude on the first row and longitude on the second row
+
+The **inline** variant is recommended for most use cases as it provides a compact, single-line layout. Use the **stacked** variant when vertical space is available and you want to clearly separate latitude and longitude components, or when working with longer coordinate formats like DMS or DDM where horizontal space is limited.
+
+<Canvas of={CoordinateFieldStories.StackedVariant} />
+
+## Core features
+
+### Segmented input
+
+Each logical part of the coordinate is a separate editable segment. This provides:
+
+- **Clear structure** - Visual separation of coordinate components
+- **Masked input** - Literal separators (°, ', ", commas) are already in place
+- **Auto-advance** - Focus moves to the next segment when the current one is full
+- **Character filtering** - Each segment only accepts valid characters for its type
+
+Segments by coordinate system:
+
+- **DD**: 2 segments (latitude, longitude)
+- **DDM**: 6 segments (lat degrees, lat minutes, lat direction, lon degrees, lon minutes, lon direction)
+- **DMS**: 8 segments (lat degrees, lat minutes, lat seconds, lat direction, lon degrees, lon minutes, lon seconds, lon direction)
+- **MGRS**: 5 segments (zone, band, grid square, easting, northing)
+- **UTM**: 4 segments (zone, hemisphere, easting, northing)
+
+### Format conversion popover
+
+The format conversion popover displays the current coordinate in all 5 supported systems with one-click copy.
+
+**Features:**
+
+- Click the globe icon button to open the popover
+- View the coordinate in DD, DDM, DMS, MGRS and UTM at once
+- Each row shows the format label (e.g., "DD", "DDM"), the formatted coordinate and a copy button
+- Copy any format to the clipboard with a single click
+- Visual feedback (checkmark icon) when copying succeeds
+- Only enabled when a valid coordinate is entered
+
+**Note:** The popover displays format labels and values only. For detailed explanations of each coordinate system and when to use them, see [Supported coordinate systems](#supported-coordinate-systems) above.
+
+**MGRS/UTM range:** MGRS and UTM are defined only from 80°S to 84°N (inclusive). Outside that band the MGRS and UTM rows show `"Not available at poles"` and their copy button is disabled; DD, DDM and DMS remain available at all latitudes.
+
+<Canvas of={CoordinateFieldStories.FormatPopoverDemo} />
+
+### Paste handling
+
+`GsCoordinateField` handles pasted coordinates in any supported system:
+
+1. **Paste any format** - Paste coordinates in DD, DDM, DMS, MGRS or UTM into any segment
+2. **Auto-detection** - The field detects which system was pasted
+3. **Auto-conversion** - The pasted value is converted to the current display format
+4. **Disambiguation** - If the text matches different locations in different systems, a dialog asks which one was meant
+
+**Example pasting behavior:**
+
+- Paste `"40.7128, -74.0060"` into a DDM field → Converts to `40° 42.768' N, 74° 0.360' W`
+- Paste `"18T WL 80654 06346"` into a DD field → Converts to decimal degrees
+- Paste an ambiguous value → Shows a dialog to select the intended format
+
+A single value such as `42` is pasted into the segment as usual.
+
+<Canvas of={CoordinateFieldStories.PasteHandling} />
+
+### Paste error handling
+
+When an invalid coordinate is pasted, the field emits `error`, so you can handle it as needed:
+
+```vue
+<GsCoordinateField
+  label="Location"
+  format="dd"
+  @error="
+    (message, context) => {
+      // Display the error to the user
+      errorMessage = message
+      // Or log it for debugging
+      console.error('Paste failed:', message, context)
+    }
+  "
+/>
+```
+
+**Important:** Paste errors are **not displayed automatically**. You control how and when to show them: the `error` event provides the message and context, and displaying it is up to you.
+
+**Common paste errors:**
+
+- `"Invalid coordinate format"` - The pasted text couldn't be parsed as any supported coordinate system
+- The context includes the `pastedText` for debugging
+
+**Example implementation with error display:**
+
+```vue
+<script setup lang="ts">
+import type { GsCoordinateValue } from '@wingbrace/glideslope'
+import { ref } from 'vue'
+
+const value = ref<GsCoordinateValue | null>(null)
+const error = ref('')
+
+function onChange(newValue: GsCoordinateValue | null) {
+  value.value = newValue
+  // Clear the error when valid input is provided
+  if (newValue) error.value = ''
+}
+</script>
+
+<template>
+  <GsCoordinateField
+    label="Coordinates"
+    :model-value="value"
+    :invalid="!!error"
+    :error-message="error"
+    @update:model-value="onChange"
+    @error="(message) => (error = message)"
+  />
+</template>
+```
+
+<Canvas of={CoordinateFieldStories.PasteHandling} />
+
+### Validation
+
+Validation uses the coordinate parsers of `@wingbrace/geo`:
+
+- **Range validation** - Latitude must be -90 to 90, longitude must be -180 to 180
+- **Format-specific validation** - Minutes must be 0-59, seconds must be 0-59, etc.
+- **Complete coordinate validation** - Only validates when all segments are filled (after a short pause, or when a segment loses focus)
+- **Error message** - An invalid coordinate shows "Invalid coordinate value" and emits `error` with the parser's errors
+- **null when invalid** - `v-model` is `null` while the coordinate is invalid or incomplete
+
+<Canvas of={CoordinateFieldStories.ValidationDemo} />
+
+### Keyboard navigation
+
+Full keyboard access for efficient data entry:
+
+- **Tab / Shift+Tab** - Move forward/backward between segments
+- **Arrow Left / Right** - Move between segments at the start or end of a segment
+- **Home** - Jump to the first segment
+- **End** - Jump to the last segment
+- **Backspace** - Delete a character, or move to the previous segment when the current one is empty (auto-retreat)
+- **Delete** - Delete the character at the cursor
+- **Auto-advance** - Move to the next segment when the current one is full
+- **Character filtering** - Invalid characters are rejected. Each segment accepts specific characters (e.g., DD segments accept `[0-9\-\.]`, direction segments `[NS]` or `[EW]`)
+
+## Props
+
+<ArgTypes of={CoordinateFieldStories} />
+
+**`classes`:**
+
+| Key            | Description                                   |
+| -------------- | --------------------------------------------- |
+| `label`        | The label                                     |
+| `control`      | The outlined box (segments and format button) |
+| `input`        | The container of the segments                 |
+| `segment`      | Each segment                                  |
+| `formatButton` | The format conversion button                  |
+| `description`  | The help text                                 |
+| `error`        | The error message                             |
+
+Classes on `GsCoordinateField` itself go on the field wrapper. Other attributes (`id`, `aria-*`, `data-*`) go on the segment group.
+
+**Forms:** with a `name`, the value (`{ lat, lon }` or `null`) is submitted by a Reka UI `FormRoot`, which also checks `required` and `validate` (see [Form integration](#form-integration)). The field has no single native input, so a native `<form>` doesn't submit it; read the value from `v-model` instead.
+
+### Shared defaults
+
+`provideCoordinateFieldDefaults()` sets defaults (`format`, `size`, `variant`, `show-format-button`, `format-button-tooltip`, `disabled`, `required`, `readonly`, `validation-mode`, `classes`) for every coordinate field below the calling component. A prop set on a field still wins.
+
+```vue
+<script setup lang="ts">
+import { provideCoordinateFieldDefaults } from '@wingbrace/glideslope'
+
+provideCoordinateFieldDefaults({ format: 'dms', size: 'small' })
+</script>
+
+<template>
+  <GsCoordinateField label="Start" />
+  <GsCoordinateField label="End" />
+</template>
+```
+
+<Canvas of={CoordinateFieldStories.SharedDefaults} />
+
+## Types
+
+```ts
+type GsCoordinateSystem = 'dd' | 'ddm' | 'dms' | 'mgrs' | 'utm'
+
+interface GsCoordinateValue {
+  lat: number // Latitude in decimal degrees (-90 to 90)
+  lon: number // Longitude in decimal degrees (-180 to 180)
+}
+```
+
+### Important type notes
+
+- **Value format**: `v-model`, `default-value` and `update:modelValue` always use Decimal Degrees (DD)
+- **Display format**: The `format` prop only controls how the coordinate is displayed to the user
+- **Validation**: `v-model` becomes `null` when the coordinate is invalid or incomplete
+- **Auto-conversion**: When `format` changes, the field converts the value to the new display format
+
+### Composables and utilities
+
+The field is built from composables you can use for a custom coordinate input: `useCoordinateField` combines `useCoordinateFieldState` (segments, validation and the value), `useCoordinateFocus` (moving between segments), `useCoordinatePaste` (paste detection and disambiguation), `useCoordinateCopy` (copying a format) and `useTimeoutCleanup`. The conversion helpers (`convertDDToDisplaySegments`, `convertDisplaySegmentsToDD`, `getAllCoordinateFormats`, `parseCoordinatePaste`, …) and segment configurations (`getSegmentConfigs`, `getSegmentLabel`, …) are exported too.
+
+## Examples
+
+### Basic usage
+
+The simplest way to use `GsCoordinateField` is with `default-value`, without `v-model`:
+
+```vue
+<script setup lang="ts">
+import type { GsCoordinateValue } from '@wingbrace/glideslope'
+
+function onChange(value: GsCoordinateValue | null) {
+  // value is always in DD format: { lat: number, lon: number }
+  console.log('Coordinate:', value)
+}
+</script>
+
+<template>
+  <GsCoordinateField
+    label="Location"
+    description="Enter a coordinate in Decimal Degrees"
+    format="dd"
+    :default-value="{ lat: 40.7128, lon: -74.006 }"
+    @update:model-value="onChange"
+  />
+</template>
+```
+
+<Canvas of={CoordinateFieldStories.WithInitialValue} />
+
+### Controlled component
+
+For more control over the value, bind `v-model`:
+
+```vue
+<script setup lang="ts">
+import type { GsCoordinateValue } from '@wingbrace/glideslope'
+import { ref } from 'vue'
+
+const location = ref<GsCoordinateValue | null>({ lat: 40.7128, lon: -74.006 })
+</script>
+
+<template>
+  <GsCoordinateField v-model="location" label="Location" format="dd" />
+</template>
+```
+
+<Canvas of={CoordinateFieldStories.Controlled} />
+
+### Different formats
+
+The field supports 5 coordinate systems. The value is always DD, but the display can be in any system:
+
+```vue
+<!-- Displayed in DDM; v-model is still DD: { lat: 40.7128, lon: -74.006 } -->
+<GsCoordinateField v-model="location" label="Location (DDM)" format="ddm" />
+```
+
+<Canvas of={CoordinateFieldStories.AllFormats} />
+
+### With validation
+
+The field validates coordinates with `@wingbrace/geo`:
+
+```vue
+<script setup lang="ts">
+import type { GsCoordinateValue } from '@wingbrace/glideslope'
+import { ref } from 'vue'
+
+const error = ref('')
+
+function onChange(value: GsCoordinateValue | null) {
+  if (value === null) {
+    // Invalid or incomplete coordinate
+    error.value = 'Please enter a valid coordinate'
+  } else {
+    // Valid coordinate
+    error.value = ''
+    console.log('Valid coordinate:', value)
+  }
+}
+</script>
+
+<template>
+  <GsCoordinateField
+    label="Location"
+    description="Enter a valid coordinate"
+    format="dd"
+    required
+    :error-message="error"
+    @update:model-value="onChange"
+  />
+</template>
+```
+
+<Canvas of={CoordinateFieldStories.ValidationDemo} />
+
+### With error monitoring
+
+Use the `error` event to monitor errors during validation or paste parsing:
+
+```vue
+<GsCoordinateField
+  v-model="coordinate"
+  label="Location"
+  format="dd"
+  @error="
+    (message, context) => {
+      // Log errors for debugging or monitoring
+      console.error('CoordinateField error:', message, context)
+      // Optional: send to an error tracking service
+    }
+  "
+/>
+```
+
+**Note:** `error` reports what went wrong and why. For form validation, use `v-model`, which is `null` for invalid coordinates, or `required` / `validate`.
+
+### Form integration
+
+Integrating `GsCoordinateField` into a Reka UI `FormRoot`, which validates on submit and passes the named values to `@form-submit`:
+
+```vue
+<script setup lang="ts">
+import type { GsCoordinateValue } from '@wingbrace/glideslope'
+import { FormRoot } from 'reka-ui'
+import { ref } from 'vue'
+
+const name = ref('')
+const coordinates = ref<GsCoordinateValue | null>(null)
+
+function onSubmit(values: Record<string, unknown>) {
+  // { name: '…', coordinates: { lat, lon } }
+  console.log('Submitting:', values)
+}
+</script>
+
+<template>
+  <FormRoot @form-submit="onSubmit">
+    <GsTextField v-model="name" name="name" label="Location name" required />
+    <GsCoordinateField
+      v-model="coordinates"
+      name="coordinates"
+      label="Coordinates"
+      format="dd"
+      required
+      :validate="(value) => (value ? undefined : 'Enter the coordinates')"
+    />
+    <GsButton type="submit">Save Location</GsButton>
+  </FormRoot>
+</template>
+```
+
+<Canvas of={CoordinateFieldStories.FormIntegration} />
+
+### Small size
+
+Use the small size for compact layouts:
+
+```vue
+<GsCoordinateField
+  label="Location"
+  size="small"
+  format="dd"
+  :default-value="{ lat: 40.7128, lon: -74.006 }"
+/>
+```
+
+<Canvas of={CoordinateFieldStories.SmallSize} />
+
+### Disabled state
+
+```vue
+<GsCoordinateField
+  label="Read-only Location"
+  format="dd"
+  :model-value="{ lat: 40.7128, lon: -74.006 }"
+  disabled
+/>
+```
+
+<Canvas of={CoordinateFieldStories.Disabled} />
+
+### Required field
+
+```vue
+<GsCoordinateField
+  label="Target Coordinates"
+  description="This field is required"
+  format="dd"
+  required
+/>
+```
+
+<Canvas of={CoordinateFieldStories.Required} />
+
+### Readonly value
+
+Allowing the field to be readonly:
+
+```vue
+<GsCoordinateField readonly :model-value="{ lat: 23.2425, lon: 12.16112 }" />
+```
+
+<Canvas of={CoordinateFieldStories.Readonly} />
+
+### Custom icon
+
+Customize the format button icon with the `icon` slot:
+
+```vue
+<script setup lang="ts">
+import CopyToClipboardIcon from '@wingbrace/glideslope-icons/copy-to-clipboard'
+import StarIcon from '@wingbrace/glideslope-icons/star'
+</script>
+
+<template>
+  <!-- A different icon from @wingbrace/glideslope-icons -->
+  <GsCoordinateField label="Location" format="dd">
+    <template #icon><CopyToClipboardIcon /></template>
+  </GsCoordinateField>
+
+  <!-- Or any other icon component -->
+  <GsCoordinateField label="Location" format="dd">
+    <template #icon><StarIcon /></template>
+  </GsCoordinateField>
+</template>
+```
+
+The `icon` slot takes any icon from `@wingbrace/glideslope-icons` or your own SVG. The default icon is `GlobalShareIcon`.
+
+<Canvas of={CoordinateFieldStories.CustomIcon} />
+
+## Best practices
+
+### Choosing a format
+
+Select the coordinate format that fits your use case:
+
+- Use **DD** for general purpose applications, web mapping, GPS data and modern APIs
+- Use **DDM** for navigation applications, aviation and marine charts
+- Use **DMS** for surveying, traditional cartography and historical data
+- Use **MGRS** for military applications and search and rescue operations
+- Use **UTM** for scientific research, GIS applications and metric-based measurements
+
+### Validation handling
+
+Always handle `null` for invalid or incomplete coordinates:
+
+```vue
+<script setup lang="ts">
+import type { GsCoordinateValue } from '@wingbrace/glideslope'
+
+function onChange(value: GsCoordinateValue | null) {
+  if (value === null) {
+    // Handle an invalid coordinate
+    error.value = 'Please enter a valid coordinate'
+    canSubmit.value = false
+  } else {
+    // Handle a valid coordinate
+    error.value = ''
+    canSubmit.value = true
+    saveCoordinate(value)
+  }
+}
+</script>
+```
+
+### Size selection
+
+- Use **medium** when the field is a primary input with full context
+- Use **small** in compact layouts, data tables or repeated forms
+
+### Layout variant selection
+
+- Use **inline** for compact, single-line layouts and when horizontal space is available
+- Use **stacked** when vertical space is preferred, to clearly separate latitude and longitude, or for longer coordinate formats (DDM, DMS) where horizontal space is constrained
+- The stacked variant is particularly useful in narrow containers or mobile layouts
+
+### Performance considerations
+
+- Use `default-value` without `v-model` when you only need to react to changes (`@update:model-value`)
+- Use `v-model` when you need to validate or transform the value externally
+- The field validates only when all segments are filled, avoiding unnecessary validation while typing
+
+### User experience
+
+- Provide clear `description` text with format examples to guide users
+- Use the format popover to help users understand how their coordinate appears in other systems
+- Let users paste coordinates in any system - the field handles conversion
+- Mark fields as `required` when applicable to set user expectations
+
+## Accessibility
+
+### Keyboard navigation
+
+All functionality is accessible from the keyboard:
+
+- **Tab order** follows the segments in order
+- **Arrow keys** move between segments
+- **Home/End** jump to the first/last segment
+- The segments, format button, popover and disambiguation dialog are all keyboard accessible
+- No keyboard traps
+
+### Screen reader support
+
+- **Segment names** describe each part (e.g., "Latitude", "Latitude degrees", "Longitude minutes", "MGRS zone")
+- **The segments form a group** named by the field's label (or `aria-label` at small size), and described by its description and error message
+- **Format button** has a descriptive `aria-label`, and each copy button names its format
+- **The disambiguation dialog** is a modal dialog named by its title
+- **Required** segments have `aria-required`, and an invalid field's group has `aria-invalid`
+
+### Focus management
+
+- **Clear focus indicators** on the focused segment
+- **Focus moves** to the next segment during auto-advance, and to the first segment after a paste
+- **Clicking the label** focuses the first segment
+- **Focus returns** after the popover and dialog close
+
+### Color and contrast
+
+- **Error states** don't rely on color alone: the error message is shown as text
+- **Disabled state** is indicated visually and on the segments
+
+## Troubleshooting
+
+### Pasted coordinate not recognized
+
+**Problem:** When pasting a coordinate, you get an error that it's not a valid format.
+
+**Solutions:**
+
+- Ensure the pasted text is a complete coordinate, not a single value
+- Check that the format matches one of the 5 supported systems (DD, DDM, DMS, MGRS, UTM)
+- Remove any extra text or formatting around the coordinate
+- Try pasting just the coordinate values without labels or descriptions
+
+### Value not updating
+
+**Problem:** The coordinate value doesn't update when you change segments.
+
+**Solutions:**
+
+- With `:model-value`, update it from `@update:model-value` (or use `v-model`)
+- Check that the value is in DD format: `{ lat: number, lon: number }`
+- Verify latitude is between -90 and 90
+- Verify longitude is between -180 and 180
+- Listen to `error` to see validation errors
+
+### Validation errors not showing
+
+**Problem:** Expected validation errors are not displayed.
+
+**Solutions:**
+
+- Check that all segments are filled - validation only runs when the coordinate is complete
+- Ensure `error-message` is set if you use external validation
+- Listen to `error` for the parser's messages
+- Verify `invalid` is set when you expect an external error to show
+
+### Format popover not showing
+
+**Problem:** The format conversion button is not visible or clickable.
+
+**Solutions:**
+
+- Check that `show-format-button` isn't `false`
+- Ensure a valid coordinate is entered - the button is disabled for invalid coordinates
+- Check that `disabled` isn't set
+- Try filling all segments completely
+
+### Keyboard navigation not working
+
+**Problem:** Tab or arrow keys don't move between segments as expected.
+
+**Solutions:**
+
+- Ensure the field has focus - click into a segment first
+- Check that `disabled` isn't set, and that the field isn't `readonly` (read-only segments are skipped by Tab)
+- Press Tab to move focus into the field
+
+### Wrong format interpretation after paste
+
+**Problem:** A pasted coordinate is interpreted as the wrong format.
+
+**Solutions:**
+
+- If the disambiguation dialog appears, select the correct format
+- Ensure the pasted coordinate matches the standard format exactly
+- Try adding more specific formatting (e.g., include degree symbols for DMS)
+- Enter the coordinate manually if detection continues to fail
+
+## Implementation notes
+
+`GsCoordinateField` is a Glideslope field: Reka UI's `FieldRoot` provides the label, description, error and validation wiring, and the segments are native inputs in a `role="group"` container. It uses `@wingbrace/geo` for coordinate parsing, validation and conversion.
+
+- **Segmented input** - Segment inputs with navigation between them
+- **Standard validation** - The `@wingbrace/geo` parsers for all 5 coordinate systems
+- **Paste detection** - Tries every parser to identify the pasted coordinate system
+- **Automatic conversion** - Converts between DD (the value) and the display format
+- **Disambiguation dialog** - Lets the user choose when the pasted text matches different locations
+- **Keyboard support** - Navigation with auto-advance and auto-retreat
+
+**Related:**
+
+- [DateField](?path=/docs/components-datefield--docs)
+- [TextField](?path=/docs/components-textfield--docs)
+- [Reka UI Field](https://reka-ui.com/docs/components/field)
+
+## Interactive examples
+
+The CoordinateField stories include:
+
+- All coordinate format examples (DD, DDM, DMS, MGRS, UTM)
+- Validation and error state demonstrations
+- Paste handling examples
+- Format conversion popover demo
+- `v-model` and `default-value` patterns
+- Form integration
+- Size variants and styling options

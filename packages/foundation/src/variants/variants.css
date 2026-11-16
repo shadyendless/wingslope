@@ -51,8 +51,8 @@
 @custom-variant focus-visible (&:where(:focus-visible));
 @custom-variant active (&:where(:active));
 @custom-variant highlighted (&:where([data-highlighted]));
-@custom-variant checked (&:where(:checked, [data-state="checked"]));
-@custom-variant indeterminate (&:where(:indeterminate, [data-state="indeterminate"]));
+@custom-variant checked (&:where(:checked, [data-state="checked"], [aria-checked="true"]));
+@custom-variant indeterminate (&:where(:indeterminate, [data-state="indeterminate"], [aria-checked="mixed"]));
 @custom-variant selected (&:where(:checked, [data-state="checked"], [data-state="on"], [data-state="active"], [data-selected], [aria-selected="true"], [aria-pressed="true"]));
 @custom-variant disabled (&:where(:disabled, [data-disabled], [aria-disabled="true"]));
 @custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));

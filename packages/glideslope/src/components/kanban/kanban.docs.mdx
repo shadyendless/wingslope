@@ -1,0 +1,429 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as KanbanStories from './kanban.stories'
+import GsKanbanCard from './GsKanbanCard.vue'
+import GsKanbanCardBody from './GsKanbanCardBody.vue'
+import GsKanbanCardHeader from './GsKanbanCardHeader.vue'
+import GsKanbanCardHeaderActions from './GsKanbanCardHeaderActions.vue'
+import GsKanbanCardHeaderTitle from './GsKanbanCardHeaderTitle.vue'
+import GsKanbanCardMoveMenu from './GsKanbanCardMoveMenu.vue'
+import GsKanbanColumn from './GsKanbanColumn.vue'
+import GsKanbanColumnActions from './GsKanbanColumnActions.vue'
+import GsKanbanColumnContainer from './GsKanbanColumnContainer.vue'
+import GsKanbanColumnContent from './GsKanbanColumnContent.vue'
+import GsKanbanColumnHeader from './GsKanbanColumnHeader.vue'
+import GsKanbanColumnHeaderActions from './GsKanbanColumnHeaderActions.vue'
+import GsKanbanColumnHeaderDragHandle from './GsKanbanColumnHeaderDragHandle.vue'
+import GsKanbanColumnHeaderTitle from './GsKanbanColumnHeaderTitle.vue'
+import GsKanbanHeader from './GsKanbanHeader.vue'
+import GsKanbanHeaderActions from './GsKanbanHeaderActions.vue'
+import GsKanbanHeaderSearch from './GsKanbanHeaderSearch.vue'
+import GsKanbanHeaderTitle from './GsKanbanHeaderTitle.vue'
+
+<Meta of={KanbanStories} />
+
+# Kanban
+
+The Kanban component provides a flexible, drag-and-drop board for organizing tasks and workflows. It's ideal for project management, task tracking, agile workflows, and any scenario where you need to visualize items moving through different states or columns.
+
+Built on [dnd-kit](https://dndkit.com), `GsKanban` lets users drag cards within and between columns, with a pointer or the keyboard, with visual feedback for where a card will land. It runs only in the browser.
+
+It is composed of the following components:
+
+- **GsKanban** – Root container that holds the board's columns (`v-model:columns`) and its drag-and-drop
+- **GsKanbanHeader** – Optional header for the board containing title, search, and actions
+- **GsKanbanHeaderTitle** – Heading element for the board title
+- **GsKanbanHeaderActions** – Container for header action buttons
+- **GsKanbanHeaderSearch** – Search field for filtering cards
+- **GsKanbanColumnContainer** – Container that holds all columns
+- **GsKanbanColumn** – Individual column that contains cards
+- **GsKanbanColumnHeader** – Header section of a column
+- **GsKanbanColumnHeaderTitle** – Title of the column
+- **GsKanbanColumnHeaderActions** – Container for column actions (includes card count)
+- **GsKanbanColumnHeaderDragHandle** – Visual grip for a column's header
+- **GsKanbanColumnContent** – Container for cards within a column
+- **GsKanbanColumnActions** – Action button for adding new cards
+- **GsKanbanCard** – Individual draggable card component
+- **GsKanbanCardHeader** – Header section of a card
+- **GsKanbanCardHeaderTitle** – Title of the card
+- **GsKanbanCardHeaderActions** – Container for card action buttons
+- **GsKanbanCardBody** – Main content area of the card
+- **GsKanbanCardMoveMenu** – Menu that moves a card without dragging
+
+## Getting Started
+
+### State: v-model:columns
+
+`GsKanban` holds the board's columns and cards in `v-model:columns`. When a card is dropped, it replaces the columns with the card moved, so bind a ref and render the columns from it. Components inside the board reach the same state, and `moveCard`, with `useKanban()`.
+
+```vue
+<script setup lang="ts">
+import type { GsKanbanColumnData } from '@wingbrace/glideslope'
+import { ref } from 'vue'
+
+const columns = ref<GsKanbanColumnData[]>(initialColumns)
+</script>
+
+<template>
+  <GsKanban v-model:columns="columns">
+    <!-- Your Kanban components here -->
+  </GsKanban>
+</template>
+```
+
+### Data Structure
+
+The Kanban component expects data in the following format:
+
+```ts
+interface GsKanbanColumnData {
+  id: string // Unique identifier for the column
+  title: string // Column display name
+  cards: GsKanbanCardData[]
+  canDrop?: boolean // Optional: set to false to refuse cards
+}
+
+interface GsKanbanCardData {
+  id: string // Unique identifier for the card, across all columns
+  title: string // Card display title, and its accessible name
+  body: string // Card content
+  columnId: string // ID of the column this card belongs to
+  position: number // Position within the column (0-indexed)
+  active?: boolean // Optional: whether the card is the current one
+}
+```
+
+A move updates the cards' `columnId` and `position` and keeps their other properties, so cards can carry data of your own.
+
+## Example Usage
+
+### Basic Kanban Board
+
+```vue
+<script setup lang="ts">
+import type { GsKanbanColumnData } from '@wingbrace/glideslope'
+import { ref } from 'vue'
+
+const columns = ref<GsKanbanColumnData[]>([
+  {
+    id: 'todo',
+    title: 'To Do',
+    cards: [
+      {
+        id: 'card-1',
+        title: 'Task 1',
+        body: 'Description of task 1',
+        columnId: 'todo',
+        position: 0,
+      },
+    ],
+  },
+  { id: 'in-progress', title: 'In Progress', cards: [] },
+  { id: 'done', title: 'Done', cards: [] },
+])
+</script>
+
+<template>
+  <GsKanban v-model:columns="columns">
+    <GsKanbanHeader>
+      <GsKanbanHeaderTitle>Project Board</GsKanbanHeaderTitle>
+    </GsKanbanHeader>
+
+    <GsKanbanColumnContainer>
+      <GsKanbanColumn v-for="column in columns" :key="column.id" :column="column">
+        <GsKanbanColumnHeader>
+          <GsKanbanColumnHeaderTitle>
+            <GsKanbanColumnHeaderDragHandle />
+            {{ column.title }}
+          </GsKanbanColumnHeaderTitle>
+          <GsKanbanColumnHeaderActions :card-count="column.cards.length" />
+        </GsKanbanColumnHeader>
+
+        <GsKanbanColumnContent :column="column">
+          <GsKanbanCard v-for="card in column.cards" :key="card.id" :card="card">
+            <GsKanbanCardHeader>
+              <GsKanbanCardHeaderTitle>{{ card.title }}</GsKanbanCardHeaderTitle>
+            </GsKanbanCardHeader>
+            <GsKanbanCardBody>{{ card.body }}</GsKanbanCardBody>
+          </GsKanbanCard>
+        </GsKanbanColumnContent>
+
+        <GsKanbanColumnActions @add-card="addCard(column.id)" />
+      </GsKanbanColumn>
+    </GsKanbanColumnContainer>
+  </GsKanban>
+</template>
+```
+
+<Canvas of={KanbanStories.Default} />
+
+### With Search and Actions
+
+Filter the cards you render, not the columns you bind: pass `GsKanbanColumnContent` the filtered column, so a dragged card lands between the cards that are shown.
+
+```vue
+<script setup lang="ts">
+const search = ref('')
+const filteredColumns = computed(() =>
+  columns.value.map((column) => ({
+    ...column,
+    cards: column.cards.filter((card) => card.title.toLowerCase().includes(search.value)),
+  })),
+)
+</script>
+
+<template>
+  <GsKanban v-model:columns="columns">
+    <GsKanbanHeader>
+      <GsKanbanHeaderTitle>My Project</GsKanbanHeaderTitle>
+      <GsKanbanHeaderActions>
+        <GsKanbanHeaderSearch v-model="search" placeholder="Search cards..." />
+        <GsButton @click="addColumn">Add Column</GsButton>
+      </GsKanbanHeaderActions>
+    </GsKanbanHeader>
+
+    <GsKanbanColumnContainer>
+      <GsKanbanColumn v-for="column in filteredColumns" :key="column.id" :column="column">
+        <!-- Header, and GsKanbanColumnContent with :column="column" -->
+      </GsKanbanColumn>
+    </GsKanbanColumnContainer>
+  </GsKanban>
+</template>
+```
+
+<Canvas of={KanbanStories.CompleteExample} />
+
+### Custom Card Content
+
+Cards can contain any content in the body:
+
+```vue
+<GsKanbanCard :card="card">
+  <GsKanbanCardHeader>
+    <GsKanbanCardHeaderTitle>{{ card.title }}</GsKanbanCardHeaderTitle>
+    <GsKanbanCardHeaderActions>
+      <GsMenu>
+        <template #trigger>
+          <GsButton variant="icon" :aria-label="`Actions for ${card.title}`">
+            <GsIcon size="small"><KebabIcon /></GsIcon>
+          </GsButton>
+        </template>
+        <GsMenuItem label="Edit" @select="edit(card.id)" />
+        <GsMenuItem label="Delete" @select="remove(card.id)" />
+      </GsMenu>
+    </GsKanbanCardHeaderActions>
+  </GsKanbanCardHeader>
+
+  <GsKanbanCardBody>
+    <div class="flex flex-col gap-s">
+      <p>{{ card.description }}</p>
+      <div class="flex gap-s">
+        <GsBadge>{{ card.priority }}</GsBadge>
+        <GsBadge>{{ card.assignee }}</GsBadge>
+      </div>
+    </div>
+  </GsKanbanCardBody>
+</GsKanbanCard>
+```
+
+Pressing buttons inside a card doesn't start a drag.
+
+<Canvas of={KanbanStories.CompleteExample} />
+
+## Drag and Drop Behavior
+
+### Card Dragging
+
+- Cards can be dragged within the same column to reorder
+- Cards can be dragged between columns to move them to different states
+- Visual indicators show where the card will be dropped
+- A preview of the card follows the cursor during dragging
+- A card dropped on a column outside its cards goes to the end of that column, which is how cards get into an empty column
+- A column with `canDrop: false` takes no cards, and other columns are outlined as possible targets while a card is dragged
+
+### Column Dragging
+
+Columns can't be reordered by dragging. `GsKanbanColumnHeaderDragHandle` is a decorative grip, as in the Design Toolkit, which doesn't reorder columns either.
+
+### Position Indicators
+
+- **The dragged card's place**: while a card is dragged, it moves through the lists itself and shows as a dashed outline where it will land
+- **Column outline**: the column the card is over is outlined in the accent color
+- **Preview**: a copy of the card, in the current card's colors, follows the pointer
+
+### Moving cards without dragging
+
+Dragging takes a pointer path or a keyboard sequence that not everyone can perform, so offer the same moves as single actions too. `GsKanbanCardMoveMenu` is a menu button for a card's header actions: it moves the card up or down among the cards its column shows, or to the end of another column, and keeps the focus on the card afterwards.
+
+```vue
+<GsKanbanCardHeader>
+  <GsKanbanCardHeaderTitle>{{ card.title }}</GsKanbanCardHeaderTitle>
+  <GsKanbanCardHeaderActions>
+    <GsKanbanCardMoveMenu :card="card" />
+  </GsKanbanCardHeaderActions>
+</GsKanbanCardHeader>
+```
+
+<Canvas of={KanbanStories.MoveWithoutDragging} />
+
+For a menu of your own, call `moveCard` from `useKanban()` in a component inside the board, or `moveKanbanCard` on your own state.
+
+## State Management
+
+`GsKanban` applies drops itself, by moving the card in `v-model:columns`. The same move is available as `moveCard` from `useKanban()`:
+
+```ts
+const { moveCard } = useKanban()
+
+moveCard(
+  cardId, // The card to move
+  targetColumnId, // The column it goes to
+  targetPosition, // The index it goes to, or with an edge, a card's index
+  closestEdge, // Optional: 'top' to go before that card, 'bottom' to go after it
+)
+```
+
+It renumbers the cards' `columnId` and `position`, refuses unknown cards and columns and columns with `canDrop: false` (logging why and returning `false`), and clamps positions outside the column. You don't need to implement this yourself; for state kept elsewhere, the same logic is exported as pure functions:
+
+- **moveKanbanCard**(columns, cardId, targetColumnId, targetPosition, closestEdge?): The new columns, or `undefined` for an invalid move
+- **validateMoveCard**(columns, cardId, targetColumnId, targetPosition): Whether a move is valid, and why not
+- **getInsertIndex**(targetPosition, closestEdge?): The index a card goes to
+- **getKanbanCardMap**(columns): Every card by id, with its column and index
+
+`useKanban()` also returns `columns`, `updateColumns`, `getColumnById`, `cardMap` and `activeCardId` (the card being dragged).
+
+## Adding Cards
+
+Use the `GsKanbanColumnActions` component, after the column's content, to add new cards:
+
+```vue
+<script setup lang="ts">
+const handleAddCard = (columnId: string) => {
+  const newCard: GsKanbanCardData = {
+    id: crypto.randomUUID(),
+    title: 'New Card',
+    body: 'Card description',
+    columnId,
+    position: columns.value.find((c) => c.id === columnId)?.cards.length ?? 0,
+  }
+  columns.value = columns.value.map((col) =>
+    col.id === columnId ? { ...col, cards: [...col.cards, newCard] } : col,
+  )
+}
+</script>
+
+<template>
+  <GsKanbanColumnActions @add-card="handleAddCard(column.id)" />
+</template>
+```
+
+<Canvas of={KanbanStories.CompleteExample} />
+
+## Props
+
+### GsKanban
+
+<ArgTypes of={KanbanStories} />
+
+### GsKanbanHeader
+
+<ArgTypes of={GsKanbanHeader} />
+
+### GsKanbanHeaderTitle
+
+<ArgTypes of={GsKanbanHeaderTitle} />
+
+### GsKanbanHeaderActions
+
+<ArgTypes of={GsKanbanHeaderActions} />
+
+### GsKanbanHeaderSearch
+
+Takes `GsSearchField`'s props, in its `outline` variant, with `v-model` for the text.
+
+<ArgTypes of={GsKanbanHeaderSearch} />
+
+### GsKanbanColumnContainer
+
+<ArgTypes of={GsKanbanColumnContainer} />
+
+### GsKanbanColumn
+
+<ArgTypes of={GsKanbanColumn} />
+
+### GsKanbanColumnHeader
+
+<ArgTypes of={GsKanbanColumnHeader} />
+
+### GsKanbanColumnHeaderTitle
+
+<ArgTypes of={GsKanbanColumnHeaderTitle} />
+
+### GsKanbanColumnHeaderActions
+
+<ArgTypes of={GsKanbanColumnHeaderActions} />
+
+### GsKanbanColumnHeaderDragHandle
+
+No configurable props. Renders a decorative grip icon.
+
+<ArgTypes of={GsKanbanColumnHeaderDragHandle} />
+
+### GsKanbanColumnContent
+
+<ArgTypes of={GsKanbanColumnContent} />
+
+### GsKanbanColumnActions
+
+<ArgTypes of={GsKanbanColumnActions} />
+
+### GsKanbanCard
+
+<ArgTypes of={GsKanbanCard} />
+
+### GsKanbanCardHeader
+
+<ArgTypes of={GsKanbanCardHeader} />
+
+### GsKanbanCardHeaderTitle
+
+<ArgTypes of={GsKanbanCardHeaderTitle} />
+
+### GsKanbanCardHeaderActions
+
+<ArgTypes of={GsKanbanCardHeaderActions} />
+
+### GsKanbanCardBody
+
+<ArgTypes of={GsKanbanCardBody} />
+
+### GsKanbanCardMoveMenu
+
+<ArgTypes of={GsKanbanCardMoveMenu} />
+
+## Accessibility
+
+- Semantic structure: the board title is a heading, each column is a group named by its `GsKanbanColumnHeaderTitle`, and its cards are a list
+- Each card is a focusable list item named by its `title`, described by the keyboard instructions
+- Keyboard dragging, with live announcements of where the card is
+- `GsKanbanCardMoveMenu` moves cards without dragging
+- Focus stays on a card after it is moved
+
+### Keyboard
+
+Focus a card (Tab) and:
+
+- **Space/Enter**: Pick the card up, and drop it once it is where it should go (Tab drops it too)
+- **Up and Down arrows**: Move the card within its column
+- **Left and Right arrows**: Move the card to the next column, between its cards or into it when it is empty
+- **Escape**: Cancel, putting the card back
+
+A live region announces what happens ("Picked up card Kanban Card, in Done, position 2 of 2", "Card Kanban Card is in In Review, position 1 of 1", "Card Kanban Card dropped in In Review, position 1 of 1").
+
+dnd-kit adds `aria-roledescription="draggable"` and `aria-describedby` (the instructions) to each card. Cards keep their `listitem` role rather than becoming buttons, so the buttons inside them stay available to assistive technology.
+
+## Related
+
+- [dnd-kit](https://dndkit.com)
+- [GsMenu](?path=/docs/components-menu--docs)
+- [GsSearchField](?path=/docs/components-searchfield--docs)

@@ -1,8 +1,8 @@
 <script setup lang="ts" generic="T">
 /**
  * @internal One row of a `GsTree`: the Reka UI tree item plus its visibility toggle, rule lines,
- * expand chevron, content and selection checkbox. `GsTree` renders one per visible node, whether
- * the nodes come from `items` or from `GsTreeItem` markup.
+ * expand chevron, content, selection checkbox and (with `drag-and-drop`) drag handle. `GsTree`
+ * renders one per visible node, whether the nodes come from `items` or from `GsTreeItem` markup.
  */
 import CheckIcon from '@wingbrace/glideslope-icons/check'
 import ChevronDownIcon from '@wingbrace/glideslope-icons/chevron-down'
@@ -19,6 +19,7 @@ import GsIcon from '../icon/GsIcon.vue'
 import GsLines from '../lines/GsLines.vue'
 import type { GsLinesProps } from '../lines/types'
 import { injectTreeContext, provideTreeItemTabStop, provideTreeRowText } from './context'
+import GsTreeDragHandle from './GsTreeDragHandle.vue'
 import styles from './styles.module.css'
 import type { GsTreeItemSlotProps, GsTreeNode } from './types'
 
@@ -80,6 +81,18 @@ const lines = computed(() => {
 })
 const lineSize = computed(() => (variant.value === 'crammed' ? 'medium' : 'large'))
 
+/** The drop preview while a node is dragged: the row travels with it, takes it, or has the line. */
+const drop = computed(() => {
+  const view = tree.drop.value
+  if (!view) return undefined
+  const { key } = node.value
+  return {
+    dragging: view.dragging.has(key),
+    target: view.parent === key,
+    indicator: view.indicator?.key === key ? view.indicator.edge : undefined,
+  }
+})
+
 function onSelect(event: TreeItemEvent) {
   // GsTree owns the selection so it can cascade and skip disabled nodes.
   event.preventDefault()
@@ -115,6 +128,9 @@ provideButtonDefaults(() => ({ size: size.value }))
     :data-visible="state.visible ? '' : undefined"
     :data-viewable="state.viewable ? '' : undefined"
     :data-indeterminate="state.indeterminate ? '' : undefined"
+    :data-dragging="drop?.dragging ? '' : undefined"
+    :data-drop-target="drop?.target ? '' : undefined"
+    :data-drop-indicator="drop?.indicator"
     @select="onSelect"
     @toggle="onToggle"
     @focusin="tree.tabStopKey.value = node.key"
@@ -181,7 +197,13 @@ provideButtonDefaults(() => ({ size: size.value }))
           <CheckIcon v-else-if="state.selected" />
         </GsIcon>
       </span>
-      <!-- A drag handle for reordering will go here once a Vue drag-and-drop library is chosen. -->
+      <GsTreeDragHandle
+        v-if="tree.dragAndDrop.value"
+        :node-key="node.key"
+        :label="node.label"
+        :disabled="state.disabled"
+        :tab-stop="isTabStop"
+      />
     </div>
   </TreeItem>
 </template>

@@ -7,6 +7,7 @@ import {
   getTreeKeys,
   getTreeLayout,
   getTreeParentKeys,
+  getTreeStepMove,
   getTreeViewableKeys,
   insertTreeNodes,
   moveTreeNodes,
@@ -152,6 +153,62 @@ describe('tree structure helpers', () => {
   })
 })
 
+describe('step moves', () => {
+  const step = (key: string, direction: Parameters<typeof getTreeStepMove>[2]) =>
+    getTreeStepMove(files(), key, direction)
+
+  it('moves past the previous or next sibling', () => {
+    expect(step('slides', 'up')).toEqual({ keys: ['slides'], target: 'report', position: 'before' })
+    expect(step('report', 'down')).toEqual({
+      keys: ['report'],
+      target: 'slides',
+      position: 'after',
+    })
+    expect(step('downloads', 'up')).toEqual({
+      keys: ['downloads'],
+      target: 'documents',
+      position: 'before',
+    })
+  })
+
+  it('indents into the previous sibling as its last child, or its only one', () => {
+    expect(step('personal', 'indent')).toEqual({
+      keys: ['personal'],
+      target: 'slides',
+      position: 'after',
+    })
+    expect(step('slides', 'indent')).toEqual({
+      keys: ['slides'],
+      target: 'report',
+      position: 'into',
+    })
+  })
+
+  it('outdents to right after the parent', () => {
+    expect(step('photo', 'outdent')).toEqual({
+      keys: ['photo'],
+      target: 'personal',
+      position: 'after',
+    })
+  })
+
+  it("returns undefined where a node can't go", () => {
+    expect(step('report', 'up')).toBeUndefined()
+    expect(step('slides', 'down')).toBeUndefined()
+    expect(step('documents', 'indent')).toBeUndefined()
+    expect(step('documents', 'outdent')).toBeUndefined()
+    expect(step('missing', 'down')).toBeUndefined()
+  })
+
+  it('applies with moveTreeNodes', () => {
+    const tree = files()
+    const { keys, target, position } = getTreeStepMove(tree, 'personal', 'indent')!
+    expect(shape(moveTreeNodes(tree, keys, target, position))[0]).toEqual({
+      documents: [{ work: ['report', 'slides', { personal: ['photo', 'locked'] }] }],
+    })
+  })
+})
+
 describe('selection', () => {
   it('toggles one key in multiple mode without cascade', () => {
     const tree = files()
@@ -285,6 +342,31 @@ describe('useTree', () => {
     expect(tree.getNode('readme')?.label).toBe('README')
     tree.moveBefore('documents', ['readme'])
     expect(tree.nodes.value[0]?.key).toBe('readme')
+  })
+
+  it('applies moves from the tree and moves nodes a step at a time', () => {
+    const tree = useTree({ items: files() })
+    tree.applyMove({ keys: ['installer'], target: 'work', position: 'into' })
+    expect(shape(tree.nodes.value)[0]).toEqual({
+      documents: [{ work: ['installer', 'report', 'slides'] }, { personal: ['photo', 'locked'] }],
+    })
+    tree.applyMove({ keys: ['downloads'], target: null, position: 'into' })
+    expect(tree.nodes.value[0]?.key).toBe('downloads')
+
+    expect(tree.canMoveStep('installer', 'up')).toBe(false)
+    expect(tree.canMoveStep('installer', 'down')).toBe(true)
+    tree.moveStep('installer', 'down')
+    tree.moveStep('installer', 'outdent')
+    expect(shape(tree.nodes.value)).toEqual([
+      'downloads',
+      {
+        documents: [{ work: ['report', 'slides'] }, 'installer', { personal: ['photo', 'locked'] }],
+      },
+    ])
+    // Impossible steps change nothing.
+    const before = tree.nodes.value
+    tree.moveStep('downloads', 'up')
+    expect(tree.nodes.value).toBe(before)
   })
 
   it('keeps a cascading selection consistent when nodes move', () => {

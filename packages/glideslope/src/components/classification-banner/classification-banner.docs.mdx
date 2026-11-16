@@ -1,0 +1,86 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as ClassificationBannerStories from './classification-banner.stories'
+
+<Meta of={ClassificationBannerStories} />
+
+# ClassificationBanner
+
+`GsClassificationBanner` is a full-width banner for displaying the security classification level at the top or bottom of pages, documents and applications. It's designed for government and secure environments that require prominent classification indicators.
+
+## Example usage
+
+```vue
+<GsClassificationBanner variant="unclassified" />
+<GsClassificationBanner variant="cui" />
+<GsClassificationBanner variant="confidential" />
+<GsClassificationBanner variant="secret" />
+<GsClassificationBanner variant="top-secret" />
+<GsClassificationBanner variant="ts-sci" />
+
+<!-- With custom text -->
+<GsClassificationBanner variant="secret">SECRET - AUTHORIZED PERSONNEL ONLY</GsClassificationBanner>
+
+<!-- Page layout example -->
+<div class="flex min-h-screen flex-col">
+  <GsClassificationBanner variant="secret" />
+  <main class="flex-1 p-m">
+    <h1>Page Content</h1>
+  </main>
+  <GsClassificationBanner variant="secret" />
+</div>
+```
+
+<Canvas of={ClassificationBannerStories.Default} />
+
+## Variants
+
+| Variant        | Default text   | Description                                      |
+| -------------- | -------------- | ------------------------------------------------ |
+| `missing`      | Missing        | Red styling for missing classification (default) |
+| `unclassified` | Unclassified   | Unclassified information                         |
+| `cui`          | CUI            | Controlled Unclassified Information              |
+| `confidential` | Confidential   | Confidential level information                   |
+| `secret`       | Secret         | Secret level information                         |
+| `top-secret`   | Top Secret     | Top secret level information                     |
+| `ts-sci`       | Top Secret/SCI | Top Secret/Sensitive Compartmented Information   |
+
+## Props
+
+<ArgTypes of={ClassificationBannerStories} />
+
+The `default` slot is custom text. When it's empty, the banner shows the level's default text.
+
+### Shared defaults
+
+`provideClassificationBannerDefaults()` sets `variant` for every banner rendered below the calling component. A prop set on a banner still wins.
+
+```vue
+<script setup lang="ts">
+import { provideClassificationBannerDefaults } from '@wingbrace/glideslope'
+
+provideClassificationBannerDefaults({ variant: 'secret' })
+</script>
+
+<template>
+  <GsClassificationBanner />
+  <GsClassificationBanner />
+</template>
+```
+
+## Accessibility
+
+- Contrast ratios for every classification level
+- Semantic color usage following security standards
+- The level is always written out as text, so it isn't carried by color alone
+
+## Implementation notes
+
+- Renders a full-width `<div>`. Attributes and classes you add go on it.
+- Shows the level's default text when the `default` slot is empty
+- The color scheme follows standard security classification conventions
+- Designed for placement at the top or bottom of pages
+
+**Related:**
+
+- [ClassificationBadge](?path=/docs/components-classificationbadge--docs)

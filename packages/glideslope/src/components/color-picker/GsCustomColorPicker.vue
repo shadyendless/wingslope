@@ -82,7 +82,7 @@ const channels = [
       </GsButton>
     </PopoverTrigger>
     <PopoverPortal>
-      <PopoverContent side="bottom" align="start" :side-offset="4" :class="styles.popover">
+      <PopoverContent side="bottom" align="start" :side-offset="8" :class="styles.popover">
         <ColorAreaRoot
           :model-value="color"
           color-space="hsb"

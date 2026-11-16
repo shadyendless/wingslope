@@ -1,0 +1,222 @@
+{
+  "name": "@wingbrace/geo",
+  "version": "0.0.0",
+  "description": "Coordinate parsing, formatting and conversion (DD, DDM, DMS, MGRS, UTM) and spherical geodesy helpers. Began as a copy of @accelint/geo 0.8.0.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "keywords": [
+    "geo",
+    "coordinates",
+    "mgrs",
+    "utm",
+    "geodesy",
+    "glideslope"
+  ],
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./cartesian": {
+      "types": "./dist/cartesian.d.ts",
+      "default": "./dist/cartesian.js"
+    },
+    "./coordinates/coordinate": {
+      "types": "./dist/coordinates/coordinate.d.ts",
+      "default": "./dist/coordinates/coordinate.js"
+    },
+    "./coordinates/latlon/decimal-degrees/formatter": {
+      "types": "./dist/coordinates/latlon/decimal-degrees/formatter.d.ts",
+      "default": "./dist/coordinates/latlon/decimal-degrees/formatter.js"
+    },
+    "./coordinates/latlon/decimal-degrees/parser": {
+      "types": "./dist/coordinates/latlon/decimal-degrees/parser.d.ts",
+      "default": "./dist/coordinates/latlon/decimal-degrees/parser.js"
+    },
+    "./coordinates/latlon/decimal-degrees/system": {
+      "types": "./dist/coordinates/latlon/decimal-degrees/system.d.ts",
+      "default": "./dist/coordinates/latlon/decimal-degrees/system.js"
+    },
+    "./coordinates/latlon/degrees-decimal-minutes/formatter": {
+      "types": "./dist/coordinates/latlon/degrees-decimal-minutes/formatter.d.ts",
+      "default": "./dist/coordinates/latlon/degrees-decimal-minutes/formatter.js"
+    },
+    "./coordinates/latlon/degrees-decimal-minutes/parser": {
+      "types": "./dist/coordinates/latlon/degrees-decimal-minutes/parser.d.ts",
+      "default": "./dist/coordinates/latlon/degrees-decimal-minutes/parser.js"
+    },
+    "./coordinates/latlon/degrees-decimal-minutes/system": {
+      "types": "./dist/coordinates/latlon/degrees-decimal-minutes/system.d.ts",
+      "default": "./dist/coordinates/latlon/degrees-decimal-minutes/system.js"
+    },
+    "./coordinates/latlon/degrees-minutes-seconds/formatter": {
+      "types": "./dist/coordinates/latlon/degrees-minutes-seconds/formatter.d.ts",
+      "default": "./dist/coordinates/latlon/degrees-minutes-seconds/formatter.js"
+    },
+    "./coordinates/latlon/degrees-minutes-seconds/parser": {
+      "types": "./dist/coordinates/latlon/degrees-minutes-seconds/parser.d.ts",
+      "default": "./dist/coordinates/latlon/degrees-minutes-seconds/parser.js"
+    },
+    "./coordinates/latlon/degrees-minutes-seconds/system": {
+      "types": "./dist/coordinates/latlon/degrees-minutes-seconds/system.d.ts",
+      "default": "./dist/coordinates/latlon/degrees-minutes-seconds/system.js"
+    },
+    "./coordinates/latlon/internal": {
+      "types": "./dist/coordinates/latlon/internal/index.d.ts",
+      "default": "./dist/coordinates/latlon/internal/index.js"
+    },
+    "./coordinates/latlon/internal/coordinate-system": {
+      "types": "./dist/coordinates/latlon/internal/coordinate-system.d.ts",
+      "default": "./dist/coordinates/latlon/internal/coordinate-system.js"
+    },
+    "./coordinates/latlon/internal/create-cache": {
+      "types": "./dist/coordinates/latlon/internal/create-cache.d.ts",
+      "default": "./dist/coordinates/latlon/internal/create-cache.js"
+    },
+    "./coordinates/latlon/internal/exhaustive-errors": {
+      "types": "./dist/coordinates/latlon/internal/exhaustive-errors.d.ts",
+      "default": "./dist/coordinates/latlon/internal/exhaustive-errors.js"
+    },
+    "./coordinates/latlon/internal/format": {
+      "types": "./dist/coordinates/latlon/internal/format.d.ts",
+      "default": "./dist/coordinates/latlon/internal/format.js"
+    },
+    "./coordinates/latlon/internal/in-range": {
+      "types": "./dist/coordinates/latlon/internal/in-range.d.ts",
+      "default": "./dist/coordinates/latlon/internal/in-range.js"
+    },
+    "./coordinates/latlon/internal/lexer": {
+      "types": "./dist/coordinates/latlon/internal/lexer.d.ts",
+      "default": "./dist/coordinates/latlon/internal/lexer.js"
+    },
+    "./coordinates/latlon/internal/normalize": {
+      "types": "./dist/coordinates/latlon/internal/normalize.d.ts",
+      "default": "./dist/coordinates/latlon/internal/normalize.js"
+    },
+    "./coordinates/latlon/internal/ordinal": {
+      "types": "./dist/coordinates/latlon/internal/ordinal.d.ts",
+      "default": "./dist/coordinates/latlon/internal/ordinal.js"
+    },
+    "./coordinates/latlon/internal/parse": {
+      "types": "./dist/coordinates/latlon/internal/parse.d.ts",
+      "default": "./dist/coordinates/latlon/internal/parse.js"
+    },
+    "./coordinates/latlon/internal/parse-format": {
+      "types": "./dist/coordinates/latlon/internal/parse-format.d.ts",
+      "default": "./dist/coordinates/latlon/internal/parse-format.js"
+    },
+    "./coordinates/latlon/internal/pipes": {
+      "types": "./dist/coordinates/latlon/internal/pipes/index.d.ts",
+      "default": "./dist/coordinates/latlon/internal/pipes/index.js"
+    },
+    "./coordinates/latlon/internal/pipes/check-ambiguous": {
+      "types": "./dist/coordinates/latlon/internal/pipes/check-ambiguous.d.ts",
+      "default": "./dist/coordinates/latlon/internal/pipes/check-ambiguous.js"
+    },
+    "./coordinates/latlon/internal/pipes/check-numbers": {
+      "types": "./dist/coordinates/latlon/internal/pipes/check-numbers.d.ts",
+      "default": "./dist/coordinates/latlon/internal/pipes/check-numbers.js"
+    },
+    "./coordinates/latlon/internal/pipes/fix-bearings": {
+      "types": "./dist/coordinates/latlon/internal/pipes/fix-bearings.d.ts",
+      "default": "./dist/coordinates/latlon/internal/pipes/fix-bearings.js"
+    },
+    "./coordinates/latlon/internal/pipes/fix-dividers": {
+      "types": "./dist/coordinates/latlon/internal/pipes/fix-dividers.d.ts",
+      "default": "./dist/coordinates/latlon/internal/pipes/fix-dividers.js"
+    },
+    "./coordinates/latlon/internal/pipes/genome": {
+      "types": "./dist/coordinates/latlon/internal/pipes/genome.d.ts",
+      "default": "./dist/coordinates/latlon/internal/pipes/genome.js"
+    },
+    "./coordinates/latlon/internal/pipes/simpler": {
+      "types": "./dist/coordinates/latlon/internal/pipes/simpler.d.ts",
+      "default": "./dist/coordinates/latlon/internal/pipes/simpler.js"
+    },
+    "./coordinates/latlon/internal/plain-decimal": {
+      "types": "./dist/coordinates/latlon/internal/plain-decimal.d.ts",
+      "default": "./dist/coordinates/latlon/internal/plain-decimal.js"
+    },
+    "./coordinates/latlon/internal/validate": {
+      "types": "./dist/coordinates/latlon/internal/validate.d.ts",
+      "default": "./dist/coordinates/latlon/internal/validate.js"
+    },
+    "./coordinates/latlon/internal/violation": {
+      "types": "./dist/coordinates/latlon/internal/violation.d.ts",
+      "default": "./dist/coordinates/latlon/internal/violation.js"
+    },
+    "./coordinates/mgrs/parser": {
+      "types": "./dist/coordinates/mgrs/parser.d.ts",
+      "default": "./dist/coordinates/mgrs/parser.js"
+    },
+    "./coordinates/mgrs/parts": {
+      "types": "./dist/coordinates/mgrs/parts.d.ts",
+      "default": "./dist/coordinates/mgrs/parts.js"
+    },
+    "./coordinates/mgrs/system": {
+      "types": "./dist/coordinates/mgrs/system.d.ts",
+      "default": "./dist/coordinates/mgrs/system.js"
+    },
+    "./coordinates/utm/parser": {
+      "types": "./dist/coordinates/utm/parser.d.ts",
+      "default": "./dist/coordinates/utm/parser.js"
+    },
+    "./coordinates/utm/parts": {
+      "types": "./dist/coordinates/utm/parts.d.ts",
+      "default": "./dist/coordinates/utm/parts.js"
+    },
+    "./coordinates/utm/system": {
+      "types": "./dist/coordinates/utm/system.d.ts",
+      "default": "./dist/coordinates/utm/system.js"
+    },
+    "./geodesy": {
+      "types": "./dist/geodesy/index.d.ts",
+      "default": "./dist/geodesy/index.js"
+    },
+    "./geodesy/bearing": {
+      "types": "./dist/geodesy/bearing.d.ts",
+      "default": "./dist/geodesy/bearing.js"
+    },
+    "./geodesy/distance": {
+      "types": "./dist/geodesy/distance.d.ts",
+      "default": "./dist/geodesy/distance.js"
+    },
+    "./geodesy/great-circle-points": {
+      "types": "./dist/geodesy/great-circle-points.d.ts",
+      "default": "./dist/geodesy/great-circle-points.js"
+    },
+    "./geodesy/midpoint": {
+      "types": "./dist/geodesy/midpoint.d.ts",
+      "default": "./dist/geodesy/midpoint.js"
+    },
+    "./geodesy/to-spherical-points": {
+      "types": "./dist/geodesy/to-spherical-points.d.ts",
+      "default": "./dist/geodesy/to-spherical-points.js"
+    },
+    "./patterning": {
+      "types": "./dist/patterning.d.ts",
+      "default": "./dist/patterning.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && vite build && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@types/geodesy": "catalog:",
+    "geodesy": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "fast-check": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
+  }
+}

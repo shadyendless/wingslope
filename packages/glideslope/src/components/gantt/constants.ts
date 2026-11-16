@@ -1,0 +1,51 @@
+import type { GsGanttHoursTimescale, GsGanttMinutesTimescale, GsGanttTimescale } from './types'
+
+const MS_PER_SECOND = 1000
+export const MS_PER_MINUTE = MS_PER_SECOND * 60
+export const MS_PER_HOUR = MS_PER_MINUTE * 60
+const MS_PER_DAY = MS_PER_HOUR * 24
+
+export const HOURS_MAPPING: Record<GsGanttHoursTimescale, number> = {
+  '1h': MS_PER_HOUR,
+  '2h': MS_PER_HOUR * 2,
+  '6h': MS_PER_HOUR * 6,
+  '12h': MS_PER_HOUR * 12,
+  '24h': MS_PER_DAY,
+}
+
+export const MINUTES_MAPPING: Record<GsGanttMinutesTimescale, number> = {
+  '1m': MS_PER_MINUTE,
+  '5m': MS_PER_MINUTE * 5,
+  '10m': MS_PER_MINUTE * 10,
+  '30m': MS_PER_MINUTE * 30,
+}
+
+export const TIMESCALE_MAPPING: Record<GsGanttTimescale, number> = {
+  ...HOURS_MAPPING,
+  ...MINUTES_MAPPING,
+}
+
+/** Width of one timeline chunk (one timescale interval), in pixels. */
+export const TIMELINE_CHUNK_WIDTH_PX = 80
+
+// Important: This needs to be at least 4 so we have at least one chunk completely out of view on
+// either end of the timeline. Otherwise, the useResizeIntersectionEffect composable will create an
+// infinite rendering loop because of the IntersectionObserver logic.
+export const BUFFERED_CHUNK_COUNT = 4
+export const GANTT_ROW_HEIGHT_PX = 40
+export const GANTT_ROW_ELEMENT_HEIGHT_PX = 30
+export const GANTT_CONTAINER_TOP_PX = 12
+export const ROW_VIRTUALIZATION_OVERSCAN = 1
+export const GANTT_HEADER_HEIGHT_PX = 64
+
+export const TIMESCALE_OPTIONS: GsGanttTimescale[] = [
+  '1m',
+  '5m',
+  '10m',
+  '30m',
+  '1h',
+  '2h',
+  '6h',
+  '12h',
+  '24h',
+]

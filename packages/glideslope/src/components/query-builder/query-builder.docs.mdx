@@ -1,0 +1,119 @@
+import { ArgTypes, Canvas, Meta } from '@storybook/addon-docs/blocks'
+
+import * as QueryBuilderStories from './query-builder.stories'
+import GsQueryBuilderCombinatorSelector from './GsQueryBuilderCombinatorSelector.vue'
+import GsQueryBuilderRemoveRuleAction from './GsQueryBuilderRemoveRuleAction.vue'
+
+<Meta of={QueryBuilderStories} />
+
+# QueryBuilder
+
+A visual interface for building complex query rulesets and filters. Built on [React Query Builder](https://react-querybuilder.js.org/)'s Vue edition, [`@react-querybuilder/vue`](https://github.com/react-querybuilder/vue-querybuilder), it provides an intuitive UI for constructing database queries with support for multiple conditions, operators, and logical grouping.
+
+<Canvas of={QueryBuilderStories.Default} />
+
+## Basic
+
+Bind the query object with `v-model:query`. Without it, `GsQueryBuilder` keeps its own query, starting from `default-query`.
+
+```vue
+<script setup lang="ts">
+import { GsQueryBuilder, type Field, type RuleGroupType } from '@wingbrace/glideslope'
+import { ref } from 'vue'
+
+const fields: Field[] = [
+  { name: 'firstName', label: 'First Name' },
+  { name: 'lastName', label: 'Last Name' },
+  { name: 'age', label: 'Age', inputType: 'number' },
+]
+
+const query = ref<RuleGroupType>({
+  combinator: 'and',
+  rules: [{ field: 'firstName', operator: '=', value: '' }],
+})
+</script>
+
+<template>
+  <GsQueryBuilder v-model:query="query" :fields="fields" />
+</template>
+```
+
+The query is React Query Builder's format, so its tools work on it: `formatQuery` (SQL, MongoDB, CEL, JSON Logic, …), the `parse*` importers and the validators come from `@react-querybuilder/vue` (or `@react-querybuilder/core`), which you add to your app to use them.
+
+## Props
+
+<ArgTypes of={QueryBuilderStories} />
+
+Fields, operators, combinators, translations, validators and callbacks such as `on-add-rule` and `on-remove` work as in React Query Builder. `on-add-rule`, `on-add-group`, `on-move-rule`, `on-move-group` and `on-remove` are callback props rather than events, because they can cancel or rewrite the change they announce. The query itself is reported by the `update:query` event, which `v-model:query` listens to.
+
+`GsQueryBuilder` always stores list values as arrays (`listsAsArrays`), and turns off drag and drop, shift actions, the "not" toggle and independent combinators.
+
+## Customizing controls
+
+Replace any control by its React Query Builder key, with a component in `control-elements` or with the matching scoped slot, which receives the props the control would have. A slot wins over a `control-elements` entry, which wins over the Glideslope control.
+
+```vue
+<GsQueryBuilder v-model:query="query" :fields="fields">
+  <template #addRuleAction="{ title, disabled, handleOnClick }">
+    <GsButton size="small" color="accent" :disabled="disabled" @click="handleOnClick">
+      <GsIcon><AddIcon /></GsIcon>
+      {{ title }}
+    </GsButton>
+  </template>
+</GsQueryBuilder>
+```
+
+<Canvas of={QueryBuilderStories.ControlSlots} />
+
+Every control receives `orientation` and `showRuleLines` in its `context` prop, merged into the `context` you pass (which must then be a plain object), so a replacement can follow the layout. Add classes to the parts with `classes`, keyed like React Query Builder's `controlClassnames`; they are added to the Glideslope classes.
+
+## Component Structure
+
+### Main Components
+
+- **GsQueryBuilder**: Main wrapper that manages query state
+- **Rule**: Individual rule with field, operator, and value
+- **RuleGroup**: Container for rules with shared combinator, with a header (combinator and group actions), a body (its rules and subgroups) and a footer (add rule and add group)
+- **ValueEditor**: Input for editing rule values (text, checkbox, radio, select, switch, textarea), with a start and an end input for range operators
+- **ValueSelector**: Combobox for selecting fields, operators and predefined values
+
+The rule, group, value editor and value selector are internal; replace them through `control-elements` or slots.
+
+### Supporting Components
+
+- **GsQueryBuilderCombinatorSelector**: AND/OR toggle for rule groups, with a tooltip explaining each
+
+<ArgTypes of={GsQueryBuilderCombinatorSelector} />
+
+### Action Components
+
+- **ActionElement**: Base button for rule and group actions (add rule, add group, remove group), internal
+- **GsQueryBuilderRemoveRuleAction**: Delete button for rules
+- **GsQueryBuilderLockAction**: Lock/unlock toggle for rules/groups
+- **GsQueryBuilderCloneAction**: Duplicate button for rules/groups
+
+<ArgTypes of={GsQueryBuilderRemoveRuleAction} />
+
+`GsQueryBuilderLockAction` and `GsQueryBuilderCloneAction` take the same props.
+
+## Usage Notes
+
+- Supports horizontal and vertical layouts via the `orientation` prop
+- Rules can be added, removed, cloned, and grouped
+- Groups support AND/OR combinators
+- Validation runs on value changes: a field's `validator` marks its value editor invalid and shows its reasons
+- Drag and drop is disabled
+
+## Accessibility
+
+- Every control has an accessible name: comboboxes are named "Field", "Operator" and after their field, value editors after their field ("AK Low start" and "AK Low end" for a range), and icon buttons after their action ("Remove rule", "Unlock rule")
+- Keyboard navigation (Tab, Space/Enter, arrow keys)
+- Invalid values are marked `aria-invalid` and their error message is linked to the input
+- Connecting lines are decorative and hidden from assistive technology
+
+## Related
+
+- [React Query Builder](https://react-querybuilder.js.org/)
+- [Vue Query Builder](https://github.com/react-querybuilder/vue-querybuilder)
+- [ComboBoxField](?path=/docs/components-comboboxfield--docs)
+- [Lines](?path=/docs/components-lines--docs)

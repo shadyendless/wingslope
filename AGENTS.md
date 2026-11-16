@@ -15,11 +15,12 @@ Durable, repo-specific instructions for coding agents. Project facts live in [RE
 - **State variants must stay zero-specificity (`:where()`).** Do not style components with Tailwind's built-in `hover` / `active` / `focus` variants, or they will override later `disabled` rules. Use the foundation's variants, which redefine them.
 - **The library CSS must start with the layer-order statement** (`src/styles/layers.css`, imported first in `src/index.ts`). It must match the foundation's `@layer` statement.
 - **Generated files** (`packages/foundation/src/tokens/{tokens.css,themes.css,types.ts,index.ts}`, `variants.css`, and `packages/icons/src/icons/*`, `packages/icons/src/index.ts`) are never edited by hand. Edit the JSON or SVG and run the package's `generate` script.
-- **Named groups in CSS Modules depend on `build/postcss-global-groups.js`.** It is registered in both `vite.config.ts` and `.storybook/vite.config.ts`. Keep both in sync, or `group-*/name` variants silently stop matching.
+- **Named groups and theme classes in CSS Modules depend on `build/postcss-global-groups.js`.** It keeps `group/*`, `peer/*`, `.light` and `.dark` unhashed. It is registered in both `vite.config.ts` and `.storybook/vite.config.ts`. Keep both in sync, or `group-*/name`, `light` and `dark` variants silently stop matching.
 - **Do not set `unmountOnHide: false` on a Reka combobox inside a portal.** Reka's `hideOthers()` then marks the open list `aria-hidden`. `GsOptionRegistry` exists to get option labels without that.
 - **`@vitejs/plugin-vue` options live in `build/vue-options.js`**, shared by `vite.config.ts`, `vitest.config.ts` and `.storybook/vite.config.ts`. It marks media-chrome's `media-*` tags as custom elements; change it there, not in one config.
 - **`tsconfig.app.json` doesn't catch declaration errors.** The library build (`vue-tsc -p tsconfig.build.json`) emits declarations and fails on exported values whose inferred types reach into a library's internals (e.g. a map of Reka components). Annotate those with public types. `pnpm verify` runs the build.
 - **Inputs that buffer typed text need a local draft.** Vue resets an `<input>`'s DOM value to its bound `:value` on any re-render. See the slider inputs.
+- **dnd-kit's optimistic sorting moves elements behind Vue's back.** On a drop, put the dragged element back where Vue rendered it before changing the data (see `restoreOrigin` in `kanban/use-kanban-drag.ts`). Otherwise Vue, removing a fragment by what lies between its anchors, leaves a stale copy.
 - **A Vite or Storybook config change needs a dev server restart.** HMR doesn't pick those up, and a stale server shows misleading story-index errors.
 
 ## Workflow

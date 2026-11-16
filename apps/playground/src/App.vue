@@ -3,6 +3,7 @@ import {
   GsAvatar,
   GsBadge,
   GsButton,
+  GsClassificationBanner,
   GsDetailsList,
   GsDetailsListLabel,
   GsDetailsListValue,
@@ -28,6 +29,7 @@ import { AddIcon, BellIcon, BrightnessIcon, PinIcon, RadarIcon } from '@wingbrac
 import { computed, ref } from 'vue'
 import DataPanel from './DataPanel.vue'
 import FormsPanel from './FormsPanel.vue'
+import PlanningPanel from './PlanningPanel.vue'
 import TokenSwatch from './TokenSwatch.vue'
 import WorkspacePanel from './WorkspacePanel.vue'
 
@@ -45,6 +47,8 @@ const modeLabel = computed(() => (theme.mode.value === 'dark' ? 'Light mode' : '
 </script>
 
 <template>
+  <!-- Real apps put the classification banner on the top edge of every page. -->
+  <GsClassificationBanner variant="unclassified" />
   <div class="mx-auto flex flex-col gap-xl p-xl" style="max-width: 960px">
     <header class="flex items-center justify-between">
       <h1 class="text-header-xl">Glideslope playground</h1>
@@ -145,6 +149,10 @@ const modeLabel = computed(() => (theme.mode.value === 'dark' ? 'Light mode' : '
     <GsDivider />
 
     <DataPanel />
+
+    <GsDivider />
+
+    <PlanningPanel />
 
     <GsDivider />
 

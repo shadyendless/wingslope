@@ -5,7 +5,7 @@ export interface GsPopoverProps {
   side?: GsOverlaySide
   /** @default 'center' */
   align?: GsOverlayAlign
-  /** Gap between trigger and popover, in pixels. @default 4 */
+  /** Gap between trigger and popover, in pixels. @default 8 */
   offset?: number
   /** Trap focus and block interaction outside while open. @default false */
   modal?: boolean

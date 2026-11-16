@@ -1,0 +1,118 @@
+/*
+ * Copyright 2024 Hypergiant Galactic Systems Inc. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import Mgrs from 'geodesy/mgrs'
+import { type ParseResults, parse } from '../latlon/internal/parse'
+import { violation } from '../latlon/internal/violation'
+
+type Match = [string, string, string, string, string]
+
+const PATTERN_PARTS =
+  /^((?:..?)?)(\w?)\s*((?:\w{2})?)\s*(?:(\d+(?:\.\d*)?)?)\s*(?:(\d+(?:\.\d*)?)?)$/i
+
+/**
+ * Creates a parse error result with a formatted error message.
+ *
+ * @param message - The error message describing what went wrong.
+ * @returns Parse results tuple with empty data array and error message array.
+ *
+ * @example
+ * ```typescript
+ * error('Invalid UTM zone');
+ * // [[], ['Invalid UTM zone; expected format DDZ AA DDD DDD.']]
+ * ```
+ */
+const error = (message: string) =>
+  [[], [`${violation(message)}; expected format DDZ AA DDD DDD.`]] as ParseResults
+
+/**
+ * Validates MGRS coordinate input and returns detailed error messages for invalid formats.
+ *
+ * Checks UTM zone number, latitude band letter, 100K meter square identification, and
+ * numerical location components. Returns specific error messages for each validation failure.
+ *
+ * @param input - The MGRS coordinate string to validate.
+ * @returns Parse results with detailed error messages for validation failures.
+ *
+ * @example
+ * ```typescript
+ * detailedErrors('99Z AA 12345 67890');
+ * // [[], ['Invalid UTM zone number (99) found in grid zone designation; expected format DDZ AA DDD DDD.']]
+ * ```
+ *
+ * @example
+ * ```typescript
+ * detailedErrors('31U BF 12345 67890');
+ * // Valid format, parsed successfully
+ * ```
+ */
+function detailedErrors(input: string) {
+  if (!input) {
+    return error('No input provided')
+  }
+
+  const [utm, bnd, hkm, east, north] = (
+    input.trim().replace(/\s+/g, ' ').match(PATTERN_PARTS) ?? []
+  ).slice(1) as Match
+
+  if (!utm || +utm > 60 || +utm < 1) {
+    return error(`Invalid UTM zone number (${utm}) found in grid zone designation`)
+  }
+
+  if (!/[C-HJ-NP-X]/i.test(bnd)) {
+    return error(`Invalid Latitude band letter (${bnd}) found in grid zone designation`)
+  }
+
+  if (!/^[A-HJ-NP-Z]*$/i.test(hkm)) {
+    return error(`Invalid 100K m square identification (${hkm}) found`)
+  }
+
+  if (!(east && north && +east > 0 && +north > 0)) {
+    return error(`Invalid numerical location (${[east, north].join()}) found`)
+  }
+
+  return error('Uncaught error condition.')
+}
+
+/**
+ * Parses a Military Grid Reference System (MGRS) coordinate string into latitude/longitude values.
+ *
+ * Converts MGRS coordinates to UTM, then to latitude/longitude decimal degrees. Returns
+ * detailed error messages for invalid MGRS formats including zone numbers, band letters,
+ * square identification, and numerical locations.
+ *
+ * @param _format - Format parameter (unused, MGRS has fixed format).
+ * @param input - The MGRS coordinate string to parse (e.g., '31U BF 12345 67890').
+ * @returns Parse results with coordinate values or detailed error messages.
+ *
+ * @example
+ * ```typescript
+ * parseMGRS(null, '31U BF 12345 67890');
+ * // [[['48.123456', 'N'], ['11.234567', 'E']], []]
+ * ```
+ *
+ * @example
+ * ```typescript
+ * parseMGRS(null, 'invalid');
+ * // [[], ['Invalid UTM zone number found...']]
+ * ```
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Format is unused
+export function parseMGRS(_format: any, input: string) {
+  try {
+    const point = Mgrs.parse(input).toUtm().toLatLon()
+
+    return parse(`${point.lat} / ${point.lon}`, 'LATLON')
+  } catch {
+    return detailedErrors(input)
+  }
+}

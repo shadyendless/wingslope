@@ -1,0 +1,122 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .kanban {
+    @apply h-full w-full select-none;
+  }
+
+  .header {
+    @apply flex flex-row items-center justify-between p-m;
+  }
+
+  .headerTitle {
+    @apply text-header-l fg-primary-bold;
+  }
+
+  .headerActions {
+    @apply flex flex-row items-center;
+  }
+
+  /* The list item a card is dragged by. Its focus ring is drawn on the card's box. */
+  .cardContainerOuter {
+    @apply flex w-full flex-col rounded-large outline-hidden;
+  }
+
+  .card {
+    @apply flex w-full flex-col rounded-large bg-surface-raised p-s pb-m text-wrap outline outline-transparent;
+
+    @variant motion-safe {
+      transition:
+        background-color var(--animation-duration-normal) var(--animation-easing-standard),
+        outline-color var(--animation-duration-normal) var(--animation-easing-standard);
+    }
+
+    @variant hover {
+      @apply outline-interactive-hover;
+    }
+
+    @variant group-focus-visible/kanban-card {
+      @apply outline-interactive-hover;
+    }
+
+    &:where([data-current]) {
+      @apply bg-accent-primary-bold outline-accent-primary-pressed;
+    }
+
+    /* While dragged, the card stays in the list as the outline of where it will land; a copy of
+       it follows the pointer. */
+    &:where([data-dragging]) {
+      @apply invisible relative;
+
+      &::after {
+        @apply visible absolute inset-0 rounded-large bg-accent-primary-muted/20 outline-2 outline-accent-primary-bold outline-dashed;
+        content: '';
+      }
+    }
+  }
+
+  .cardHeader {
+    @apply flex flex-row items-center justify-between gap-s p-0 text-header-m;
+  }
+
+  .cardTitle {
+    @apply font-medium fg-primary-bold;
+
+    :where(.card[data-current]) & {
+      @apply fg-a11y-on-accent;
+    }
+  }
+
+  .cardBody {
+    @apply text-body-m fg-primary-muted;
+
+    :where(.card[data-current]) & {
+      @apply fg-a11y-on-accent;
+    }
+  }
+
+  .cardHeaderActions {
+    @apply flex flex-row items-center;
+  }
+
+  .column {
+    @apply flex h-full flex-1 flex-col items-center overflow-x-hidden overflow-y-auto rounded-large p-xs outline outline-transparent;
+    min-width: 210px;
+
+    /* A card is over the column, or one from another column could go in it. */
+    @variant highlighted {
+      @apply outline-interactive-hover;
+    }
+
+    /* A card is over the column and would go in it. */
+    &:where([data-drop-target]) {
+      @apply outline-accent-primary-bold;
+    }
+  }
+
+  .columnItems {
+    @apply flex h-full w-full flex-row gap-xs overflow-x-auto p-m;
+  }
+
+  .columnHeader {
+    @apply flex w-full items-center justify-between gap-m bg-surface-default p-s text-header-m fg-primary-bold;
+  }
+
+  .columnHeaderActions {
+    @apply flex flex-row items-center gap-s fg-primary-muted;
+  }
+
+  .columnTitle {
+    @apply flex flex-row items-center gap-s text-body-s font-medium fg-primary-bold;
+  }
+
+  .columnContent {
+    @apply relative my-s flex h-full w-full flex-1 grow flex-col flex-nowrap gap-s overflow-y-auto px-px;
+    min-height: 200px;
+  }
+
+  /* Where a card dropped into an empty column goes: about a card's height, and invisible. */
+  .emptySlot {
+    @apply h-xxl shrink-0;
+  }
+}

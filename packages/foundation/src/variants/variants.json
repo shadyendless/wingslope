@@ -60,8 +60,8 @@
 
   "highlighted": "[data-highlighted]",
 
-  "checked": ":checked, [data-state=\"checked\"]",
-  "indeterminate": ":indeterminate, [data-state=\"indeterminate\"]",
+  "checked": ":checked, [data-state=\"checked\"], [aria-checked=\"true\"]",
+  "indeterminate": ":indeterminate, [data-state=\"indeterminate\"], [aria-checked=\"mixed\"]",
   "selected": ":checked, [data-state=\"checked\"], [data-state=\"on\"], [data-state=\"active\"], [data-selected], [aria-selected=\"true\"], [aria-pressed=\"true\"]",
 
   "disabled": ":disabled, [data-disabled], [aria-disabled=\"true\"]",

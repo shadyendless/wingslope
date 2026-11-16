@@ -12,6 +12,16 @@ import {
 import type { GsTreeNodeLayout } from './tree-data'
 import type { GsTreeKey, GsTreeSelectionMode, GsTreeVariant } from './types'
 
+/** @internal What rows show while a node is dragged. */
+export interface TreeDropView {
+  /** The dragged node and its visible descendants, which travel with it. */
+  dragging: ReadonlySet<GsTreeKey>
+  /** The node the dragged one would go into, or `null` for the root level. */
+  parent: GsTreeKey | null
+  /** The row that shows the drop line, and on which edge. */
+  indicator: { key: GsTreeKey; edge: 'top' | 'bottom' } | undefined
+}
+
 /** @internal State `GsTree` shares with its rows and their parts. */
 export interface TreeContext {
   variant: ComputedRef<GsTreeVariant>
@@ -31,6 +41,12 @@ export interface TreeContext {
    * order, so Tab doesn't walk through every row's buttons.
    */
   tabStopKey: Ref<GsTreeKey | undefined>
+  /** Rows have drag handles. */
+  dragAndDrop: ComputedRef<boolean>
+  /** The drop preview while a node is dragged. */
+  drop: ComputedRef<TreeDropView | undefined>
+  /** Records a row's element, for finding the gap under the pointer. Returns the cleanup. */
+  registerRow: (key: GsTreeKey, element: HTMLElement) => () => void
 }
 
 const key: InjectionKey<TreeContext> = Symbol('GsTree')

@@ -11,6 +11,26 @@ export type GsTreeSelectionMode = 'none' | 'single' | 'multiple'
 export type GsTreeInsertPosition = 'before' | 'after' | 'into'
 
 /**
+ * A move of nodes (with their descendants) to `position` relative to `target`, as
+ * `moveTreeNodes` applies it. A `null` target means the root level: `before` and `into` go to its
+ * start, `after` to its end. `GsTree` emits one with `move` when a drag ends.
+ */
+export interface GsTreeMove {
+  /** The nodes to move. */
+  keys: GsTreeKey[]
+  /** The node they move relative to, or `null` for the root level. */
+  target: GsTreeKey | null
+  position: GsTreeInsertPosition
+}
+
+/**
+ * One step of moving a node without dragging (see `getTreeStepMove`): `up` / `down` past the
+ * previous / next sibling, `indent` into the previous sibling (as its last child), `outdent` out
+ * of its parent (right after it).
+ */
+export type GsTreeMoveDirection = 'up' | 'down' | 'indent' | 'outdent'
+
+/**
  * One node of tree data. The tree's state (selected, expanded, visible) lives in key arrays
  * bound with `v-model`. The `expanded`, `selected` and `visible` flags only set its initial value.
  *
@@ -26,7 +46,7 @@ export interface GsTreeNode<T = unknown> {
   label: string
   /** Application-specific data, available to the row slot as `node.values`. */
   values?: T
-  /** Prevents focusing, selecting, expanding and toggling the visibility of this node. */
+  /** Prevents focusing, selecting, expanding, dragging and toggling the visibility of this node. */
   disabled?: boolean
   /**
    * Starts expanded. Read once, by `useTree` and by a `GsTree` without `v-model:expanded`; the
@@ -77,6 +97,12 @@ export interface GsTreeProps<T = unknown> {
   disabledKeys?: GsTreeKey[]
   /** Disables the whole tree. */
   disabled?: boolean
+  /**
+   * Let users move nodes by dragging the handle at the end of each row, with a pointer or with the
+   * keyboard. The tree emits `move` when a drag ends; apply it to `items` (`useTree`'s
+   * `applyMove` does). Disabled nodes can't be dragged. @default false
+   */
+  dragAndDrop?: boolean
 }
 
 /** Props passed to the `GsTree` row slot. */
@@ -108,7 +134,7 @@ export interface GsTreeItemProps {
    * visibility toggle.
    */
   label: string
-  /** Prevents focusing, selecting, expanding and toggling the visibility of this node. */
+  /** Prevents focusing, selecting, expanding, dragging and toggling the visibility of this node. */
   disabled?: boolean
 }
 

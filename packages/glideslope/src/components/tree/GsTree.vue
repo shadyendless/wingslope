@@ -15,6 +15,11 @@
  * Clicking a row (or Enter / Space) toggles its selection. The chevron and the arrow keys expand
  * and collapse; without selection, clicking a row expands it too.
  *
+ * With `drag-and-drop`, each row gets a drag handle: drag it with a pointer, or focus it and press
+ * Space or Enter to move the node with the arrow keys. The tree emits `move` with where the node
+ * goes; `useTree`'s `applyMove` applies it. Offer `getTreeStepMove` actions ("Move up", "Indent")
+ * in a row menu as well, for people who can't drag.
+ *
  * @example
  * ```vue
  * <GsTree
@@ -32,8 +37,9 @@
  * </GsTree>
  * ```
  */
+import { DragDropProvider, DragOverlay } from '@dnd-kit/vue'
 import { TreeRoot } from 'reka-ui'
-import { computed, ref, shallowReactive } from 'vue'
+import { computed, ref, shallowReactive, type FunctionalComponent } from 'vue'
 import { provideTreeContext } from './context'
 import GsTreeItemLabel from './GsTreeItemLabel.vue'
 import GsTreeRow from './GsTreeRow.vue'
@@ -57,10 +63,16 @@ import {
 import type {
   GsTreeItemSlotProps,
   GsTreeKey,
+  GsTreeMove,
   GsTreeNode,
   GsTreeProps,
   GsTreeStateFlag,
 } from './types'
+import { useTreeDrag } from './use-tree-drag'
+
+// With drag-and-drop the root is a fragment (the tree and dnd-kit's drag overlay), so attributes
+// are bound to the tree element explicitly.
+defineOptions({ inheritAttrs: false })
 
 const {
   items,
@@ -71,7 +83,16 @@ const {
   selectionCascade = false,
   disabledKeys = [],
   disabled = false,
+  dragAndDrop = false,
 } = defineProps<GsTreeProps<T>>()
+
+const emit = defineEmits<{
+  /**
+   * A drag (`drag-and-drop`) ended somewhere new. Receives the move to apply to `items`, for
+   * example with `useTree`'s `applyMove`.
+   */
+  move: [move: GsTreeMove]
+}>()
 
 /**
  * Selected keys. In `single` mode the array holds at most one key. Without a binding, starts from
@@ -143,6 +164,16 @@ const rekaSelection = computed(() =>
 const getKey = (node: { key: GsTreeKey }) => node.key
 const getChildren = (node: GsTreeNode<T>) => (node.children?.length ? node.children : undefined)
 
+const dnd = useTreeDrag({
+  nodes: () => nodes.value,
+  expanded: () => expanded.value,
+  variant: () => variant,
+  move: (move) => emit('move', move),
+})
+
+/** Stands in for dnd-kit's `DragDropProvider` without drag-and-drop: renders its slot as is. */
+const Passthrough: FunctionalComponent = (_, { slots }) => slots.default?.()
+
 provideTreeContext({
   variant: computed(() => variant),
   showRuleLines: computed(() => showRuleLines),
@@ -164,33 +195,47 @@ provideTreeContext({
     visible.value = toggleTreeVisibility(visible.value, key)
   },
   tabStopKey: ref<GsTreeKey>(),
+  dragAndDrop: computed(() => dragAndDrop),
+  drop: dnd.drop,
+  registerRow: dnd.registerRow,
 })
 </script>
 
 <template>
-  <!-- Drag-and-drop reordering will hook in here (drop targets on rows, calling useTree's move
-       actions) once a Vue drag-and-drop library is chosen. -->
-  <TreeRoot
-    v-slot="{ flattenItems }"
-    v-model:expanded="expanded"
-    :items="nodes"
-    :get-key="getKey"
-    :get-children="getChildren"
-    :model-value="rekaSelection"
-    :multiple="selectionMode === 'multiple'"
-    :disabled="disabled"
-    :class="['group/tree', styles.tree]"
+  <component
+    :is="dragAndDrop ? DragDropProvider : Passthrough"
+    v-bind="dragAndDrop ? dnd.provider : {}"
   >
-    <GsTreeRow v-for="item in flattenItems" :key="item._id" :item="item">
-      <template #default="row">
-        <GsTreeStaticContent v-if="isStatic" :entry="staticIndex.get(row.node.key)" :row="row" />
-        <slot v-else v-bind="row">
-          <GsTreeItemLabel>{{ row.node.label }}</GsTreeItemLabel>
-        </slot>
+    <TreeRoot
+      v-slot="{ flattenItems }"
+      v-model:expanded="expanded"
+      v-bind="$attrs"
+      :items="nodes"
+      :get-key="getKey"
+      :get-children="getChildren"
+      :model-value="rekaSelection"
+      :multiple="selectionMode === 'multiple'"
+      :disabled="disabled"
+      :class="['group/tree', styles.tree]"
+      @keydown.capture="dnd.onKeydownCapture"
+    >
+      <GsTreeRow v-for="item in flattenItems" :key="item._id" :item="item">
+        <template #default="row">
+          <GsTreeStaticContent v-if="isStatic" :entry="staticIndex.get(row.node.key)" :row="row" />
+          <slot v-else v-bind="row">
+            <GsTreeItemLabel>{{ row.node.label }}</GsTreeItemLabel>
+          </slot>
+        </template>
+      </GsTreeRow>
+      <!-- Markup: the GsTreeItems register their nodes here and render nothing visible. The slot
+           gets no row props in this mode; its type describes the `items` mode. -->
+      <li v-if="isStatic" hidden><slot v-bind="{} as GsTreeItemSlotProps<T>" /></li>
+    </TreeRoot>
+    <!-- Follows the pointer while a row is dragged. Empty, and unstyled, the rest of the time. -->
+    <DragOverlay v-if="dragAndDrop" :drop-animation="null" aria-hidden="true">
+      <template #default="{ source }">
+        <div :class="[styles.overlay, styles[variant]]">{{ dnd.label(String(source.id)) }}</div>
       </template>
-    </GsTreeRow>
-    <!-- Markup: the GsTreeItems register their nodes here and render nothing visible. The slot
-         gets no row props in this mode; its type describes the `items` mode. -->
-    <li v-if="isStatic" hidden><slot v-bind="{} as GsTreeItemSlotProps<T>" /></li>
-  </TreeRoot>
+    </DragOverlay>
+  </component>
 </template>

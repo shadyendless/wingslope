@@ -6,6 +6,8 @@
 import type {
   GsTreeInsertPosition,
   GsTreeKey,
+  GsTreeMove,
+  GsTreeMoveDirection,
   GsTreeNode,
   GsTreeSelectionMode,
   GsTreeStateFlag,
@@ -200,6 +202,61 @@ export function moveTreeNodes<T>(
     moved.map((node) => node.key),
   )
   return insertTreeNodes(without, target, moved, position)
+}
+
+/** The siblings of a node (its parent's children, or the root level), and its index among them. */
+function findTreeSiblings<T>(
+  nodes: Nodes<T>,
+  key: GsTreeKey,
+  parent: GsTreeNode<T> | null = null,
+): { siblings: Nodes<T>; index: number; parent: GsTreeNode<T> | null } | undefined {
+  const index = nodes.findIndex((node) => node.key === key)
+  if (index !== -1) return { siblings: nodes, index, parent }
+  for (const node of nodes) {
+    const found = node.children && findTreeSiblings(node.children, key, node)
+    if (found) return found
+  }
+  return undefined
+}
+
+/**
+ * Where one step in `direction` takes a node, as a move for `moveTreeNodes` (or `useTree`'s
+ * `applyMove`): the non-drag alternative to dragging, for "Move up" or "Indent" buttons and menu
+ * items.
+ *
+ * - `up` / `down`: before its previous sibling / after its next sibling
+ * - `indent`: into its previous sibling, as the last child
+ * - `outdent`: out of its parent, right after it
+ *
+ * Returns `undefined` when the node can't go that way (it is the first or last sibling, a root
+ * node for `outdent`, or an unknown key).
+ */
+export function getTreeStepMove<T>(
+  nodes: Nodes<T>,
+  key: GsTreeKey,
+  direction: GsTreeMoveDirection,
+): GsTreeMove | undefined {
+  const found = findTreeSiblings(nodes, key)
+  if (!found) return undefined
+  const { siblings, index, parent } = found
+  const previous = siblings[index - 1]
+  const next = siblings[index + 1]
+  const keys = [key]
+  switch (direction) {
+    case 'up':
+      return previous && { keys, target: previous.key, position: 'before' }
+    case 'down':
+      return next && { keys, target: next.key, position: 'after' }
+    case 'indent': {
+      if (!previous) return undefined
+      const last = previous.children?.at(-1)
+      return last
+        ? { keys, target: last.key, position: 'after' }
+        : { keys, target: previous.key, position: 'into' }
+    }
+    case 'outdent':
+      return parent ? { keys, target: parent.key, position: 'after' } : undefined
+  }
 }
 
 /* ---------------------------------------------------------------------------------------------- */

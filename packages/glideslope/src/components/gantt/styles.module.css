@@ -1,0 +1,321 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+/*
+ * Sizes shared by the chart's parts are CSS variables set once on the root (`GsGanttRootContainer`)
+ * from `constants.ts`: --gantt-row-height, --gantt-header-height, --gantt-row-element-height,
+ * --gantt-container-top and --gantt-chunk-width. Per-element positions (--translate-x, --width,
+ * --elapsed-pct) are set on each element.
+ *
+ * Rows, the header and the panel draw single-side dividers with borders: an outline can't draw
+ * one side, and these elements have fixed sizes (border-box), so the border doesn't resize them.
+ */
+@layer components.l1 {
+  /* The vertical scroll container. The tall element inside gives it the rows' scroll range. */
+  .root {
+    @apply relative h-full max-h-full w-full overflow-x-hidden overflow-y-auto outline-hidden;
+  }
+
+  /* Both scroll containers take focus, so the keyboard can scroll them. Inset, as they fill their
+     box. */
+  .root,
+  .content {
+    @variant focus-visible {
+      @apply outline-2 -outline-offset-2 outline-accent-primary-bold;
+    }
+  }
+
+  .virtualized-content-height {
+    height: var(--gantt-scroll-height);
+  }
+
+  /* The visible region, which stays put while the root scrolls. */
+  .stuck {
+    @apply sticky top-0 max-h-full;
+    height: var(--gantt-visible-height);
+  }
+
+  .layout {
+    @apply relative flex max-h-full flex-row;
+  }
+
+  .content {
+    @apply relative max-h-full overflow-x-auto overflow-y-hidden bg-surface-default outline-hidden;
+    flex: 1 1 auto;
+  }
+
+  .panel {
+    @apply relative max-h-full max-w-full overflow-x-hidden overflow-y-hidden border-r bg-surface-default;
+    border-color: var(--outline-static);
+    flex: 0 0 238px;
+  }
+
+  .header {
+    @apply sticky top-0 left-0 z-10 flex shrink-0 grow-0 items-end border-b bg-inherit;
+    height: var(--gantt-header-height);
+    border-color: var(--outline-static);
+  }
+
+  /* Timeline */
+  .timeline-container {
+    @apply flex overflow-hidden;
+  }
+
+  .timeline {
+    @apply flex;
+    transform: translateX(var(--translate-x, 0px));
+  }
+
+  .chunk {
+    min-width: var(--gantt-chunk-width);
+  }
+
+  .chunk-label {
+    @apply flex justify-center font-display text-body-s fg-primary-muted;
+    transform: translateX(-50%);
+  }
+
+  .chunk-ticks {
+    @apply flex;
+  }
+
+  .chunk-tick-container {
+    @apply flex flex-1;
+  }
+
+  .chunk-tick {
+    @apply w-px bg-current fg-disabled;
+    height: 6px;
+  }
+
+  /* Current time */
+  .current-time {
+    @apply pointer-events-none absolute z-10 flex flex-col items-center justify-center font-display text-body-xs fg-primary-bold;
+    top: var(--gantt-container-top);
+    transform: translateX(calc(var(--translate-x, 0px) - 50%));
+  }
+
+  .current-time-label {
+    @apply p-xs text-body-xs outline outline-accent-primary-bold;
+    border-radius: 3px;
+  }
+
+  .current-time-indicator {
+    @apply w-px fg-accent-primary-bold;
+    --dash: 6px;
+    --gap: 6px;
+    --border: 3px;
+    background: repeating-linear-gradient(
+        to bottom,
+        currentColor 0 var(--dash),
+        transparent var(--dash) calc(var(--dash) + var(--gap))
+      )
+      left / var(--border) 100% no-repeat;
+  }
+
+  /* Rows */
+  .rows-virtualizer {
+    @apply relative min-w-full overflow-y-hidden;
+    width: var(--gantt-timeline-width, auto);
+  }
+
+  .rows-virtualizer-rows {
+    @apply relative w-full min-w-full overflow-hidden;
+    height: var(--gantt-rows-height);
+  }
+
+  .panel-row {
+    @apply relative flex items-center border-b px-m py-xxs;
+    height: var(--gantt-row-height);
+    border-color: var(--outline-static);
+  }
+
+  .content-row {
+    --row-padding: 4.5px;
+    --element-height: calc(100% - calc(var(--row-padding) * 2));
+
+    @apply relative flex items-center border-b;
+    padding-block: var(--row-padding);
+    height: var(--gantt-row-height);
+    border-color: var(--outline-static);
+
+    & .block,
+    & .bracket,
+    & .marker {
+      height: var(--element-height);
+    }
+  }
+
+  /* Row elements */
+  .block {
+    --bg-color: var(--bg-interactive-muted);
+    --outline-color: var(--outline-interactive);
+    --elapsed-color: var(--bg-interactive-muted);
+
+    @apply absolute flex flex-nowrap items-center overflow-hidden rounded-small p-xs whitespace-nowrap;
+    width: var(--width);
+    transform: translateX(var(--translate-x));
+
+    /* A transparent border over a border-box gradient, so the elapsed part shows in the edge too. */
+    border: 1px solid transparent;
+    background:
+      linear-gradient(
+          to right,
+          var(--elapsed-color) var(--elapsed-pct, 0%),
+          var(--bg-color) var(--elapsed-pct, 0%)
+        )
+        padding-box,
+      linear-gradient(
+          to right,
+          var(--elapsed-color) var(--elapsed-pct, 0%),
+          var(--outline-color) var(--elapsed-pct, 0%)
+        )
+        border-box;
+
+    @variant color-accent {
+      --bg-color: var(--bg-accent-primary-muted);
+      --outline-color: var(--outline-accent-primary-bold);
+    }
+
+    @variant color-serious {
+      --bg-color: var(--bg-serious-muted);
+      --outline-color: var(--outline-serious-bold);
+    }
+
+    @variant color-critical {
+      --bg-color: var(--bg-critical-muted);
+      --outline-color: var(--outline-critical-bold);
+    }
+  }
+
+  .spacer {
+    @apply absolute h-px;
+    width: var(--width);
+    transform: translateX(var(--translate-x));
+    background: linear-gradient(
+      to right,
+      var(--fg-inverse-muted) var(--elapsed-pct, 0%),
+      currentColor var(--elapsed-pct, 0%)
+    );
+
+    @variant color-accent {
+      @apply fg-accent-primary-bold;
+    }
+
+    @variant color-serious {
+      @apply fg-serious-bold;
+    }
+
+    @variant color-critical {
+      @apply fg-critical-bold;
+    }
+  }
+
+  .bracket {
+    --rotate: 0deg;
+
+    @apply absolute;
+    transform: translateX(var(--translate-x)) rotate(var(--rotate));
+
+    &:where([data-direction='close']) {
+      --rotate: 180deg;
+    }
+
+    /* The serifs at the bracket's ends. */
+    &::before,
+    &::after {
+      @apply absolute rounded-small border border-current border-t-transparent border-b-transparent border-l-transparent;
+      content: '';
+      left: 4px;
+    }
+
+    &::before {
+      @apply -top-px rotate-45;
+    }
+
+    &::after {
+      @apply -bottom-px -rotate-45;
+    }
+
+    @variant color-accent {
+      @apply fg-accent-primary-bold;
+    }
+
+    @variant color-serious {
+      @apply fg-serious-bold;
+    }
+
+    @variant color-critical {
+      @apply fg-critical-bold;
+    }
+
+    /* After the colors: an elapsed element is muted whatever its color. */
+    &:where([data-elapsed]) {
+      @apply fg-inverse-muted;
+    }
+  }
+
+  .bracket-line {
+    @apply absolute left-0 h-full rounded-l-small border border-r-transparent border-b-current bg-transparent;
+    width: 6px;
+  }
+
+  .marker {
+    @apply absolute flex w-px items-center justify-center border-solid border-current bg-current;
+    /* Above other elements (like spacers) that may be rendered at the same point in time. */
+    z-index: 1;
+    min-height: var(--gantt-row-element-height);
+    transform: translateX(var(--translate-x));
+
+    @variant color-accent {
+      @apply fg-accent-primary-bold;
+    }
+
+    @variant color-serious {
+      @apply fg-serious-bold;
+    }
+
+    @variant color-critical {
+      @apply fg-critical-bold;
+    }
+
+    &:where([data-elapsed]) {
+      @apply fg-inverse-muted;
+    }
+  }
+
+  .marker-point {
+    @apply absolute rounded-full bg-current;
+    width: 3px;
+    height: 3px;
+  }
+
+  .marker-icon {
+    @apply outline outline-transparent;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+
+    @variant color-accent {
+      @apply bg-accent-primary-muted;
+    }
+
+    @variant color-serious {
+      @apply bg-serious-muted;
+    }
+
+    @variant color-critical {
+      @apply bg-critical-muted;
+    }
+
+    &:where([data-elapsed]) {
+      @apply bg-interactive-muted;
+    }
+  }
+}
+
+@layer components.l2 {
+  /* The `GsIcon` in a `GsGanttIconMarker`, scaled down to leave some space in the ring. */
+  .marker-icon-glyph {
+    @apply fg-primary-bold;
+    transform: scale(0.6);
+  }
+}

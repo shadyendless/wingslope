@@ -11,18 +11,18 @@ import GsTreeItemPrefixIcon from './GsTreeItemPrefixIcon.vue'
 
 # Tree
 
-Tree view allows users to navigate lists of data with nested levels that can be expanded or collapsed. `GsTree` provides a hierarchical structure with selection (optionally cascading through descendants), expansion and collapse, and visibility control.
+Tree view allows users to navigate lists of data with nested levels that can be expanded or collapsed. `GsTree` provides a hierarchical structure with selection (optionally cascading through descendants), expansion and collapse, visibility control, and drag-and-drop.
 
 It is composed of the following components:
 
-- **GsTree** - parent that takes the tree data as `items`, renders one row per visible node and drives global tree behavior like selection
+- **GsTree** - parent that takes the tree data as `items`, renders one row per visible node and drives global tree behavior like selection or drag and drop
 - **GsTreeItem** - defines an individual tree node in markup, for a tree written without `items`
 - **GsTreeItemLabel** - places and styles the tree node label
 - **GsTreeItemDescription** - places and styles the tree node description
 - **GsTreeItemPrefixIcon** - places and styles the icon that optionally shows before a tree node label
 - **GsTreeItemActions** - container for application-specific icons and buttons at the end of a row
 
-`GsTree` renders each row itself (visibility toggle, rule lines, expand chevron and selection checkbox); the row's content is composed from the parts above, in `GsTree`'s default slot (with `items`) or in each `GsTreeItem`'s `#content` slot.
+`GsTree` renders each row itself (visibility toggle, rule lines, expand chevron, selection checkbox and drag handle); the row's content is composed from the parts above, in `GsTree`'s default slot (with `items`) or in each `GsTreeItem`'s `#content` slot.
 
 ## Dynamic data example
 
@@ -57,7 +57,7 @@ const items: GsTreeNode<ItemValues>[] = [
 </template>
 ```
 
-<Canvas of={TreeStories.Stateless} />
+<Canvas of={TreeStories.DragAndDrop} />
 
 ## Static data example
 
@@ -271,6 +271,78 @@ const visible = ref(['one', 'two'])
 
 <Canvas of={TreeStories.Visibility} />
 
+## Drag and drop
+
+Set `drag-and-drop` to let users move nodes, with their descendants, to anywhere in the tree. Each row gets a drag handle at its end. Drag it with a pointer, or focus it and press Space or Enter to move the node with the keyboard. The tree doesn't change its own `items`: when a drag ends somewhere new, it emits `move` with a `GsTreeMove` (`keys`, a `target` key or `null` for the root level, and a `position` of `before`, `after` or `into`), the same arguments `moveTreeNodes` takes. `useTree`'s `applyMove` applies it.
+
+```vue
+<script setup lang="ts">
+import { useTree } from '@wingbrace/glideslope'
+
+const { nodes, selected, expanded, applyMove } = useTree({ items: initialTreeData })
+</script>
+
+<template>
+  <GsTree
+    v-model="selected"
+    v-model:expanded="expanded"
+    :items="nodes"
+    drag-and-drop
+    aria-label="Files"
+    @move="applyMove"
+  />
+</template>
+```
+
+With your own state, apply the move with the tree data helpers:
+
+```ts
+import { moveTreeNodes, type GsTreeMove } from '@wingbrace/glideslope'
+
+const handleMove = ({ keys, target, position }: GsTreeMove) => {
+  tree.value = moveTreeNodes(tree.value, keys, target, position)
+}
+```
+
+While a node is dragged, it and its descendants are dimmed. A line shows where it will land, and the node it will go into is outlined. Moving the pointer up and down picks the place between two rows; moving it sideways picks the level, as far as the rows around that place allow (a node can become the first child of the row above it, or move out to any level its new neighbors allow). Disabled nodes can't be dragged.
+
+Drag-and-drop is built on [dnd-kit](https://dndkit.com), which runs only in the browser.
+
+<Canvas of={TreeStories.CascadeWithDragAndDrop} />
+
+### Moving without dragging
+
+Dragging needs a pointer path or a keyboard sequence that not everyone can perform, so offer the same moves as single actions too, in a row menu or as buttons. `getTreeStepMove` returns the move for one step, or `undefined` when the node can't go that way:
+
+- **up** / **down**: before its previous sibling / after its next sibling
+- **indent**: into its previous sibling, as its last child
+- **outdent**: out of its parent, right after it
+
+`useTree` wraps it as `moveStep(key, direction)` and `canMoveStep(key, direction)`:
+
+```vue
+<GsTree :items="nodes" drag-and-drop aria-label="Files" @move="applyMove">
+  <template #default="{ node }">
+    <GsTreeItemLabel>{{ node.label }}</GsTreeItemLabel>
+    <GsTreeItemActions>
+      <GsMenu @action="(direction) => moveStep(node.key, direction)">
+        <template #trigger>
+          <GsButton variant="icon" :aria-label="`Move ${node.label}`">
+            <GsIcon><KebabIcon /></GsIcon>
+          </GsButton>
+        </template>
+        <GsMenuItem value="up" label="Move up" :disabled="!canMoveStep(node.key, 'up')" />
+        <GsMenuItem value="down" label="Move down" :disabled="!canMoveStep(node.key, 'down')" />
+        <GsMenuItem value="indent" label="Indent" :disabled="!canMoveStep(node.key, 'indent')" />
+        <GsMenuItem value="outdent" label="Outdent" :disabled="!canMoveStep(node.key, 'outdent')" />
+      </GsMenu>
+    </GsTreeItemActions>
+  </template>
+</GsTree>
+```
+
+<Canvas of={TreeStories.MoveWithoutDragging} />
+
 ## GsTreeNode structure
 
 Each node in `items` follows this structure. Only the `key` and `label` properties are required.
@@ -286,7 +358,7 @@ interface GsTreeNode<T> {
   // Optional application-specific values
   values?: T
 
-  // Prevents focusing, selecting, expanding and toggling the visibility of this node
+  // Prevents focusing, selecting, expanding, dragging and toggling the visibility of this node
   disabled?: boolean
 
   // Initial state: whether the node starts expanded, selected or visible
@@ -361,12 +433,15 @@ const expandAll = () => {
 </template>
 ```
 
+<Canvas of={TreeStories.Stateless} />
+
 ### Available functions
 
 Data:
 
 - **insertTreeNodes**: Insert nodes `before` or `after` a target node, or `into` it as its first children
 - **moveTreeNodes**: Move nodes (with their descendants) `before`, `after` or `into` a target node
+- **getTreeStepMove**: The move for one step `up`, `down`, `indent` or `outdent`, for moving without dragging
 - **removeTreeNodes**: Remove nodes and their descendants
 - **updateTreeNode**: Replace a node with the result of an update function
 - **findTreeNode**: Find a node by key
@@ -500,6 +575,8 @@ It returns:
 - **getNode**: Find a node by key
 - **expandAll**, **collapseAll**, **selectAll**, **unselectAll**, **revealAll**, **hideAll**: State actions
 - **insertBefore**, **insertAfter**, **insertInto**, **moveBefore**, **moveAfter**, **moveInto**, **remove**, **updateNode**: Structural actions. They drop the keys of removed nodes from the state
+- **applyMove**: Applies a `GsTreeMove`, for the tree's `move` event with `drag-and-drop`
+- **moveStep**, **canMoveStep**: Move a node one step `up`, `down`, `indent` or `outdent`, and whether it can go that way, for moving without dragging
 
 ## Accessibility
 
@@ -513,6 +590,18 @@ It returns:
 - **Right arrow**: Expand a collapsed node or move to the first child
 - **Left arrow**: Collapse an expanded node or move to the parent
 - **Typing**: Jump to the next item whose label starts with the typed text
+- **Tab**: With `drag-and-drop`, or with controls in `GsTreeItemActions`, reach the focused row's buttons, including its drag handle
+
+### Moving a node with the keyboard
+
+With `drag-and-drop`, focus a row's drag handle (Tab from the row) and:
+
+- **Space/Enter**: Pick the node up, and drop it once it is where it should go (Tab drops it too)
+- **Up and Down arrows**: Move the drop place between rows
+- **Left and Right arrows**: Change the level the node lands at, out of or into the rows around the place
+- **Escape**: Cancel, leaving the node where it was
+
+While the node is picked up, the keys go to the drag only, so they don't select or move the focus between rows. A live region announces what happens ("Picked up Report", "Report will move after Slides", "Report moved into Work"), and every handle is described by these instructions. After a drop, the focus stays on the moved node's handle, or goes to its nearest visible ancestor if it moved into a collapsed node.
 
 ### ARIA attributes
 
@@ -525,6 +614,9 @@ The tree applies the appropriate ARIA attributes so screen readers can interpret
 - `aria-disabled` for disabled items
 - `aria-level` to indicate the nesting level
 
+With `drag-and-drop`, the drag handle (not the row) carries dnd-kit's drag attributes: `aria-roledescription="draggable"`, `aria-pressed` while picked up, and `aria-describedby` pointing at the keyboard instructions. That keeps each row announced as a tree item, and Space and Enter on a row still select it. The handle is named "Drag" followed by the node's `label`.
+
 ## Related
 
 - [Reka UI Tree](https://reka-ui.com/docs/components/tree)
+- [dnd-kit](https://dndkit.com)

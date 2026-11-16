@@ -7,7 +7,7 @@
 
   /* The row (Reka UI's TreeItem). Rows without `data-viewable` are hidden, or under a hidden node. */
   .item {
-    @apply rounded-medium px-s fg-primary-bold outline-hidden;
+    @apply relative rounded-medium px-s fg-primary-bold outline-hidden;
 
     &:where(:not([data-viewable])) {
       @apply fg-primary-muted;
@@ -48,6 +48,47 @@
 
     &.crammed {
       @apply min-h-s;
+    }
+
+    /* Drag-and-drop: the dragged row and the descendants that travel with it. */
+    &:where([data-dragging]) {
+      @apply opacity-50;
+    }
+
+    /* The row the dragged node would go into. */
+    &:where([data-drop-target]) {
+      @apply bg-accent-primary-muted/20 outline outline-accent-primary-bold;
+    }
+
+    /* The line where the dragged node would land, on this row's top or bottom edge. */
+    &:where([data-drop-indicator])::before {
+      @apply pointer-events-none absolute inset-x-s h-xxs rounded-full bg-accent-primary-hover;
+      content: '';
+    }
+
+    &:where([data-drop-indicator='top'])::before {
+      @apply top-0 -translate-y-1/2;
+    }
+
+    &:where([data-drop-indicator='bottom'])::before {
+      @apply bottom-0 translate-y-1/2;
+    }
+  }
+
+  /* What follows the pointer while a row is dragged: the row's label on a raised surface. */
+  .overlay {
+    @apply flex size-full items-center rounded-medium bg-surface-overlay px-l fg-primary-bold shadow-elevation-overlay;
+
+    &.cozy {
+      @apply text-header-m;
+    }
+
+    &.compact {
+      @apply text-header-s;
+    }
+
+    &.crammed {
+      @apply text-header-s;
     }
   }
 
@@ -191,6 +232,15 @@
 
 /* Restyles GsLines and GsButton, which live in components.l1. */
 @layer components.l2 {
+  /* The drag handle: a grab cursor where the pointer can start a drag. */
+  .drag {
+    @apply cursor-grab;
+
+    @variant disabled {
+      @apply cursor-not-allowed;
+    }
+  }
+
   .spacing {
     @apply shrink-0;
 
@@ -211,7 +261,8 @@
   }
 
   .visibility,
-  .expansion {
+  .expansion,
+  .drag {
     :where(.group\/tree-item:not([data-viewable])) & {
       @apply fg-primary-muted;
     }

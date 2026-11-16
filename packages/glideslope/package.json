@@ -34,8 +34,13 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@dnd-kit/helpers": "catalog:",
+    "@dnd-kit/vue": "catalog:",
     "@internationalized/date": "catalog:",
+    "@react-querybuilder/core": "catalog:",
+    "@react-querybuilder/vue": "catalog:",
     "@tanstack/vue-table": "catalog:",
+    "@wingbrace/geo": "workspace:^",
     "@wingbrace/glideslope-icons": "workspace:^",
     "media-chrome": "catalog:",
     "reka-ui": "catalog:"

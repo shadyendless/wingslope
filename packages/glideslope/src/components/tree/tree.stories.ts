@@ -3,6 +3,7 @@ import {
   CenterOnIcon,
   CollapseAllIcon,
   ExpandAllIcon,
+  KebabIcon,
   LockFillIcon,
   PlaceholderIcon,
   WarningIcon,
@@ -10,6 +11,8 @@ import {
 import { ref, type ConcreteComponent } from 'vue'
 import GsButton from '../button/GsButton.vue'
 import GsIcon from '../icon/GsIcon.vue'
+import GsMenu from '../menu/GsMenu.vue'
+import GsMenuItem from '../menu/GsMenuItem.vue'
 import GsTree from './GsTree.vue'
 import GsTreeItem from './GsTreeItem.vue'
 import GsTreeItemActions from './GsTreeItemActions.vue'
@@ -17,7 +20,7 @@ import GsTreeItemDescription from './GsTreeItemDescription.vue'
 import GsTreeItemLabel from './GsTreeItemLabel.vue'
 import GsTreeItemPrefixIcon from './GsTreeItemPrefixIcon.vue'
 import { getTreeFlaggedKeys, getTreeKeys, getTreeParentKeys } from './tree-data'
-import type { GsTreeKey, GsTreeNode } from './types'
+import type { GsTreeKey, GsTreeMoveDirection, GsTreeNode } from './types'
 import { useTree } from './use-tree'
 
 /**
@@ -110,7 +113,7 @@ const node = `
       {{ node.values.description }}
     </GsTreeItemDescription>
     <GsTreeItemActions>
-      <GsIcon v-if="disabled" class="fg-primary-muted"><LockFillIcon /></GsIcon>
+      <GsIcon v-if="disabled" class="aspect-square rounded-full p-xs"><LockFillIcon /></GsIcon>
       <GsIcon v-if="node.values?.hasWarning" class="fg-serious-bold"><WarningIcon /></GsIcon>
       <GsButton variant="icon" :aria-label="\`Center on \${node.label}\`" :disabled="!(viewable && visible)">
         <GsIcon><CenterOnIcon /></GsIcon>
@@ -167,6 +170,33 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 /**
+ * This story is using the optional useTree composable, a convenience helper that holds the tree's
+ * state. Its `applyMove` applies the moves the tree emits with `drag-and-drop`: drag a row by its
+ * handle, or focus the handle and press Space.
+ */
+export const DragAndDrop: Story = {
+  render: (args) => ({
+    components,
+    setup: () => ({ args, ...useTree({ items }) }),
+    template: `
+      <div>
+        <div class="flex items-center gap-m">${selectionButtons}${expansionButtons}</div>
+        <GsTree
+          v-bind="args"
+          v-model="selected"
+          v-model:expanded="expanded"
+          v-model:visible="visible"
+          :items="nodes"
+          drag-and-drop
+          class="w-[500px]"
+          aria-label="Drag and Drop example"
+          @move="applyMove"
+        >${node}</GsTree>
+      </div>`,
+  }),
+}
+
+/**
  * A Stateless tree uses data from a remote source to drive tree display and operations. The
  * pure helpers from `tree-data` (`getTreeKeys`, `getTreeParentKeys`, …) provide basic tree data
  * operations.
@@ -210,7 +240,7 @@ export const Stateless: Story = {
       }
     },
     template: `
-      <div class="flex flex-col gap-m">
+      <div>
         <div class="flex items-center gap-m">${selectionButtons}${expansionButtons}</div>
         <GsTree
           v-bind="args"
@@ -335,6 +365,44 @@ export const CascadeBasic: Story = {
 }
 
 /**
+ * Cascade selection with drag-and-drop enabled.
+ * Test how cascade state updates when moving selected items between parents.
+ *
+ * Try this:
+ * 1. Select "Documents" (all children become selected)
+ * 2. Drag "Report.pdf" to "Downloads"
+ * 3. Notice how "Documents" becomes indeterminate (some children moved away)
+ * 4. Notice how "Downloads" becomes indeterminate (gained a selected child)
+ */
+export const CascadeWithDragAndDrop: Story = {
+  render: (args) => ({
+    components,
+    setup: () => ({
+      args,
+      ...useTree({ items: fileSystemData, selectionCascade: true }),
+    }),
+    template: `
+      <div class="flex flex-col gap-m">
+        <div class="flex items-center gap-m">${selectionButtons}${expansionButtons}</div>
+        <div class="rounded-medium bg-surface-raised p-m">
+          <GsTree
+            v-bind="args"
+            v-model="selected"
+            v-model:expanded="expanded"
+            v-model:visible="visible"
+            :items="nodes"
+            selection-cascade
+            drag-and-drop
+            class="w-[500px]"
+            aria-label="Cascade with Drag and Drop"
+            @move="applyMove"
+          >${node}</GsTree>
+        </div>
+      </div>`,
+  }),
+}
+
+/**
  * Glideslope extra: `v-model:visible` holds the keys whose eye toggle is on. Nodes that are hidden,
  * or sit under a hidden node, are muted; children keep their flags, so revealing a parent restores
  * them. `useTree`'s `revealAll` and `hideAll` set every flag at once.
@@ -366,5 +434,60 @@ export const Visibility: Story = {
         >${node}</GsTree>
         <span class="fg-primary-muted text-body-s">visible: {{ visible }}</span>
       </div>`,
+  }),
+}
+
+const moveSteps: { direction: GsTreeMoveDirection; label: string }[] = [
+  { direction: 'up', label: 'Move up' },
+  { direction: 'down', label: 'Move down' },
+  { direction: 'indent', label: 'Indent' },
+  { direction: 'outdent', label: 'Outdent' },
+]
+
+/**
+ * Glideslope extra: `useTree`'s `moveStep` moves a node one step without dragging, here from a row
+ * menu: the single-pointer alternative to dragging. `canMoveStep` disables the steps a node can't
+ * take.
+ */
+export const MoveWithoutDragging: Story = {
+  args: { showVisibility: false },
+  render: (args) => ({
+    components: { ...components, GsMenu, GsMenuItem, KebabIcon },
+    setup: () => ({ args, moveSteps, ...useTree({ items: fileSystemData }) }),
+    template: `
+      <GsTree
+        v-bind="args"
+        v-model="selected"
+        v-model:expanded="expanded"
+        :items="nodes"
+        drag-and-drop
+        class="w-[500px]"
+        aria-label="Files"
+        @move="applyMove"
+      >
+        <template #default="{ node }">
+          <GsTreeItemPrefixIcon><PlaceholderIcon /></GsTreeItemPrefixIcon>
+          <GsTreeItemLabel>{{ node.label }}</GsTreeItemLabel>
+          <GsTreeItemDescription v-if="node.values?.description">
+            {{ node.values.description }}
+          </GsTreeItemDescription>
+          <GsTreeItemActions>
+            <GsMenu @action="(direction) => moveStep(node.key, direction)">
+              <template #trigger>
+                <GsButton variant="icon" :aria-label="\`Move \${node.label}\`">
+                  <GsIcon><KebabIcon /></GsIcon>
+                </GsButton>
+              </template>
+              <GsMenuItem
+                v-for="step in moveSteps"
+                :key="step.direction"
+                :value="step.direction"
+                :label="step.label"
+                :disabled="!canMoveStep(node.key, step.direction)"
+              />
+            </GsMenu>
+          </GsTreeItemActions>
+        </template>
+      </GsTree>`,
   }),
 }

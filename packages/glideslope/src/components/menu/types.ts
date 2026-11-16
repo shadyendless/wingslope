@@ -13,7 +13,7 @@ export interface GsMenuProps {
   side?: GsOverlaySide
   /** @default 'start' */
   align?: GsOverlayAlign
-  /** Gap between trigger and menu, in pixels. @default 4 */
+  /** Gap between trigger and menu, in pixels. @default 8 */
   offset?: number
   /** Classes for inner parts. `popover`: the floating panel that holds the items. */
   classes?: { popover?: string }

@@ -3,9 +3,13 @@ packages:
   - packages/*
 
 catalog:
+  '@dnd-kit/helpers': 0.5.3
+  '@dnd-kit/vue': 0.5.3
   '@fontsource-variable/roboto-flex': ^5.3.0
   '@fontsource-variable/roboto-mono': ^5.3.0
   '@internationalized/date': ^3.12.4
+  '@react-querybuilder/core': ^8.26.0
+  '@react-querybuilder/vue': 0.3.0
   '@storybook/addon-a11y': ^10.6.7
   '@storybook/addon-docs': ^10.6.7
   '@storybook/addon-themes': ^10.6.7
@@ -15,10 +19,13 @@ catalog:
   '@testing-library/jest-dom': ^7.0.1
   '@testing-library/user-event': ^14.6.10
   '@testing-library/vue': ^8.1.0
+  '@types/geodesy': ^2.2.8
   '@types/node': ^22.20.5
   '@types/react': ^19.3.0
   '@vitejs/plugin-vue': ^6.0.11
   '@vue/test-utils': ^2.5.1
+  fast-check: ^4.10.2
+  geodesy: ^2.4.0
   jsdom: ^31.0.1
   media-chrome: ^4.19.5
   react: ^19.3.1
@@ -35,3 +42,8 @@ catalog:
 
 onlyBuiltDependencies:
   - esbuild
+
+# Carried over from standard-toolkit with @wingbrace/geo: widens geodesy's UTM northing range
+# check and rounds MGRS band latitudes, so the inclusive 80°S and 84°N grid limits convert.
+patchedDependencies:
+  geodesy@2.4.0: patches/geodesy@2.4.0.patch

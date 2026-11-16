@@ -1,0 +1,92 @@
+@reference '@wingbrace/glideslope-foundation/styles';
+
+@layer components.l1 {
+  .queryBuilder {
+    @apply outline outline-transparent;
+  }
+
+  .ruleGroup {
+    @apply col-span-full flex flex-col gap-s rounded-medium p-s outline outline-info-bold;
+  }
+
+  .header {
+    @apply flex gap-s;
+  }
+
+  .body {
+    @apply grid gap-x-s;
+
+    @variant empty {
+      @apply hidden;
+    }
+
+    &.showRuleLines {
+      grid-template-columns: 10px minmax(100px, 1fr) min-content;
+    }
+
+    &.hideRuleLines {
+      grid-template-columns: minmax(100px, 1fr) min-content;
+    }
+  }
+
+  .rule {
+    @apply flex gap-xs py-s;
+
+    &.horizontal {
+      @apply items-center;
+      min-height: 50px;
+    }
+
+    &.vertical {
+      @apply flex-col items-stretch;
+    }
+  }
+}
+
+/* Restyles the Glideslope controls the query builder renders. */
+@layer components.l2 {
+  .combinatorGroup {
+    @apply flex-nowrap;
+  }
+
+  .cloneRule,
+  .cloneGroup,
+  .lockRule,
+  .lockGroup {
+    @apply fg-info-bold;
+
+    @variant hover {
+      @apply fg-info-hover;
+    }
+
+    @variant disabled {
+      @apply fg-disabled;
+    }
+  }
+
+  .fields,
+  .value,
+  .operators {
+    @apply w-full;
+  }
+
+  .ruleLines {
+    min-height: 46px;
+    width: 20px;
+  }
+
+  .textInput {
+    @apply min-h-xl;
+  }
+
+  .fields,
+  .operators {
+    @variant group-size-small/combobox-field {
+      max-width: 250px;
+    }
+  }
+
+  .value {
+    max-width: 250px;
+  }
+}

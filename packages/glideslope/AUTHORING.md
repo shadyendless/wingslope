@@ -76,6 +76,7 @@ Tooltip, popover, dialog and menu share one shape:
 
 - The trigger goes in a `#trigger` slot, rendered inside Reka's `…Trigger as-child`, so it must be a single element or component (usually a `GsButton`). `GsDialog`'s trigger is optional; open it with `v-model:open` instead.
 - The default slot is the content and receives `close`.
+- **A tooltip overwrites its trigger's `data-state`** with its own (`closed`, `delayed-open`). Reka gives its trigger part precedence, so a toggle, radio or checkbox inside `GsTooltip`'s `#trigger` loses `data-state="on"`/`"checked"`. Style state with the foundation's variants (`selected`, `checked`, `indeterminate`), which also match `aria-pressed` / `aria-checked`, never with raw `[data-state=…]` selectors.
 - Overlays set `inheritAttrs: false` and bind `$attrs` to their `…Trigger`. Their root is a fragment (trigger plus portal), so otherwise an outer overlay's trigger attributes and listeners are dropped when one overlay is another's trigger.
 - Content is portalled to `body`. Styles reach it through module classes on the Reka content part, not through ancestors in the page.
 - Reka labels popover content by its trigger and gives that precedence over attributes we pass, so `GsPopoverTitle` points the panel's `aria-labelledby` at itself after it mounts, and `GsPopover`'s `label` renders a hidden span the panel is labelled by.
