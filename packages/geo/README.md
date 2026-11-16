@@ -2,19 +2,9 @@
 
 Geographic coordinate parsing, conversion, and formatting for multiple coordinate systems, plus spherical geodesy helpers. `@wingbrace/glideslope`'s `GsCoordinateField` is built on it.
 
-## Origin
+## The `geodesy` patch
 
-This package began as a copy of [`@accelint/geo`](https://github.com/gohypergiant/standard-toolkit/tree/main/packages/geo) 0.8.0 from the Accelint Standard Toolkit (Copyright 2024-2026 Hypergiant Galactic Systems Inc., licensed under the Apache License, Version 2.0). It keeps the same functionality, public API and subpath exports, so code written against `@accelint/geo` works after changing the import to `@wingbrace/geo`, and it evolves separately from here.
-
-Changes from the original:
-
-- Path aliases (`@/…`) became relative imports, and the code follows this repo's Prettier and ESLint setup (behavior-neutral: formatting, removed redundant type assertions, ESLint instead of Biome suppression comments).
-- It builds with Vite library mode (one output module per source module) and `tsc` declarations instead of `tsdown`.
-- Each source file keeps the original Apache-2.0 header comment.
-
-### The `geodesy` patch
-
-Like standard-toolkit, this repo patches `geodesy` 2.4.0 (`patches/geodesy@2.4.0.patch`, registered under `patchedDependencies` in `pnpm-workspace.yaml`). The patch widens the UTM northing range check and rounds the latitude used for the MGRS band, so the inclusive grid limits (80°S and 84°N) convert to UTM and MGRS. pnpm applies patches only to installs inside this workspace: an app that installs the package outside it gets unpatched `geodesy`, where `toUtmParts` / `toMgrsParts` report those exact boundary latitudes as out of range and `createCoordinate(...).utm()` / `.mgrs()` throw for them. The published `@accelint/geo` has the same limitation, since its build also leaves `geodesy` external.
+This repo patches `geodesy` 2.4.0 (`patches/geodesy@2.4.0.patch`, registered under `patchedDependencies` in `pnpm-workspace.yaml`). The patch widens the UTM northing range check and rounds the latitude used for the MGRS band, so the inclusive grid limits (80°S and 84°N) convert to UTM and MGRS. pnpm applies patches only to installs inside this workspace: an app that installs the package outside it gets unpatched `geodesy`, where `toUtmParts` / `toMgrsParts` report those exact boundary latitudes as out of range and `createCoordinate(...).utm()` / `.mgrs()` throw for them.
 
 ## Features
 
@@ -399,7 +389,7 @@ packages/geo/src/
 - MGRS and UTM conversions delegate to the [`geodesy`](https://www.movable-type.co.uk/scripts/geodesy-library.html) library, as do the spherical-Earth geodesy functions (`LatLonSpherical`).
 - Every non-test source module is its own output file and subpath export, so consumers can import exactly what they need (`@wingbrace/geo/coordinates/mgrs/parts`).
 
-Rules carried over from upstream:
+Rules:
 
 - Preserve coordinate-order and input-shape contracts. Do not add "smart" inference that silently flips formats or tuple semantics.
 - Keep parsing conservative. Prefer validation or errors over permissive heuristics for ambiguous coordinates.
@@ -416,5 +406,3 @@ pnpm --filter @wingbrace/geo typecheck  # tsc, tests included
 ## License
 
 Apache-2.0
-
-Copyright 2024-2026 Hypergiant Galactic Systems Inc. Modifications are part of Glideslope, also under Apache-2.0.

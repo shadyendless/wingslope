@@ -9,7 +9,8 @@ import {
 
 /** An RGBA tuple with every channel 0–255 (deck.gl style). The alpha channel is optional. */
 export type GsColorTuple =
-  readonly [number, number, number] | readonly [number, number, number, number]
+  | readonly [number, number, number]
+  | readonly [number, number, number, number]
 
 /** A CSS color string, an RGBA tuple (0–255), or a Reka UI `Color` object. */
 export type GsColorInput = string | GsColorTuple | Color

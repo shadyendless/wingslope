@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { computed, nextTick, watch } from 'vue'
 import { GANTT_ROW_HEIGHT_PX, MS_PER_HOUR } from './constants'
 import { createGanttStore, selectors } from './store'

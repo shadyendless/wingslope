@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { h } from 'vue'
 import GsMediaControls from '../media-controls/GsMediaControls.vue'
 import GsPlayButton from '../media-controls/GsPlayButton.vue'

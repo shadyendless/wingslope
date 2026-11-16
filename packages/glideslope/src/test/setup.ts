@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/vue'
-import { afterEach } from 'vitest'
+import { afterEach } from 'vite-plus/test'
 
 // jsdom gaps that Reka UI's popper, select, slider and listbox code relies on.
 if (!('ResizeObserver' in globalThis)) {

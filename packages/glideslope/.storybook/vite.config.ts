@@ -1,6 +1,6 @@
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite-plus'
 import globalGroups from '../build/postcss-global-groups.js'
 import { vueOptions } from '../build/vue-options.js'
 

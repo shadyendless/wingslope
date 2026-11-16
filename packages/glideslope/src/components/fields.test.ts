@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { h, ref } from 'vue'
 import GsCheckbox from './checkbox/GsCheckbox.vue'
 import GsCheckboxGroup from './checkbox/GsCheckboxGroup.vue'

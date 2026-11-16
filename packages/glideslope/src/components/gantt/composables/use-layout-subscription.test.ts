@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { nextTick, shallowRef } from 'vue'
 import { withGanttProviders } from '../__fixtures__/providers'
 import { useLayoutSubscription } from './use-layout-subscription'

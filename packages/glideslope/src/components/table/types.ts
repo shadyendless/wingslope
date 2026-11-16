@@ -39,7 +39,7 @@ export interface GsTableRowData {
  * Header and cell renderers return text or VNodes (`h()`), or use the table's `#header-<id>` and
  * `#cell-<id>` slots instead.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- ColumnDef is invariant in its value type; TanStack's own column helper output is typed with `any` here too.
+// oxlint-disable-next-line @typescript-eslint/no-explicit-any -- ColumnDef is invariant in its value type; TanStack's own column helper output is typed with `any` here too.
 export type GsTableColumnDef<T extends RowData> = ColumnDef<GsTableFeatures, T, any>
 
 export interface GsTableProps<T extends GsTableRowData> {

@@ -1,5 +1,5 @@
 import type { RuleType } from '@react-querybuilder/vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { getValidationResult } from './utils'
 
 /** Whether a value coerces to an integer no greater than 10. */

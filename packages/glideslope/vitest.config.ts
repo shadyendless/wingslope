@@ -1,5 +1,5 @@
 import vue from '@vitejs/plugin-vue'
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from 'vite-plus'
 import { vueOptions } from './build/vue-options.js'
 
 export default defineConfig({

@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { effectScope, nextTick, shallowRef } from 'vue'
 import { useResizeIntersectionEffect } from './use-resize-intersection-effect'
 import type { GsGanttTimelineChunkObject } from '../types'

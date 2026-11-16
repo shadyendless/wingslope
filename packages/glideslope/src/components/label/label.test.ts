@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/vue'
 import { FieldRoot } from 'reka-ui'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { defineComponent, h, type VNode } from 'vue'
 import { provideLabelDefaults } from './defaults'
 import GsLabel from './GsLabel.vue'

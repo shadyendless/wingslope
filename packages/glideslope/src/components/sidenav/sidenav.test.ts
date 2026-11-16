@@ -1,7 +1,7 @@
 import { render, screen, waitFor, within } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
 import PlaceholderIcon from '@wingbrace/glideslope-icons/placeholder'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { computed, h, nextTick, ref, type VNodeChild } from 'vue'
 import GsButton from '../button/GsButton.vue'
 import GsDivider from '../divider/GsDivider.vue'

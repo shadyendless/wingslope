@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import {
   BUFFERED_CHUNK_COUNT,
   MS_PER_HOUR,

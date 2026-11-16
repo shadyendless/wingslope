@@ -1,7 +1,7 @@
 {
   "name": "@wingbrace/geo",
   "version": "0.0.0",
-  "description": "Coordinate parsing, formatting and conversion (DD, DDM, DMS, MGRS, UTM) and spherical geodesy helpers. Began as a copy of @accelint/geo 0.8.0.",
+  "description": "Coordinate parsing, formatting and conversion (DD, DDM, DMS, MGRS, UTM) and spherical geodesy helpers.",
   "type": "module",
   "license": "Apache-2.0",
   "keywords": [
@@ -204,9 +204,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "rm -rf dist && vite build && tsc -p tsconfig.build.json",
+    "build": "vp build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vp test run"
   },
   "dependencies": {
     "@types/geodesy": "catalog:",
@@ -217,6 +217,6 @@
     "fast-check": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:"
+    "vite-plus": "catalog:"
   }
 }

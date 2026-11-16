@@ -117,7 +117,7 @@ Preserve keyboard operation, accessible names, focus behavior and status feedbac
 
 ## Tests and stories
 
-- **Tests** (`<family>.test.ts`) use Vitest with `@testing-library/vue` and `user-event`. Query by role and name, and test behavior: provided defaults, `v-model`, disabled handling, ARIA. CSS Module class names are unhashed in tests (`toHaveClass('button', 'filled')`).
+- **Tests** (`<family>.test.ts`) use Vitest (imported from `vite-plus/test`) with `@testing-library/vue` and `user-event`. Query by role and name, and test behavior: provided defaults, `v-model`, disabled handling, ARIA. CSS Module class names are unhashed in tests (`toHaveClass('button', 'filled')`).
 - **Reka wires some things after mount:** label and description IDs, slider thumbs. Use `findBy…` or `waitFor` for those assertions rather than `getBy…` straight after `render`. Don't query with `{ hidden: true }` to make a test pass; a hidden element is usually a real accessibility bug.
 - **Stories mirror the Design Toolkit's.** For a ported component, keep one story file per Design Toolkit story file, with the same file name, `title` and story names, in the same order (`Default` is the controls-driven story). Add a story only when it shows Vue-specific API (a `v-model`, a slot, `provide*Defaults`), after the ported ones. Stories are CSF3 with `satisfies Meta<typeof GsX>`; templates may use utility classes for layout.
 - **Docs pages** (`<name>.docs.mdx`, next to the stories, `<Meta of={…Stories} />`) follow the Design Toolkit's page with Vue code samples. Use `<ArgTypes>` for props, events and slots, which are generated from the components' JSDoc, rather than hand-written tables.

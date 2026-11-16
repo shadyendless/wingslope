@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { computed, h, nextTick, ref, type VNodeChild } from 'vue'
 import GsButton from '../button/GsButton.vue'
 import GsViewStack from './GsViewStack.vue'

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { computed, nextTick, shallowRef } from 'vue'
 import { withGanttProviders } from '../__fixtures__/providers'
 import * as thresholdUtils from '../utils/thresholds'

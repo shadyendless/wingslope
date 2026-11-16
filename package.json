@@ -7,30 +7,27 @@
   "license": "Apache-2.0",
   "packageManager": "pnpm@10.25.0",
   "engines": {
-    "node": ">=22.12",
+    "node": "^22.18.0 || ^24.11.0 || >=26.0.0",
     "pnpm": ">=10"
   },
   "scripts": {
-    "build": "pnpm --filter \"./packages/**\" run build",
-    "typecheck": "pnpm -r run typecheck",
-    "test": "pnpm -r run test",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "storybook": "pnpm --filter \"@wingbrace/glideslope^...\" run build && pnpm --filter @wingbrace/glideslope run storybook",
-    "playground": "pnpm --filter \"playground^...\" run build && pnpm --filter playground run dev",
-    "verify": "pnpm build && pnpm typecheck && pnpm test && pnpm lint && pnpm format:check"
+    "build": "vp run -r build",
+    "typecheck": "vp run -r typecheck",
+    "test": "vp test run",
+    "check": "vp check",
+    "check:fix": "vp check --fix",
+    "lint": "vp lint .",
+    "lint:fix": "vp lint . --fix",
+    "format": "vp fmt .",
+    "format:check": "vp fmt --check .",
+    "storybook": "vp run --filter \"@wingbrace/glideslope^...\" build && vp run --filter @wingbrace/glideslope storybook",
+    "playground": "vp run --filter \"playground^...\" build && vp run --filter playground dev",
+    "verify": "vp run build && vp check && vp run typecheck && vp test run",
+    "prepare": "vp config"
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "@vue/eslint-config-prettier": "^10.2.0",
-    "@vue/eslint-config-typescript": "^14.9.0",
-    "eslint": "^10.14.0",
-    "eslint-plugin-vue": "^10.12.1",
-    "globals": "^17.14.0",
-    "prettier": "^3.10.1",
-    "prettier-plugin-tailwindcss": "^0.8.1",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
   }
 }

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, within } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { h, ref } from 'vue'
 import GsButton from '../button/GsButton.vue'
 import GsIcon from '../icon/GsIcon.vue'

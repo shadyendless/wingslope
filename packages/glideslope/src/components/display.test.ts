@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { defineComponent, h } from 'vue'
 import GsAvatar from './avatar/GsAvatar.vue'
 import GsBadge from './badge/GsBadge.vue'

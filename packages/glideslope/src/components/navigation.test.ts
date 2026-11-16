@@ -1,6 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { h, nextTick, ref } from 'vue'
 import GsAccordion from './accordion/GsAccordion.vue'
 import GsAccordionGroup from './accordion/GsAccordionGroup.vue'

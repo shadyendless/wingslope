@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { h, ref } from 'vue'
 import GsChip from '../chip/GsChip.vue'
 import GsChipList from '../chip/GsChipList.vue'

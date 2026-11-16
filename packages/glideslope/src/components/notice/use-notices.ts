@@ -94,13 +94,15 @@ export function registerNoticeList(list: MountedList): () => void {
 /** @internal Tells `onAction` listeners that a notice's action was chosen. */
 export function reportNoticeAction(notice: GsNoticeContent, action: GsNoticeActionKind) {
   const event = { id: notice.id, metadata: notice.metadata, action }
-  for (const listener of [...actionListeners]) listener(event)
+  // Copied first, so listeners added while dispatching wait for the next event.
+  for (const listener of Array.from(actionListeners)) listener(event)
 }
 
 /** @internal Tells `onClose` listeners that a notice was closed. */
 export function reportNoticeClose(notice: GsNoticeContent) {
   const event = { id: notice.id, metadata: notice.metadata }
-  for (const listener of [...closeListeners]) listener(event)
+  // Copied first, so listeners added while dispatching wait for the next event.
+  for (const listener of Array.from(closeListeners)) listener(event)
 }
 
 /**

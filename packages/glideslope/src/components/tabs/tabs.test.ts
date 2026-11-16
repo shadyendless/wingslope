@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { defineComponent, h, ref, type VNodeChild } from 'vue'
 import { provideTabDefaults, provideTabsDefaults } from './defaults'
 import GsTab from './GsTab.vue'

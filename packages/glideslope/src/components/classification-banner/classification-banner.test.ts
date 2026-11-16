@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { defineComponent, h } from 'vue'
 import { provideClassificationBannerDefaults } from './defaults'
 import GsClassificationBanner from './GsClassificationBanner.vue'

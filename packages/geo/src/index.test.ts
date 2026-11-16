@@ -1,17 +1,4 @@
-// __private-exports
-/*
- * Copyright 2024 Hypergiant Galactic Systems Inc. All rights reserved.
- * This file is licensed to you under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License. You may obtain a copy
- * of the License at https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under
- * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
- * OF ANY KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
- */
-
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import {
   createCoordinate,
   parseDecimalDegrees,
@@ -97,7 +84,7 @@ describe('creating a coordinate object', () => {
 
       expect(result.ok).toBe(true)
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- narrowed by the assertion above
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any -- narrowed by the assertion above
       const { value } = result as any
 
       expect(value.zone).toBe(18)
@@ -690,25 +677,25 @@ describe('createCoordinate with non-string inputs', () => {
 
   describe('invalid input types', () => {
     it('should reject null', () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- testing invalid input
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any -- testing invalid input
       const coord = create(null as any)
       expect(coord.valid).toBe(false)
     })
 
     it('should reject undefined', () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- testing invalid input
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any -- testing invalid input
       const coord = create(undefined as any)
       expect(coord.valid).toBe(false)
     })
 
     it('should reject single number', () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- testing invalid input
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any -- testing invalid input
       const coord = create(42 as any)
       expect(coord.valid).toBe(false)
     })
 
     it('should reject array with wrong length', () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- testing invalid input
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any -- testing invalid input
       const coord = create([1, 2, 3] as any)
       expect(coord.valid).toBe(false)
     })

@@ -29,9 +29,9 @@
   ],
   "scripts": {
     "generate": "node scripts/generate-tokens.mjs && node scripts/generate-variants.mjs",
-    "build": "pnpm run generate && node scripts/build.mjs",
+    "build": "vp build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vp test run"
   },
   "peerDependencies": {
     "@fontsource-variable/roboto-flex": "catalog:",
@@ -44,6 +44,6 @@
     "@types/node": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:"
+    "vite-plus": "catalog:"
   }
 }

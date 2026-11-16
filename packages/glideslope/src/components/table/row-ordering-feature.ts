@@ -62,7 +62,7 @@ declare module '@tanstack/vue-table' {
   }
 
   // Merged declarations must repeat the original type parameters.
-  /* eslint-disable @typescript-eslint/no-unused-vars */
+  /* oxlint-disable @typescript-eslint/no-unused-vars */
   interface TableOptions_FeatureMap<TFeatures extends TableFeatures, TData extends RowData> {
     rowOrderingFeature: RowOrderingTableOptions
   }
@@ -74,7 +74,7 @@ declare module '@tanstack/vue-table' {
   interface Row_FeatureMap<TFeatures extends TableFeatures, TData extends RowData> {
     rowOrderingFeature: RowOrderingRowApis
   }
-  /* eslint-enable @typescript-eslint/no-unused-vars */
+  /* oxlint-enable @typescript-eslint/no-unused-vars */
 }
 
 function tableSetRowOrdering<TFeatures extends TableFeatures, TData extends RowData>(

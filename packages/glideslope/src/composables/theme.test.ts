@@ -1,6 +1,6 @@
 import { render } from '@testing-library/vue'
 import { designTokens, type ThemeTokens } from '@wingbrace/glideslope-foundation/tokens'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vite-plus/test'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import { provideTheme, useTheme, type DeepPartial, type Theme, type ThemeOptions } from './theme'
 

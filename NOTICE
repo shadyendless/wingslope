@@ -1,8 +1,0 @@
-Glideslope
-
-This product includes software and design assets derived from the Accelint Standard Toolkit
-(https://github.com/gohypergiant/standard-toolkit), Copyright 2026 Hypergiant Galactic Systems Inc.,
-licensed under the Apache License, Version 2.0. Derived material includes the design token values,
-icon SVG sources, Tailwind theme and utility definitions, and component styles, which were adapted
-for Vue, and the coordinate and geodesy code in packages/geo, which began as a copy of @accelint/geo
-0.8.0 (including its patch to the geodesy package).

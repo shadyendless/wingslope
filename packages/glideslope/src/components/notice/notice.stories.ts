@@ -73,7 +73,8 @@ export const ButtonEvents: Story = {
     components: { GsNoticeList },
     setup: () => ({
       args,
-      target: useStoryNotices(args, (notice) => [
+      // Asserted for `vp check`, whose TypeScript 7 pass sees untyped story args (see src/env.d.ts).
+      target: useStoryNotices(args as GsNoticeProps, (notice) => [
         notice,
         {
           ...notice,

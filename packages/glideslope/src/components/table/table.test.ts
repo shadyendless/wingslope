@@ -7,7 +7,7 @@ import type {
   RowSelectionState,
   SortingState,
 } from '@tanstack/vue-table'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, ref, type Component, type Ref } from 'vue'
 import GsPagination from '../pagination/GsPagination.vue'
 import { provideTableDefaults } from './defaults'

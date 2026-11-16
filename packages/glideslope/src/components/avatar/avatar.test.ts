@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/vue'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, nextTick } from 'vue'
 import { provideAvatarDefaults } from './defaults'
 import GsAvatar from './GsAvatar.vue'

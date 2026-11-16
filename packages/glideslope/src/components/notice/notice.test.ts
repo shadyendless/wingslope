@@ -1,6 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { effectScope, h } from 'vue'
 import GsNoticeList from './GsNoticeList.vue'
 import { useNotices } from './use-notices'

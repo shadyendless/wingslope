@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { defineComponent, h } from 'vue'
 import { provideDividerDefaults } from './defaults'
 import GsDivider from './GsDivider.vue'

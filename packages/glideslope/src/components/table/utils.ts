@@ -48,7 +48,7 @@ export function orderRows<T extends { id: string | number }>(data: T[], order: s
   if (!order.length) return data
 
   const rank = new Map(order.map((id, index) => [id, index]))
-  const slots = new Array<T | undefined>(order.length)
+  const slots = Array.from<T | undefined>({ length: order.length })
   const unranked: T[] = []
   for (const item of data) {
     const slot = rank.get(String(item.id))

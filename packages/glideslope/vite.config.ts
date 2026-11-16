@@ -1,7 +1,9 @@
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 import { readFileSync } from 'node:fs'
-import { defineConfig } from 'vite'
+import { fileURLToPath } from 'node:url'
+import { defineConfig, lazyPlugins } from 'vite-plus'
+import { emitDeclarations } from '../../tooling/vite-plugins'
 import globalGroups from './build/postcss-global-groups.js'
 import { vueOptions } from './build/vue-options.js'
 
@@ -24,7 +26,11 @@ const isExternal = (id: string) => externals.some((dep) => id === dep || id.star
 const cssTarget = ['chrome123', 'edge123', 'firefox128', 'safari18']
 
 export default defineConfig({
-  plugins: [vue(vueOptions), tailwindcss()],
+  plugins: lazyPlugins(() => [
+    vue(vueOptions),
+    tailwindcss(),
+    emitDeclarations(fileURLToPath(new URL('.', import.meta.url)), 'vue-tsc'),
+  ]),
   css: {
     postcss: { plugins: [globalGroups()] },
     modules: {

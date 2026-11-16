@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { h } from 'vue'
 import GsBreadcrumbItem from './GsBreadcrumbItem.vue'
 import GsBreadcrumbs from './GsBreadcrumbs.vue'

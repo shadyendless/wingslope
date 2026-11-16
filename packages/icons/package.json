@@ -27,9 +27,9 @@
   ],
   "scripts": {
     "generate": "node scripts/generate.mjs",
-    "build": "pnpm run generate && rm -rf dist && tsc -p tsconfig.build.json",
+    "build": "vp build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vp test run"
   },
   "peerDependencies": {
     "vue": "catalog:"
@@ -40,7 +40,7 @@
     "jsdom": "catalog:",
     "svgo": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:",
-    "vue": "catalog:"
+    "vue": "catalog:",
+    "vite-plus": "catalog:"
   }
 }

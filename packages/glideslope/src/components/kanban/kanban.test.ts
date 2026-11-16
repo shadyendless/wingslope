@@ -1,7 +1,7 @@
 import '../tree/__fixtures__/dnd-env'
 import { render, screen, within } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { computed, defineComponent, h, ref, type Ref } from 'vue'
 import { settle } from '../tree/__fixtures__/dnd-env'
 import GsKanban from './GsKanban.vue'

@@ -1,6 +1,6 @@
 /**
  * Wraps a number into the half-open range `[min, max)`, cycling values that fall outside it back
- * around rather than clamping them to the edge. A local copy of `@accelint/math`'s `wrap`.
+ * around rather than clamping them to the edge.
  *
  * Unlike clamping, this treats the range as circular: a value past `max` re-enters at `min`, and
  * one below `min` re-enters just under `max`. It handles negative and multi-revolution inputs

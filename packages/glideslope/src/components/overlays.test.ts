@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { h, ref } from 'vue'
 import GsButton from './button/GsButton.vue'
 import GsDialog from './dialog/GsDialog.vue'

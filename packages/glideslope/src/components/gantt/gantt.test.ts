@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/vue'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, nextTick, ref, type Component } from 'vue'
 import GsIcon from '../icon/GsIcon.vue'
 import { MS_PER_HOUR } from './constants'

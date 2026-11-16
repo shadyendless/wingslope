@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
 import { MediaUIEvents } from 'media-chrome/dist/constants.js'
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, nextTick, shallowRef, type ShallowRef, type VNodeChild } from 'vue'
 import { provideMediaControlsDisabled, provideMediaStore } from './context'
 import GsFullscreenButton from './GsFullscreenButton.vue'

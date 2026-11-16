@@ -1,6 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import type { AcceptableValue } from 'reka-ui'
 import { defineComponent, h, ref, type VNode } from 'vue'
 import GsIcon from '../icon/GsIcon.vue'

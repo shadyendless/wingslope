@@ -1,6 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { h, ref } from 'vue'
 import { parseCoordinatePaste } from './coordinate-utils'
 import type * as CoordinateUtils from './coordinate-utils'

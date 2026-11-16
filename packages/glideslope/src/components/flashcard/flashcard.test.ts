@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { computed, defineComponent, h, nextTick, ref } from 'vue'
 import { useFlashcard } from './context'
 import GsFlashcard from './GsFlashcard.vue'

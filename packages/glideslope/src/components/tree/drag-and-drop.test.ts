@@ -1,7 +1,7 @@
 import './__fixtures__/dnd-env'
-import { render, screen, within } from '@testing-library/vue'
+import { render, screen, waitFor, within } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, type Component } from 'vue'
 import { settle } from './__fixtures__/dnd-env'
 import {
@@ -219,8 +219,9 @@ describe('GsTree drag and drop', () => {
 
   it('puts a drag handle in each row, described by the keyboard instructions', async () => {
     renderTree()
-    await settle()
     const report = handle('Report')
+    // dnd-kit sets the handle's attributes in an animation frame, which a busy machine can delay.
+    await waitFor(() => expect(report).toHaveAttribute('aria-describedby'))
     const description = document.getElementById(report.getAttribute('aria-describedby')!)
     expect(description).toHaveTextContent(/press Space or Enter/)
     expect(handle('Locked')).toBeDisabled()

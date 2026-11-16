@@ -40,8 +40,7 @@ function splitOnFilter(): [string, string, string] | null {
   <component :is="options.kind === 'select' ? SelectItemText : 'span'" :class="styles.label">
     <template v-for="(split, index) in [splitOnFilter()]" :key="index">
       <template v-if="split">
-        {{ split[0] }}<mark :class="styles.highlight">{{ split[1] }}</mark
-        >{{ split[2] }}
+        {{ split[0] }}<mark :class="styles.highlight">{{ split[1] }}</mark>{{ split[2] }}
       </template>
       <slot v-else />
     </template>

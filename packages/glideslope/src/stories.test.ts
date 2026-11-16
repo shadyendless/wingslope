@@ -4,7 +4,7 @@
  */
 import { composeStories, type composeStory } from '@storybook/vue3-vite'
 import { cleanup, render } from '@testing-library/vue'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 
 type StoryModule = Parameters<typeof composeStories>[0]
 type ComposedStory = ReturnType<typeof composeStory>

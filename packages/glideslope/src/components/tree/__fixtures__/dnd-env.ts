@@ -41,5 +41,16 @@ if (!('IntersectionObserver' in globalThis)) {
   } as unknown as typeof IntersectionObserver
 }
 
-/** Lets dnd-kit's scheduled work (animation frames, microtasks, debounced announcements) run. */
-export const settle = (ms = 30) => new Promise((resolve) => setTimeout(resolve, ms))
+/** The next animation frame and then a task, so whatever was queued for that frame has run. */
+const nextFrame = () =>
+  new Promise<void>((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)))
+
+/**
+ * Lets dnd-kit's scheduled work run. It batches DOM updates into animation frames, at times one
+ * frame after another, so this waits for frames rather than a fixed time, which a busy machine can
+ * outlast. `ms` adds a delay for its timers, such as the debounced announcements.
+ */
+export async function settle(ms = 0) {
+  for (let frame = 0; frame < 3; frame++) await nextFrame()
+  if (ms > 0) await new Promise((resolve) => setTimeout(resolve, ms))
+}

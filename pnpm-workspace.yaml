@@ -35,10 +35,10 @@ catalog:
   svgo: ^4.1.0
   tailwindcss: ^4.3.5
   typescript: ~6.0.3
-  vite: ^8.3.8
-  vitest: ^5.1.0
+  vite: npm:@voidzero-dev/vite-plus-core@1.6.0
   vue: ^3.5.45
   vue-tsc: ^3.3.14
+  vite-plus: 1.6.0
 
 onlyBuiltDependencies:
   - esbuild
@@ -47,3 +47,10 @@ onlyBuiltDependencies:
 # check and rounds MGRS band latitudes, so the inclusive 80°S and 84°N grid limits convert.
 patchedDependencies:
   geodesy@2.4.0: patches/geodesy@2.4.0.patch
+overrides:
+  vite@*: 'catalog:'
+peerDependencyRules:
+  allowAny:
+    - vite
+  allowedVersions:
+    vite: '*'

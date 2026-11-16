@@ -1,15 +1,3 @@
-/*
- * Copyright 2024 Hypergiant Galactic Systems Inc. All rights reserved.
- * This file is licensed to you under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License. You may obtain a copy
- * of the License at https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under
- * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
- * OF ANY KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
- */
-
 import Mgrs from 'geodesy/mgrs'
 import { type ParseResults, parse } from '../latlon/internal/parse'
 import { violation } from '../latlon/internal/violation'
@@ -106,7 +94,7 @@ function detailedErrors(input: string) {
  * // [[], ['Invalid UTM zone number found...']]
  * ```
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Format is unused
+// oxlint-disable-next-line @typescript-eslint/no-explicit-any -- Format is unused
 export function parseMGRS(_format: any, input: string) {
   try {
     const point = Mgrs.parse(input).toUtm().toLatLon()

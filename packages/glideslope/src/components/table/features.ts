@@ -42,7 +42,7 @@ export type GsTableFeatures = Pick<
   rowOrderingFeature: TableFeature
   sortedRowModel: NonNullable<TableFeatures['sortedRowModel']>
   paginatedRowModel: NonNullable<TableFeatures['paginatedRowModel']>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TanStack's own sortFn registry type
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any -- TanStack's own sortFn registry type
   sortFns: Record<BuiltInSortFn, CreatedSortFn<any, any>>
 }
 

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, ref } from 'vue'
 import GsIcon from '../icon/GsIcon.vue'
 import { provideButtonDefaults } from './defaults'

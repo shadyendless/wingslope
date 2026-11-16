@@ -10,8 +10,6 @@ function remainder(interval: number): number {
  * the wall clock. Each timeout is computed from the current time, so drift never accumulates and a
  * clock showing seconds ticks over when the second does.
  *
- * Replaces `setClockInterval` from `@accelint/temporal`.
- *
  * @returns A function that stops the interval.
  */
 export function setClockInterval(callback: () => void, ms: number): () => void {

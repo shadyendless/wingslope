@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { MS_PER_HOUR, ROW_VIRTUALIZATION_OVERSCAN, TIMELINE_CHUNK_WIDTH_PX } from '../constants'
 import {
   deriveCurrentTimeTranslateX,

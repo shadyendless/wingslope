@@ -1,7 +1,7 @@
 import type { RuleType } from '@react-querybuilder/vue'
 import { render, screen, waitFor, within } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, ref } from 'vue'
 import { defaultQuery, fields } from './__fixtures__/example-configuration'
 import GsQueryBuilder from './GsQueryBuilder.vue'

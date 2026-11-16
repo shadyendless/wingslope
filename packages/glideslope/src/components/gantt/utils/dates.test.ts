@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { MS_PER_HOUR, MS_PER_MINUTE } from '../constants'
 import { roundMsToInterval } from './dates'
 

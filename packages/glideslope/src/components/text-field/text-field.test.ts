@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { defineComponent, h, type Component } from 'vue'
 import GsSearchField from './GsSearchField.vue'
 import GsTextAreaField from './GsTextAreaField.vue'

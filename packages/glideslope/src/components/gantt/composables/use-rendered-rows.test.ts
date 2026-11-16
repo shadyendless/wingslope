@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { Comment, createCommentVNode, createTextVNode, Fragment, h } from 'vue'
 import { toRows } from './use-rendered-rows'
 

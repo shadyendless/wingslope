@@ -1,7 +1,7 @@
 import { render, screen, waitFor, within } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
 import { FormRoot } from 'reka-ui'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h, ref } from 'vue'
 import { provideCoordinateFieldDefaults } from './defaults'
 import GsCoordinateField from './GsCoordinateField.vue'
